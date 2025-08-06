@@ -4,6 +4,7 @@ from typing import Any, Dict, List
 from firebase_functions import https_fn, options
 from google.cloud.sql.connector import Connector, IPTypes
 import sqlalchemy
+import json
 
 # =================================================================================
 #  GLOBAL SETUP (Synchronous)
@@ -144,4 +145,71 @@ def create_listing(req: https_fn.Request) -> https_fn.Response:
 
     except Exception as e:
         print(f"An error occurred during request processing: {e}")
+        return https_fn.Response("An internal server error occurred.", status=500)
+
+# Hàm này sẽ giúp chúng ta chuyển đổi các kiểu dữ liệu từ DB một cách an toàn
+def alchemy_row_to_dict(row):
+    d = dict(row._mapping)
+    # Chuyển đổi các kiểu dữ liệu không phải là JSON serializable
+    for key, value in d.items():
+        if isinstance(value, (Decimal, uuid.UUID)):
+            d[key] = str(value)
+    return d
+
+@https_fn.on_request(cors=options.CorsOptions(cors_origins=["*"], cors_methods=["get"]))
+def get_listings(req: https_fn.Request) -> https_fn.Response:
+    """
+    API Endpoint TỐI ƯU để lấy tất cả các tin đăng 'available'.
+    Sử dụng một truy vấn JOIN duy nhất và trả về JSON hợp lệ.
+    """
+    global db_engine
+    if db_engine is None:
+        try: db_engine = init_db_engine()
+        except Exception as e:
+            print(f"FATAL: Could not initialize database engine: {e}")
+            return https_fn.Response("Internal Server Error: DB connection failed.", status=500)
+
+    if req.method != "GET":
+        return https_fn.Response(f"Method {req.method} not allowed.", status=405)
+
+    # Câu lệnh SQL với JOIN và tập hợp thuộc tính bằng JSON
+    # Đây là một kỹ thuật cực kỳ mạnh mẽ của PostgreSQL
+    sql_query = sqlalchemy.text("""
+        SELECT
+            l.*,
+            (
+                SELECT json_agg(json_build_object(
+                    'name', a.name,
+                    'value', COALESCE(
+                        la.value_boolean::text, -- Ép kiểu boolean thành text
+                        la.value_integer::text, -- Đã là text
+                        la.value_string         -- Đã là text
+                    )
+                ))
+                FROM listing_attributes la
+                JOIN attributes a ON la.attribute_id = a.id
+                WHERE la.listing_id = l.id
+            ) as attributes
+        FROM listings l
+        WHERE l.status = 'available'
+    """)
+
+    try:
+        with db_engine.connect() as conn:
+            result = conn.execute(sql_query).fetchall()
+            
+            # Chuyển đổi kết quả (Row objects) thành một danh sách các dict
+            listings_data = [dict(row._mapping) for row in result]
+
+            # Chuyển đổi danh sách Python thành một chuỗi JSON hợp lệ
+            json_response = json.dumps(listings_data, default=str) # default=str để xử lý UUID, Decimal...
+
+        return https_fn.Response(
+            json_response,
+            status=200,
+            headers={"Content-Type": "application/json"}
+        )
+
+    except Exception as e:
+        print(f"An error occurred during listing retrieval: {e}")
         return https_fn.Response("An internal server error occurred.", status=500)
