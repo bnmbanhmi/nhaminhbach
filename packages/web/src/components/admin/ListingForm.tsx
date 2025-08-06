@@ -6,12 +6,13 @@ const CREATE_LISTING_ENDPOINT = 'https://5001-firebase-nhaminhbach-1754197535766
 /**
  * Basic form data structure for listing creation
  * Matches the core fields from our listings table schema
+ * Numeric fields allow empty strings during editing for better UX
  */
 interface ListingFormData {
   title: string;
   description: string;
-  price_monthly_vnd: number;
-  area_m2: number;
+  price_monthly_vnd: number | '';
+  area_m2: number | '';
   address_ward: string;
   address_district: string;
 }
@@ -33,12 +34,12 @@ interface CreateListingResponse {
  * database schema for the listings table.
  */
 const ListingForm: React.FC = () => {
-  // State Management: Initialize price and area as numbers (0), others as empty strings
+  // State Management: Initialize numeric fields as empty strings for better UX
   const [formData, setFormData] = useState<ListingFormData>({
     title: '',
     description: '',
-    price_monthly_vnd: 0,
-    area_m2: 0,
+    price_monthly_vnd: '',
+    area_m2: '',
     address_ward: '',
     address_district: '',
   });
@@ -70,7 +71,7 @@ const ListingForm: React.FC = () => {
     const value = e.target.value;
     setFormData(prev => ({
       ...prev,
-      price_monthly_vnd: value === '' ? 0 : Number(value),
+      price_monthly_vnd: value === '' ? '' : Number(value),
     }));
   };
 
@@ -79,7 +80,7 @@ const ListingForm: React.FC = () => {
     const value = e.target.value;
     setFormData(prev => ({
       ...prev,
-      area_m2: value === '' ? 0 : Number(value),
+      area_m2: value === '' ? '' : Number(value),
     }));
   };
 
@@ -105,6 +106,21 @@ const ListingForm: React.FC = () => {
     
     // Clear any previous error messages
     setErrorMessage(null);
+    
+    // Client-side validation
+    const priceValue = formData.price_monthly_vnd === '' ? 0 : formData.price_monthly_vnd;
+    const areaValue = formData.area_m2 === '' ? 0 : formData.area_m2;
+    
+    // Validate that required numeric fields are greater than 0
+    if (priceValue <= 0 || areaValue <= 0) {
+      let errorMessage = 'Please fix the following:\n';
+      if (priceValue <= 0) errorMessage += '- Price must be greater than 0\n';
+      if (areaValue <= 0) errorMessage += '- Area must be greater than 0\n';
+      
+      alert(errorMessage.trim());
+      return; // Stop submission immediately
+    }
+    
     setIsLoading(true);
     
     try {
@@ -113,8 +129,8 @@ const ListingForm: React.FC = () => {
         listing: {
           title: formData.title,
           description: formData.description,
-          price_monthly_vnd: formData.price_monthly_vnd,
-          area_m2: formData.area_m2,
+          price_monthly_vnd: priceValue,
+          area_m2: areaValue,
           address_ward: formData.address_ward,
           address_district: formData.address_district,
         },
@@ -147,8 +163,8 @@ const ListingForm: React.FC = () => {
         setFormData({
           title: '',
           description: '',
-          price_monthly_vnd: 0,
-          area_m2: 0,
+          price_monthly_vnd: '',
+          area_m2: '',
           address_ward: '',
           address_district: '',
         });
@@ -241,7 +257,7 @@ const ListingForm: React.FC = () => {
           value={formData.price_monthly_vnd}
           onChange={handlePriceChange}
           required
-          min="0"
+          min="0.01"
           step="1000"
           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Enter monthly rent price"
@@ -263,7 +279,7 @@ const ListingForm: React.FC = () => {
           value={formData.area_m2}
           onChange={handleAreaChange}
           required
-          min="0"
+          min="0.1"
           step="0.1"
           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Enter area in square meters"
