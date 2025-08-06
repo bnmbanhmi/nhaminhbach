@@ -135,5 +135,6 @@ applyTo: "**"
   2.  **Backend Logic:** The Cloud Function validates business rules and data structure.
   3.  **Database Constraints:** The database (`NOT NULL`, `CHECK`, `UNIQUE`) is the ultimate, uncompromising source of truth and the final line of defense against data corruption.
 - **Principle of Contract Adherence:** The frontend UI/logic must strictly respect the data contract (required fields, data types, constraints) defined by the backend API and the database schema. Any change in the schema must be reflected in the frontend.
+- **Principle of Data Type Resilience:** The frontend must be resilient to minor data type inconsistencies from the API, especially between numbers and strings. When expecting a number, always be prepared to receive a string and parse it safely (e.g., using `Number()` or `parseInt()`) before performing numerical operations.
 
 ---
