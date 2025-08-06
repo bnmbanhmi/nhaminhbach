@@ -122,4 +122,18 @@ applyTo: "**"
 - **Focused Execution:** Despite having global context, your **write/edit operations must be focused on a single, self-contained task at a time.** Do not propose simultaneous changes across multiple unrelated files.
 - **Clarity and Rationale:** When generating code, provide a brief explanation of what the code does and why it was designed that way, referencing the principles in this document (e.g., "This uses SQLAlchemy Core as required by our tech stack.").
 - **Prompt-Driven Workflow:** I will provide prompts with specific goals. Your output must use the full context of this document to generate a response that is consistent with our project's architecture and standards.
-```
+
+---
+
+## 7. CORE ENGINEERING PRINCIPLES (Learned from experience)
+
+**These principles are non-negotiable and must be reflected in all new code.**
+
+- **Principle of Environment Parity:** When troubleshooting complex network issues like CORS, the primary solution is to run both client and server in the most similar environments possible. Avoid fighting security layers; adapt to them.
+- **Principle of Defense in Depth:** Our system's reliability comes from multiple layers of defense.
+  1.  **Client-Side Validation:** The frontend is the first line of defense. It must prevent invalid or nonsensical data from ever being sent.
+  2.  **Backend Logic:** The Cloud Function validates business rules and data structure.
+  3.  **Database Constraints:** The database (`NOT NULL`, `CHECK`, `UNIQUE`) is the ultimate, uncompromising source of truth and the final line of defense against data corruption.
+- **Principle of Contract Adherence:** The frontend UI/logic must strictly respect the data contract (required fields, data types, constraints) defined by the backend API and the database schema. Any change in the schema must be reflected in the frontend.
+
+---
