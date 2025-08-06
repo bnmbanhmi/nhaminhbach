@@ -8,11 +8,26 @@ interface ListingCardProps {
 
 const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
   // Helper function to format price to VND currency
-  const formatPrice = (price: number) => {
+  const formatPrice = (price: number | string) => {
+    // Convert to number safely
+    const numericPrice = Number(price);
+    if (isNaN(numericPrice)) {
+      return 'N/A'; // Return a fallback if conversion fails
+    }
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
       currency: 'VND',
-    }).format(price);
+    }).format(numericPrice);
+  };
+
+  // Helper function to format area
+  const formatArea = (area: number | string) => {
+    // Convert to number safely
+    const numericArea = Number(area);
+    if (isNaN(numericArea)) {
+      return 'N/A'; // Return a fallback if conversion fails
+    }
+    return `${numericArea.toFixed(2)} m²`;
   };
 
   // Helper function to build a clean address string, ignoring null/empty parts
@@ -46,7 +61,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
           {formatPrice(listing.price_monthly_vnd)}
         </p>
         <p className="text-gray-700 mb-2">
-          {listing.area_m2.toFixed(2)} m²
+          {formatArea(listing.area_m2)}
         </p>
         <p className="text-gray-600 text-sm truncate" title={formatAddress()}>
           {formatAddress()}
