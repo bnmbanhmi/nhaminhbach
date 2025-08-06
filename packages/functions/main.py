@@ -44,7 +44,10 @@ def init_db_engine() -> sqlalchemy.engine.Engine:
 #  API ENDPOINT (Synchronous)
 # =================================================================================
 
-@https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
+frontend_url="https://5173-firebase-nhaminhbach-1754197535766.cluster-ikxjzjhlifcwuroomfkjrx437g.cloudworkstations.dev"
+
+
+@https_fn.on_request(cors=options.CorsOptions(cors_origins=[frontend_url, "http://localhost:5173"], cors_methods=["get", "post"]))
 def create_listing(req: https_fn.Request) -> https_fn.Response:
     """
     API Endpoint ĐỒNG BỘ để tạo một tin đăng mới.
