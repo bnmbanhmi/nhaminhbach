@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import type { Listing } from '../types';
 import ListingCard from '../components/listings/ListingCard';
+import { API_BASE_URL } from '../config'; // <-- THAY ĐỔI: Import từ file config
 
-const API_ENDPOINT = 'http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listings';
+// Sử dụng biến đã import để xây dựng endpoint
+const API_ENDPOINT = `${API_BASE_URL}/get_listings`;
 
 const HomePage: React.FC = () => {
   const [listings, setListings] = useState<Listing[]>([]);
