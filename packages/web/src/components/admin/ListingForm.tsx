@@ -7,6 +7,7 @@ const CREATE_LISTING_ENDPOINT = 'https://5001-firebase-nhaminhbach-1754197535766
  * Basic form data structure for listing creation
  * Matches the core fields from our listings table schema
  * Numeric fields allow empty strings during editing for better UX
+ * price_monthly_vnd must be an integer (no decimal places)
  */
 interface ListingFormData {
   title: string;
@@ -66,12 +67,12 @@ const ListingForm: React.FC = () => {
     }));
   };
 
-  // Event Handler for price input with proper number conversion
+  // Event Handler for price input with proper integer conversion
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setFormData(prev => ({
       ...prev,
-      price_monthly_vnd: value === '' ? '' : Number(value),
+      price_monthly_vnd: value === '' ? '' : Math.floor(Number(value)),
     }));
   };
 
@@ -257,10 +258,10 @@ const ListingForm: React.FC = () => {
           value={formData.price_monthly_vnd}
           onChange={handlePriceChange}
           required
-          min="0.01"
-          step="1000"
+          min="1"
+          step="1"
           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Enter monthly rent price"
+          placeholder="Enter monthly rent price (VND)"
         />
       </div>
 
