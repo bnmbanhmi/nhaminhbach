@@ -11,6 +11,9 @@ interface ListingFormData {
   title: string;
   description: string;
   price_monthly_vnd: number;
+  area_m2: number;
+  address_ward: string;
+  address_district: string;
 }
 
 /**
@@ -30,11 +33,14 @@ interface CreateListingResponse {
  * database schema for the listings table.
  */
 const ListingForm: React.FC = () => {
-  // State Management: Initialize price as number (0), others as empty strings
+  // State Management: Initialize price and area as numbers (0), others as empty strings
   const [formData, setFormData] = useState<ListingFormData>({
     title: '',
     description: '',
     price_monthly_vnd: 0,
+    area_m2: 0,
+    address_ward: '',
+    address_district: '',
   });
 
   // Loading state for submit button
@@ -68,6 +74,31 @@ const ListingForm: React.FC = () => {
     }));
   };
 
+  // Event Handler for area input with proper number conversion
+  const handleAreaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData(prev => ({
+      ...prev,
+      area_m2: value === '' ? 0 : Number(value),
+    }));
+  };
+
+  // Event Handler for ward input
+  const handleWardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      address_ward: e.target.value,
+    }));
+  };
+
+  // Event Handler for district input
+  const handleDistrictChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      address_district: e.target.value,
+    }));
+  };
+
   // Submission Handler
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent default browser form submission
@@ -83,6 +114,9 @@ const ListingForm: React.FC = () => {
           title: formData.title,
           description: formData.description,
           price_monthly_vnd: formData.price_monthly_vnd,
+          area_m2: formData.area_m2,
+          address_ward: formData.address_ward,
+          address_district: formData.address_district,
         },
         attributes: [
           // Hardcoded attributes for testing (will make dynamic later)
@@ -114,6 +148,9 @@ const ListingForm: React.FC = () => {
           title: '',
           description: '',
           price_monthly_vnd: 0,
+          area_m2: 0,
+          address_ward: '',
+          address_district: '',
         });
       } else {
         // Handle API errors
@@ -208,6 +245,68 @@ const ListingForm: React.FC = () => {
           step="1000"
           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Enter monthly rent price"
+        />
+      </div>
+
+      {/* Area Field */}
+      <div>
+        <label 
+          htmlFor="area_m2" 
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          Area (m²)
+        </label>
+        <input
+          type="number"
+          id="area_m2"
+          name="area_m2"
+          value={formData.area_m2}
+          onChange={handleAreaChange}
+          required
+          min="0"
+          step="0.1"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Enter area in square meters"
+        />
+      </div>
+
+      {/* Ward Field */}
+      <div>
+        <label 
+          htmlFor="address_ward" 
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          Ward (Phường/Xã)
+        </label>
+        <input
+          type="text"
+          id="address_ward"
+          name="address_ward"
+          value={formData.address_ward}
+          onChange={handleWardChange}
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Enter ward name"
+        />
+      </div>
+
+      {/* District Field */}
+      <div>
+        <label 
+          htmlFor="address_district" 
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          District (Quận/Huyện)
+        </label>
+        <input
+          type="text"
+          id="address_district"
+          name="address_district"
+          value={formData.address_district}
+          onChange={handleDistrictChange}
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Enter district name"
         />
       </div>
 
