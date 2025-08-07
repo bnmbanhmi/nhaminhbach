@@ -18,6 +18,8 @@ DB_USER = os.environ.get("DB_USER")
 DB_PASS = os.environ.get("DB_PASS")
 DB_NAME = os.environ.get("DB_NAME")
 
+IS_EMULATOR = os.environ.get("FUNCTIONS_EMULATOR") == "true"
+
 # Cài đặt toàn cục cho tất cả các function trong region này
 options.set_global_options(region="asia-southeast1", max_instances=5)
 
@@ -36,32 +38,21 @@ CORS_CONFIG = options.CorsOptions(
 # =================================================================================
 
 def get_db_engine() -> sqlalchemy.engine.Engine:
-    """
-    Initializes a SQLAlchemy Engine, safely managing a connection pool.
-    Uses a global variable to ensure the engine is created only once per container instance.
-    """
     global db_engine
     if db_engine is not None:
         return db_engine
 
     def getconn() -> Any:
-        # For emulator, we need credentials, for deployed function, we use IAM auth.
+        # Sử dụng IS_EMULATOR đã được định nghĩa ở global
         enable_iam_auth = not IS_EMULATOR
         conn = Connector().connect(
-            INSTANCE_CONNECTION_NAME,
-            "pg8000",
-            user=DB_USER,
-            password=DB_PASS,
-            db=DB_NAME,
-            ip_type=IPTypes.PUBLIC if IS_EMULATOR else IPTypes.PRIVATE,
+            INSTANCE_CONNECTION_NAME, "pg8000", user=DB_USER, password=DB_PASS,
+            db=DB_NAME, ip_type=IPTypes.PUBLIC if IS_EMULATOR else IPTypes.PRIVATE,
             enable_iam_auth=enable_iam_auth
         )
         return conn
 
-    db_engine = sqlalchemy.create_engine(
-        "postgresql+pg8000://",
-        creator=getconn,
-    )
+    db_engine = sqlalchemy.create_engine("postgresql+pg8000://", creator=getconn)
     logger.info("Database engine initialized.")
     return db_engine
 
@@ -71,10 +62,14 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
 
 def default_json_serializer(obj):
     """Custom JSON serializer for objects not serializable by default."""
-    if isinstance(obj, (datetime.datetime, datetime.date)):
-        return obj.isoformat()
-    if isinstance(obj, uuid.UUID):
+    if isinstance(obj, (datetime, uuid.UUID)):
         return str(obj)
+    # *** THÊM LOGIC XỬ LÝ DECIMAL VÀO ĐÂY ***
+    if isinstance(obj, Decimal):
+        # Chuyển đổi Decimal thành float hoặc string. Float là lựa chọn phổ biến
+        # cho JSON, nhưng string an toàn hơn nếu cần độ chính xác tuyệt đối.
+        # Ở đây, float là đủ tốt cho diện tích.
+        return float(obj)
     raise TypeError(f"Type {type(obj)} not serializable")
 
 
