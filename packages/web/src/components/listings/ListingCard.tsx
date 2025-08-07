@@ -1,5 +1,6 @@
 // src/components/listings/ListingCard.tsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 import type { Listing } from '../../types';
 
 interface ListingCardProps {
@@ -38,7 +39,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
   };
 
   return (
-    <div className="border rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-200 flex flex-col">
+    <Link to={`/listings/${listing.id}`} className="block border rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-200 flex flex-col">
       <div className="relative">
         {listing.image_urls && listing.image_urls.length > 0 ? (
           <img 
@@ -82,7 +83,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
           ))}
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
