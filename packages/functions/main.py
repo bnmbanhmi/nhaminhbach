@@ -37,43 +37,32 @@ CORS_CONFIG = options.CorsOptions(
 
 def get_db_engine() -> sqlalchemy.engine.Engine:
     """
-    Quản lý việc khởi tạo và tái sử dụng DB engine một cách an toàn.
-    Sử dụng pattern "lazy initialization" trên biến toàn cục.
+    Initializes a SQLAlchemy Engine, safely managing a connection pool.
+    Uses a global variable to ensure the engine is created only once per container instance.
     """
     global db_engine
-    if db_engine is None:
-        logger.info("Database engine is not initialized. Initializing...")
-        try:
-            # KIỂM TRA MÔI TRƯỜNG
-            is_emulator = os.environ.get("IS_EMULATOR", "false").lower() == "true"
+    if db_engine is not None:
+        return db_engine
 
-            # Nếu không phải emulator, chúng ta không cần xác thực rõ ràng
-            # Nó sẽ tự động dùng Service Account của Cloud Function
-            if not is_emulator:
-                connector = Connector()
-            else:
-                # NẾU LÀ EMULATOR, chúng ta tắt tính năng tự động tìm kiếm xác thực
-                # và chỉ dựa vào mật khẩu.
-                logger.info("Emulator detected. Disabling automatic IAM authentication.")
-                connector = Connector(enable_iam_auth=False)
+    def getconn() -> Any:
+        # For emulator, we need credentials, for deployed function, we use IAM auth.
+        enable_iam_auth = not IS_EMULATOR
+        conn = Connector().connect(
+            INSTANCE_CONNECTION_NAME,
+            "pg8000",
+            user=DB_USER,
+            password=DB_PASS,
+            db=DB_NAME,
+            ip_type=IPTypes.PUBLIC if IS_EMULATOR else IPTypes.PRIVATE,
+            enable_iam_auth=enable_iam_auth
+        )
+        return conn
 
-            def getconn() -> Any:
-                # Hàm này giờ đây sẽ hoạt động nhất quán trên cả hai môi trường
-                return connector.connect(
-                    INSTANCE_CONNECTION_NAME, "pg8000",
-                    user=DB_USER, password=DB_PASS, db=DB_NAME,
-                    ip_type=IPTypes.PUBLIC
-                )
-
-            db_engine = sqlalchemy.create_engine(
-                "postgresql+pg8000://",
-                creator=getconn,
-                pool_size=5, max_overflow=2, pool_timeout=30, pool_recycle=1800,
-            )
-            logger.info("Database engine initialized successfully.")
-        except Exception as e:
-            logger.critical(f"FATAL: Could not initialize database engine: {e}")
-            raise
+    db_engine = sqlalchemy.create_engine(
+        "postgresql+pg8000://",
+        creator=getconn,
+    )
+    logger.info("Database engine initialized.")
     return db_engine
 
 # =================================================================================
@@ -81,19 +70,12 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
 # =================================================================================
 
 def default_json_serializer(obj):
-    """
-    Hàm tùy chỉnh để chuyển đổi các kiểu dữ liệu không-JSON-serializable,
-    bao gồm cả datetime, UUID, và Decimal.
-    """
-    if isinstance(obj, datetime):
-        # Chuyển đổi datetime thành chuỗi theo định dạng ISO 8601,
-        # đây là một tiêu chuẩn phổ biến cho các API.
+    """Custom JSON serializer for objects not serializable by default."""
+    if isinstance(obj, (datetime.datetime, datetime.date)):
         return obj.isoformat()
-    if isinstance(obj, (uuid.UUID, Decimal)):
+    if isinstance(obj, uuid.UUID):
         return str(obj)
-    
-    # Nếu không phải là các kiểu trên, báo lỗi như bình thường.
-    raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
+    raise TypeError(f"Type {type(obj)} not serializable")
 
 
 # =================================================================================
@@ -236,4 +218,31 @@ def get_listing_by_id(req: https_fn.Request) -> https_fn.Response:
 
     except Exception as e:
         logger.error(f"Error fetching listing ID {listing_id}: {e}")
+        return https_fn.Response("An internal server error occurred.", status=500)
+
+
+@https_fn.on_request(cors=CORS_CONFIG)
+def get_all_attributes(req: https_fn.Request) -> https_fn.Response:
+    """
+    API Endpoint to get all possible attributes for a listing.
+    This is used by the frontend to build the QC form.
+    """
+    if req.method != "GET":
+        return https_fn.Response(f"Method {req.method} not allowed.", status=405)
+
+    sql_query = sqlalchemy.text("SELECT * FROM attributes ORDER BY type, id;")
+
+    try:
+        # Lấy engine. Việc khởi tạo chỉ xảy ra ở lần gọi đầu tiên.
+        engine = get_db_engine()
+        with engine.connect() as conn:
+            result = conn.execute(sql_query).fetchall()
+        
+        attributes_data = [dict(row._mapping) for row in result]
+        json_response = json.dumps(attributes_data, default=default_json_serializer)
+
+        return https_fn.Response(json_response, status=200, headers={"Content-Type": "application/json"})
+
+    except Exception as e:
+        logger.error(f"Error in get_all_attributes: {e}")
         return https_fn.Response("An internal server error occurred.", status=500)
