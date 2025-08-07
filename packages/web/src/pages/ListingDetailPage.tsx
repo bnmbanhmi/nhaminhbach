@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { Listing } from '../types';
 import { API_BASE_URL } from '../config';
+import { formatPrice, formatArea } from '../utils/formatters';
 
 const ListingDetailPage: React.FC = () => {
   const { listingId } = useParams<{ listingId: string }>();
@@ -35,18 +36,6 @@ const ListingDetailPage: React.FC = () => {
 
     fetchListing();
   }, [listingId]);
-
-  const formatPrice = (price: number | string) => {
-    const numericPrice = Number(price);
-    if (isNaN(numericPrice)) return 'N/A';
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(numericPrice);
-  };
-
-  const formatArea = (area: number | string) => {
-    const numericArea = Number(area);
-    if (isNaN(numericArea)) return 'N/A';
-    return `${numericArea.toFixed(2)} m²`;
-  };
 
   if (isLoading) {
     return <div className="text-center p-8">Loading...</div>;

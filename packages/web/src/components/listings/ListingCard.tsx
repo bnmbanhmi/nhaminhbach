@@ -2,34 +2,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Listing } from '../../types';
+import { formatPrice, formatArea } from '../../utils/formatters';
 
 interface ListingCardProps {
   listing: Listing;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
-  // Helper function to format price to VND currency
-  const formatPrice = (price: number | string) => {
-    // Convert to number safely
-    const numericPrice = Number(price);
-    if (isNaN(numericPrice)) {
-      return 'N/A'; // Return a fallback if conversion fails
-    }
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-    }).format(numericPrice);
-  };
-
-  // Helper function to format area
-  const formatArea = (area: number | string) => {
-    // Convert to number safely
-    const numericArea = Number(area);
-    if (isNaN(numericArea)) {
-      return 'N/A'; // Return a fallback if conversion fails
-    }
-    return `${numericArea.toFixed(2)} m²`;
-  };
 
   // Helper function to build a clean address string, ignoring null/empty parts
   const formatAddress = () => {
