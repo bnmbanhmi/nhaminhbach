@@ -79,57 +79,93 @@ def default_json_serializer(obj):
 
 @https_fn.on_request(cors=CORS_CONFIG)
 def create_listing(req: https_fn.Request) -> https_fn.Response:
-    """API Endpoint để tạo một tin đăng mới."""
+    """
+    API Endpoint to create a new listing with dynamic attributes.
+    Refactored for clarity and correctness using named parameters.
+    """
     if req.method != "POST":
         return https_fn.Response(f"Method {req.method} not allowed.", status=405)
 
     try:
-        engine = get_db_engine()
         data = req.get_json(silent=True)
-        if not data: return https_fn.Response("Invalid JSON payload.", status=400)
+        if not data:
+            return https_fn.Response("Invalid JSON payload.", status=400)
 
         listing_data = data.get("listing")
-        attributes_data = data.get("attributes", []) # Mặc định là list rỗng
-        
-        if not listing_data:
-            return https_fn.Response("Missing 'listing' data.", status=400)
+        attributes_data = data.get("attributes")
+
+        if not listing_data or not isinstance(attributes_data, list):
+            return https_fn.Response("Missing or malformed 'listing' or 'attributes' data.", status=400)
+
+        engine = get_db_engine()
+        new_listing_id = None
 
         with engine.connect() as conn:
             with conn.begin() as tx:
-                result = conn.execute(
-                    sqlalchemy.text("""
+                try:
+                    # 1. Chèn vào bảng 'listings' sử dụng tham số có tên
+                    insert_listing_stmt = sqlalchemy.text("""
                         INSERT INTO listings (title, description, price_monthly_vnd, area_m2, address_ward, address_district, source_url)
-                        VALUES (:title, :desc, :price, :area, :ward, :district, :source) RETURNING id
-                    """),
-                    {
-                        "title": listing_data.get("title"), "desc": listing_data.get("description"),
-                        "price": listing_data.get("price_monthly_vnd"), "area": listing_data.get("area_m2"),
-                        "ward": listing_data.get("address_ward"), "district": listing_data.get("address_district"),
-                        "source": f"manual-entry-{os.urandom(4).hex()}"
-                    }
-                )
-                new_listing_id = result.scalar_one()
-
-                if attributes_data:
-                    attrs_to_insert = [
+                        VALUES (:title, :description, :price, :area, :ward, :district, :source)
+                        RETURNING id
+                    """)
+                    result = conn.execute(
+                        insert_listing_stmt,
                         {
-                            "listing_id": new_listing_id,
-                            "attribute_id": attr.get("attribute_id"),
-                            "value_boolean": attr.get("value") if isinstance(attr.get("value"), bool) else None,
-                            "value_integer": attr.get("value") if isinstance(attr.get("value"), int) else None,
-                            "value_string": str(attr.get("value")) if not isinstance(attr.get("value"), (bool, int)) else None,
+                            "title": listing_data.get("title"),
+                            "description": listing_data.get("description"),
+                            "price": int(listing_data.get("price_monthly_vnd", 0)),
+                            "area": float(listing_data.get("area_m2", 0)),
+                            "ward": listing_data.get("address_ward"),
+                            "district": listing_data.get("address_district"),
+                            "source": f"qc-form-{uuid.uuid4()}" # Tạo source_url duy nhất
                         }
-                        for attr in attributes_data
-                    ]
-                    conn.execute(sqlalchemy.text("""
-                        INSERT INTO listing_attributes (listing_id, attribute_id, value_boolean, value_integer, value_string)
-                        VALUES (:listing_id, :attribute_id, :value_boolean, :value_integer, :value_string)
-                    """), attrs_to_insert)
-                
-                tx.commit()
-        
-        response_data = {"message": "Listing created successfully", "id": str(new_listing_id)}
-        return https_fn.Response(json.dumps(response_data), status=201, headers={"Content-Type": "application/json"})
+                    )
+                    new_listing_id = result.scalar_one()
+
+                    # 2. Chuẩn bị và chèn vào bảng 'listing_attributes'
+                    if attributes_data:
+                        attrs_to_insert = []
+                        for attr in attributes_data:
+                            # Tạo một dictionary rõ ràng cho mỗi hàng
+                            row = {
+                                "listing_id": new_listing_id,
+                                "attribute_id": attr.get("attribute_id"),
+                                "value_boolean": None,
+                                "value_integer": None,
+                                "value_string": None,
+                            }
+                            
+                            value = attr.get("value")
+                            
+                            # Phân loại và gán vào đúng key trong dictionary
+                            if isinstance(value, bool):
+                                row["value_boolean"] = value
+                            elif isinstance(value, int):
+                                row["value_integer"] = value
+                            else:
+                                row["value_string"] = str(value)
+                            
+                            attrs_to_insert.append(row)
+                        
+                        # Sử dụng tham số có tên để chèn hàng loạt
+                        if attrs_to_insert:
+                            insert_attrs_stmt = sqlalchemy.text("""
+                                INSERT INTO listing_attributes (listing_id, attribute_id, value_boolean, value_integer, value_string)
+                                VALUES (:listing_id, :attribute_id, :value_boolean, :value_integer, :value_string)
+                            """)
+                            conn.execute(insert_attrs_stmt, attrs_to_insert)
+                    
+                    tx.commit()
+                except Exception as e:
+                    logger.error(f"Transaction failed, rolling back. Error: {e}")
+                    tx.rollback()
+                    raise
+
+        return https_fn.Response(
+            json.dumps({"message": "Listing created successfully", "id": new_listing_id}, default=default_json_serializer),
+            status=201, headers={"Content-Type": "application/json"}
+        )
 
     except Exception as e:
         logger.error(f"Error in create_listing: {e}")
