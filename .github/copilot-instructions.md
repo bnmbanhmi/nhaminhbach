@@ -98,6 +98,9 @@ applyTo: "**"
   - Centralize API calling logic in a dedicated service/hook (e.g., `services/api.ts` or `hooks/useApi.ts`).
   - Use `fetch()` or a lightweight wrapper like `ky`. Do not add heavy libraries like Axios.
   - Always handle loading, success, and error states explicitly in the UI.
+
+- **Database Interaction:** Always use **named parameters** (e.g., `sqlalchemy.text("... VALUES (:key)")`) instead of positional parameters (e.g., `VALUES (%s)`) for all SQL queries. This prevents data type mismatch errors caused by incorrect parameter order.
+
 - **Folder Structure (for `packages/web`):**
   /src/
     ├── assets/
