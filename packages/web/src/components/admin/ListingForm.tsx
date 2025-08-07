@@ -1,188 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '../../config';
-
-// API Endpoints for Cloud Functions
-const CREATE_LISTING_ENDPOINT = `${API_BASE_URL}/create_listing`;
-const GET_ATTRIBUTES_ENDPOINT = `${API_BASE_URL}/get_all_attributes`;
-
-/**
- * Defines the structure of a single attribute from the API.
- * This is the schema for our dynamic form fields.
- */
-interface Attribute {
-  id: number;
-  name: string;
-  slug: string;
-  type: 'boolean' | 'string' | 'integer' | 'enum';
-  possible_values: string[] | null;
-}
-
-/**
- * Basic form data structure for the static part of the listing.
- * Matches the core fields from our `listings` table schema.
- */
-interface ListingFormData {
-  title: string;
-  description: string;
-  price_monthly_vnd: number | '';
-  area_m2: number | '';
-  address_ward: string;
-  address_district: string;
-}
-
-/**
- * API Response structure from the `create_listing` Cloud Function.
- */
-interface CreateListingResponse {
-  success: boolean;
-  id?: string;
-  message?: string;
-}
+import React from 'react';
+import { useListingForm } from '../../hooks/useListingForm';
+import type { Attribute } from '../../types';
 
 /**
  * ListingForm Component - A comprehensive form for creating new rental listings.
  *
- * This component handles both the static listing details (like title, price)
- * and dynamically generated fields for listing attributes (like amenities).
- * It fetches the attribute schema on mount to build the form.
+ * This component is now a "dumb" component focused on rendering the UI.
+ * All the form logic, state management, and submission handling is managed
+ * by the `useListingForm` custom hook.
  */
 const ListingForm: React.FC = () => {
-  // State for the static part of the form
-  const [formData, setFormData] = useState<ListingFormData>({
-    title: '',
-    description: '',
-    price_monthly_vnd: '',
-    area_m2: '',
-    address_ward: '',
-    address_district: '',
-  });
-
-  // State for the dynamic attribute values, keyed by attribute slug
-  const [formValues, setFormValues] = useState<Record<string, any>>({});
-
-  // State for the fetched attribute schema
-  const [attributesSchema, setAttributesSchema] = useState<Attribute[]>([]);
-  const [isAttributesLoading, setIsAttributesLoading] = useState<boolean>(true);
-  const [attributesError, setAttributesError] = useState<string | null>(null);
-
-  // State for the submission process
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-
-  // Fetch attributes schema when the component mounts
-  useEffect(() => {
-    const fetchAttributes = async () => {
-      try {
-        const response = await fetch(GET_ATTRIBUTES_ENDPOINT);
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to fetch attributes: ${response.status} ${errorText}`);
-        }
-        const data: Attribute[] = await response.json();
-        setAttributesSchema(data);
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : 'An unknown error occurred.';
-        setAttributesError(msg);
-        console.error(msg);
-      } finally {
-        setIsAttributesLoading(false);
-      }
-    };
-
-    fetchAttributes();
-  }, []);
-
-  // Generic handler for static form fields
-  const handleStaticFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  // Generic handler for dynamic attribute fields
-  const handleAttributeChange = (slug: string, type: Attribute['type']) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const target = e.target as HTMLInputElement; // Cast to access 'checked' property
-    const value = type === 'boolean' ? target.checked : target.value;
-    setFormValues(prev => ({ ...prev, [slug]: value }));
-  };
-
-  // Submission Handler
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSubmitError(null);
-
-    // Client-side validation for core fields
-    const priceValue = formData.price_monthly_vnd === '' ? 0 : Number(formData.price_monthly_vnd);
-    const areaValue = formData.area_m2 === '' ? 0 : Number(formData.area_m2);
-
-    if (priceValue <= 0 || areaValue <= 0) {
-      alert('Price and Area must be greater than 0.');
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      // Construct the attributes payload from formValues
-      const attributesPayload = Object.entries(formValues)
-        .map(([slug, value]) => {
-          const attribute = attributesSchema.find(attr => attr.slug === slug);
-          if (!attribute || value === '' || value === false || value === null) {
-            return null; // Skip empty, false, or null values
-          }
-
-          let processedValue: any = value;
-          if (attribute.type === 'integer') {
-            processedValue = parseInt(value, 10);
-            if (isNaN(processedValue)) return null;
-          } else if (attribute.type === 'boolean') {
-            processedValue = Boolean(value);
-          }
-
-          return {
-            attribute_id: attribute.id,
-            value: processedValue,
-          };
-        })
-        .filter(Boolean); // Remove null entries
-
-      // Prepare the final payload for the API
-      const payload = {
-        listing: {
-          ...formData,
-          price_monthly_vnd: priceValue,
-          area_m2: areaValue,
-        },
-        attributes: attributesPayload,
-      };
-
-      const response = await fetch(CREATE_LISTING_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        const responseData: CreateListingResponse = await response.json();
-        console.log('Success! Listing created:', responseData);
-        alert(`Listing created successfully with ID: ${responseData.id}`);
-        // Reset form state
-        setFormData({
-          title: '', description: '', price_monthly_vnd: '', area_m2: '',
-          address_ward: '', address_district: '',
-        });
-        setFormValues({});
-      } else {
-        const errorText = await response.text();
-        throw new Error(`Error ${response.status}: ${errorText}`);
-      }
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : 'An unknown network error occurred.';
-      console.error('Submission failed:', msg);
-      setSubmitError(msg);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const {
+    formData,
+    formValues,
+    attributesSchema,
+    isAttributesLoading,
+    attributesError,
+    isSubmitting,
+    submitError,
+    handleStaticFieldChange,
+    handleAttributeChange,
+    handleSubmit,
+  } = useListingForm();
 
   // Helper function to render the correct input based on attribute type
   const renderAttributeInput = (attribute: Attribute) => {
@@ -197,7 +36,7 @@ const ListingForm: React.FC = () => {
               id={`attr-${id}`}
               type="checkbox"
               checked={!!formValues[slug]}
-              onChange={handleAttributeChange(slug, type)}
+              onChange={e => handleAttributeChange(slug, e.target.checked)}
               className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
             <label htmlFor={`attr-${id}`} className="ml-2 block text-sm text-gray-900">
@@ -213,7 +52,7 @@ const ListingForm: React.FC = () => {
               id={`attr-${id}`}
               type="number"
               value={formValues[slug] || ''}
-              onChange={handleAttributeChange(slug, type)}
+              onChange={e => handleAttributeChange(slug, e.target.value)}
               className={commonClasses}
               placeholder={`Enter ${name}`}
             />
@@ -227,7 +66,7 @@ const ListingForm: React.FC = () => {
               id={`attr-${id}`}
               type="text"
               value={formValues[slug] || ''}
-              onChange={handleAttributeChange(slug, type)}
+              onChange={e => handleAttributeChange(slug, e.target.value)}
               className={commonClasses}
               placeholder={`Enter ${name}`}
             />
@@ -240,7 +79,7 @@ const ListingForm: React.FC = () => {
             <select
               id={`attr-${id}`}
               value={formValues[slug] || ''}
-              onChange={handleAttributeChange(slug, type)}
+              onChange={e => handleAttributeChange(slug, e.target.value)}
               className={commonClasses}
             >
               <option value="">-- Select {name} --</option>
