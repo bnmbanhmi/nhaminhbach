@@ -44,7 +44,7 @@ const HomePage: React.FC = () => {
   }
 
   return (
-    <div className="w-full px-2 md:px-4 lg:px-6">
+    <div className="w-full px-1 md:px-2 lg:px-3">
       <h1 className="text-3xl font-bold mb-6">Available Listings</h1>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4 md:gap-6 justify-items-center">
         {listings.map((listing) => (
