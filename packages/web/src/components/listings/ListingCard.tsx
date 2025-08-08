@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Listing } from '../../types';
-import { formatPrice, formatArea } from '../../utils/formatters';
+import { formatPrice } from '../../utils/formatters';
 
 interface ListingCardProps {
   listing: Listing;
@@ -51,20 +51,12 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
           {formatTitle()}
         </h3>
         
-        {/* Price, Area & Address */}
-        <div className="flex justify-between items-center">
-          {/* Left side: Price */}
-          <div className="flex items-baseline">
-            <span className="font-bold text-primary text-lg">
-              {formatPrice(listing.price_monthly_vnd)}
-            </span>
-            <span className="text-sm font-normal text-text-secondary">/tháng</span>
-          </div>
-          
-          {/* Right side: Area & Address */}
-          <div className="text-sm text-text-secondary">
-            <span>{formatArea(listing.area_m2)} {formatAddress()}</span>
-          </div>
+        {/* Price */}
+        <div className="flex items-baseline">
+          <span className="font-bold text-primary text-lg">
+            {formatPrice(listing.price_monthly_vnd)}
+          </span>
+          <span className="text-sm font-normal text-text-secondary">/tháng</span>
         </div>
       </div>
     </Link>
