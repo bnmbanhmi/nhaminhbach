@@ -101,6 +101,8 @@ applyTo: "**"
 
 - **Database Interaction:** Always use **named parameters** (e.g., `sqlalchemy.text("... VALUES (:key)")`) instead of positional parameters (e.g., `VALUES (%s)`) for all SQL queries. This prevents data type mismatch errors caused by incorrect parameter order.
 
+- **Link Styling:** When styling links (e.g., the `<Link>` component from `react-router-dom`), always explicitly apply the desired text color class (e.g., `text-text-primary`) and use `no-underline` unless a visual underline is explicitly desired. Always prioritize our defined design tokens.
+
 - **Folder Structure (for `packages/web`):**
   /src/
     ├── assets/
