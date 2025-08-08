@@ -1,7 +1,6 @@
 // src/components/listings/ListingCard.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Squares2X2Icon } from '@heroicons/react/24/outline';
 import type { Listing } from '../../types';
 import { formatPrice, formatArea } from '../../utils/formatters';
 
@@ -52,20 +51,20 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
           {formatTitle()}
         </h3>
         
-        {/* Price */}
-        <div>
-          <span className="font-bold text-primary text-lg">
-            {formatPrice(listing.price_monthly_vnd)}
-          </span>
-          <span className="text-sm font-normal text-text-secondary">/tháng</span>
-        </div>
-        
-        {/* Area & Address */}
-        <div className="flex items-center text-sm text-text-secondary mt-1">
-          <Squares2X2Icon className="w-4 h-4 mr-1.5" />
-          <span>{formatArea(listing.area_m2)}</span>
-          <span className="mx-2">·</span>
-          <span>{formatAddress()}</span>
+        {/* Price, Area & Address */}
+        <div className="flex justify-between items-center">
+          {/* Left side: Price */}
+          <div className="flex items-baseline">
+            <span className="font-bold text-primary text-lg">
+              {formatPrice(listing.price_monthly_vnd)}
+            </span>
+            <span className="text-sm font-normal text-text-secondary">/tháng</span>
+          </div>
+          
+          {/* Right side: Area & Address */}
+          <div className="text-sm text-text-secondary">
+            <span>{formatArea(listing.area_m2)} {formatAddress()}</span>
+          </div>
         </div>
       </div>
     </Link>

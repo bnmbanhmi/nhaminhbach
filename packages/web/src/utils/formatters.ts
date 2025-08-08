@@ -9,5 +9,5 @@ export const formatPrice = (price: number | string) => {
 export const formatArea = (area: number | string) => {
     const numericArea = Number(area);
     if (isNaN(numericArea)) return 'N/A';
-    return `${numericArea.toFixed(2)} m²`;
+    return `${Math.round(numericArea)} m²`;
   };
