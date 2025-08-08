@@ -9,8 +9,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-800 text-white w-full">
-      <div className="w-full px-4 py-4 flex justify-between items-center">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-800 text-white w-full h-[10vh]">
+      <div className="w-full h-full px-4 flex justify-between items-center">
         {/* Logo */}
         <div className="text-lg font-bold">
           <Link to="/" className="hover:text-gray-300">NhaMinhBach</Link>
@@ -35,7 +35,7 @@ const Navbar = () => {
       </div>
       
       {/* Mobile Menu */}
-      <div className={`md:hidden bg-gray-700 transition-all duration-300 overflow-hidden ${isMenuOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`md:hidden bg-gray-700 absolute top-full left-0 right-0 transition-all duration-300 overflow-hidden ${isMenuOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="px-4 py-2 space-y-2">
           <Link 
             to="/" 
