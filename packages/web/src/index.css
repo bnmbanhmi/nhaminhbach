@@ -2,57 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  @apply bg-background text-text-primary;
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    /* === 1. Bảng màu === */
+    --color-primary: 240 109 101; /* F06D65 */
+    --color-background: 253 251 247; /* FDFBF7 */
+    --color-surface: 255 255 255; /* FFFFFF */
+    --color-text-primary: 44 44 44; /* 2C2C2C */
+    --color-text-secondary: 117 117 117; /* 757575 */
+    --color-accent-cool: 108 139 154; /* 6C8B9A */
+
+    /* === 2. Phông chữ === */
+    --font-sans: 'Inter', 'system-ui', 'sans-serif';
+
+    /* === 3. Bo góc === */
+    --radius-button: 0.5rem;
+    --radius-card: 0.75rem;
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+
+  body {
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-text-primary));
+    font-family: var(--font-sans);
   }
 }
