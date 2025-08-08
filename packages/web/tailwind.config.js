@@ -6,22 +6,21 @@ export default {
   ],
   theme: {
     extend: {
-      // Bảo Tailwind cách sử dụng các biến CSS của chúng ta
       colors: {
-        primary: 'rgb(var(--color-primary) / <alpha-value>)',
-        background: 'rgb(var(--color-background) / <alpha-value>)',
-        surface: 'rgb(var(--color-surface) / <alpha-value>)',
-        'text-primary': 'rgb(var(--color-text-primary) / <alpha-value>)',
-        'text-secondary': 'rgb(var(--color-text-secondary) / <alpha-value>)',
-        'accent-cool': 'rgb(var(--color-accent-cool) / <alpha-value>)',
+        primary: '#F06D65',
+        background: '#FDFBF7',
+        surface: '#FFFFFF',
+        'text-primary': '#2C2C2C',
+        'text-secondary': '#757575',
+        'accent-cool': '#6C8B9A',
       },
       fontFamily: {
-        sans: 'var(--font-sans)',
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
-        'button': 'var(--radius-button)',
-        'card': 'var(--radius-card)',
-      }
+        'card': '0.75rem',
+        'button': '0.5rem',
+      },
     },
   },
   plugins: [
