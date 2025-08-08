@@ -56,7 +56,6 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
           <span className="font-bold text-primary text-xl">
             {formatPrice(listing.price_monthly_vnd)}
           </span>
-          <span className="text-sm font-normal text-text-secondary">/tháng</span>
         </div>
       </div>
     </Link>
