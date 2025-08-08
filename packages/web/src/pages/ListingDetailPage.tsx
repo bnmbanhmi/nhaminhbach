@@ -61,7 +61,7 @@ const ListingDetailPage: React.FC = () => {
         )}
         <div className="p-6">
           <h1 className="text-3xl font-bold mb-2">{listing.title}</h1>
-          <p className="text-lg text-gray-600 mb-4">{[listing.address_street, listing.address_ward, listing.address_district].filter(Boolean).join(', ')}</p>
+          <p className="text-lg text-gray-600 mb-4">{[listing.address_ward, listing.address_district].filter(Boolean).join(', ')}</p>
           
           <div className="flex items-center justify-between mb-4">
             <span className="text-2xl font-semibold text-green-600">{formatPrice(listing.price_monthly_vnd)}</span>
@@ -76,7 +76,7 @@ const ListingDetailPage: React.FC = () => {
               <div key={attr.slug} className="p-2">
                 <span className="font-medium">{attr.name}: </span>
                 <span>
-                  {attr.type === 'boolean' ? (attr.value ? 'Yes' : 'No') : String(attr.value)}
+                  {typeof attr.value === 'boolean' ? (attr.value ? 'Yes' : 'No') : String(attr.value)}
                 </span>
               </div>
             ))}
