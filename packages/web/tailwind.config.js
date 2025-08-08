@@ -1,3 +1,5 @@
+const colors = require('tailwindcss/colors');
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -5,25 +7,39 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    // Chúng ta định nghĩa các token trực tiếp ở đây,
+    // Tailwind sẽ tự động hợp nhất chúng với các giá trị mặc định.
+    colors: {
+      // Thêm các màu tùy chỉnh của chúng ta
+      primary: '#F06D65',
+      background: '#FDFBF7',
+      surface: '#FFFFFF',
+      'text-primary': '#2C2C2C',
+      'text-secondary': '#757575',
+      'accent-cool': '#6C8B9A',
+      
+      // Giữ lại các màu mặc định của Tailwind nếu cần
+      transparent: 'transparent',
+      current: 'currentColor',
+      black: '#000',
+      white: '#fff',
+      gray: colors.gray,
+      // Thêm các màu khác nếu cần, ví dụ:
+      // red: colors.red,
+    },
+    fontFamily: {
+      sans: ['Inter', 'system-ui', 'sans-serif'],
+    },
+    // Chúng ta sẽ mở rộng (extend) borderRadius để không mất đi các giá trị mặc định
     extend: {
-      colors: {
-        primary: '#F06D65',        // For main CTAs, links, highlights
-        background: '#FDFBF7',     // Main page background
-        surface: '#FFFFFF',        // Card and navbar backgrounds
-        'text-primary': '#2C2C2C', // Main text color
-        'text-secondary': '#757575',// Subdued text for descriptions, metadata
-        'accent-cool': '#6C8B9A',   // For specific tags or success states
-      },
-      fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'], // Set Inter as the default font
-      },
       borderRadius: {
-        'card': '0.75rem',         // For larger elements like ListingCard
-        'button': '0.5rem',        // For smaller elements like buttons and tags
+        'card': '0.75rem',  // Giá trị của chúng ta
+        'button': '0.5rem', // Giá trị của chúng ta
       },
     },
   },
   plugins: [
+    // Giữ lại plugin của bạn
     require('@tailwindcss/line-clamp'),
   ],
 }
