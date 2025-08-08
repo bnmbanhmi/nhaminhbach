@@ -1,5 +1,6 @@
-@import "tailwindcss";
-@import "./styles/design-system.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 a {
   font-weight: 500;
@@ -11,9 +12,7 @@ a:hover {
 }
 
 body {
-  background-color: #FDFBF7; /* bg-[#FDFBF7] equivalent */
-  color: #2C2C2C; /* text-[#2C2C2C] equivalent */
-  font-family: 'Inter', system-ui, sans-serif;
+  @apply bg-background text-text-primary;
   margin: 0;
   display: flex;
   place-items: center;
