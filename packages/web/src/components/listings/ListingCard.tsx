@@ -47,13 +47,13 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
       {/* Content Section */}
       <div className="p-4 flex flex-col gap-2">
         {/* Title */}
-        <h3 className="font-semibold line-clamp-2 text-text-primary" title={formatTitle()}>
+        <h3 className="font-semibold line-clamp-2 text-text-primary text-left" title={formatTitle()}>
           {formatTitle()}
         </h3>
         
         {/* Price */}
         <div className="flex items-baseline">
-          <span className="font-bold text-primary text-lg">
+          <span className="font-bold text-primary text-xl">
             {formatPrice(listing.price_monthly_vnd)}
           </span>
           <span className="text-sm font-normal text-text-secondary">/tháng</span>
