@@ -294,3 +294,673 @@ Issues? Report them at https://github.com/firebase/firebase-tools/issues and att
 [debug] [2025-08-07T14:55:50.031Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=finish"}}
 [debug] [2025-08-07T14:55:50.032Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=close"}}
 [debug] [2025-08-07T14:55:50.035Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-08-08T13:48:03.680Z] ----------------------------------------------------------------------
+[debug] [2025-08-08T13:48:03.683Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/4ba3nh7p56fsnidgr9jcqnpv4k7nwwrv-firebase-tools-14.12.0/lib/node_modules/firebase-tools/lib/bin/firebase.js emulators:start
+[debug] [2025-08-08T13:48:03.684Z] CLI Version:   14.12.0
+[debug] [2025-08-08T13:48:03.685Z] Platform:      linux
+[debug] [2025-08-08T13:48:03.685Z] Node Version:  v20.19.1
+[debug] [2025-08-08T13:48:03.685Z] Time:          Fri Aug 08 2025 13:48:03 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-08-08T13:48:03.685Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-08-08T13:48:04.269Z] Checked if tokens are valid: false, expires at: 1754653033263
+[debug] [2025-08-08T13:48:04.269Z] Checked if tokens are valid: false, expires at: 1754653033263
+[debug] [2025-08-08T13:48:04.270Z] > refreshing access token with scopes: []
+[debug] [2025-08-08T13:48:04.273Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-08-08T13:48:04.273Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-08-08T13:48:04.345Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-08-08T13:48:04.345Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-08-08T13:48:04.358Z] >>> [apiv2][query] GET https://monospace-pa.googleapis.com/v1/workspaces/nhaminhbach-62972861 [none]
+[debug] [2025-08-08T13:48:05.432Z] <<< [apiv2][status] GET https://monospace-pa.googleapis.com/v1/workspaces/nhaminhbach-62972861 200
+[debug] [2025-08-08T13:48:05.432Z] <<< [apiv2][body] GET https://monospace-pa.googleapis.com/v1/workspaces/nhaminhbach-62972861 {"workspaceId":"nhaminhbach-62972861","name":"nhaminhbach","workspaceRedirectUrl":"firebase-nhaminhbach-1754197535766.cluster-ikxjzjhlifcwuroomfkjrx437g.cloudworkstations.dev","status":"WORKSPACE_STATUS_RUNNING","lastAccessDatetime":"2025-08-08T13:46:16.095035Z","workspaceTemplate":"WORKSPACE_TEMPLATE_BLANK_WEB","owner":"SELF","serviceAccountEmail":"msp-4714763537869207739@monospace-per-ws-sa-4.iam.gserviceaccount.com","gitRepoUrl":"https://github.com/bnmbanhmi/nhaminhbach","enableNix":true,"ownerEmail":"minhbach0212@gmail.com","workstationAccessToken":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2Nsb3VkLmdvb2dsZS5jb20vd29ya3N0YXRpb25zIiwiYXVkIjoiZmlyZWJhc2UtbmhhbWluaGJhY2gtMTc1NDE5NzUzNTc2Ni5jbHVzdGVyLWlreGp6amhsaWZjd3Vyb29tZmtqcng0MzdnLmNsb3Vkd29ya3N0YXRpb25zLmRldiIsImlhdCI6MTc1NDY2MDg4NSwiZXhwIjoxNzU0NzQ3Mjg1fQ.J_wJGorgEAEcjsGOxujvVGCi2IviZ0pv20edL0GQe72h3D-NCOs11Yc40TIV2NyLJsPjZphN-c_uaP0SneKTJ04Nys6b4aP_1PCVD2zb-wh-gJLFohWPCu-hBP6c-rECGFTcirp-pSToAmhDGCwnU9KtTmW0mu3QiR1ReNqsP1KQIe8tJ69AC929vqAd3I_y8xGIIlNs9tujKSvZ90AzVQJtGr38XaN_G0UjsQmFeqq56OuDKF0Ymebh0niBen3eJgSVSA7W4lN38tkym3AJnOjYzWCyc32jMb1FWUiMK3Tb4KEcCIc09NfyNmj29QxK7Xs66AasMMpT17NxnmtS6g","firebaseProjectId":"omega-sorter-467514-q6"}
+[debug] [2025-08-08T13:48:05.434Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-08-08T13:48:05.435Z] > authorizing via signed-in user (minhbach0212@gmail.com)
+[info] i  emulators: Starting emulators: functions, extensions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions, extensions"}}
+[debug] [2025-08-08T13:48:05.453Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T13:48:05.453Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T13:48:05.453Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/omega-sorter-467514-q6 [none]
+[debug] [2025-08-08T13:48:06.259Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/omega-sorter-467514-q6 200
+[debug] [2025-08-08T13:48:06.259Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/omega-sorter-467514-q6 {"projectNumber":"967311112997","projectId":"omega-sorter-467514-q6","lifecycleState":"ACTIVE","name":"nhaminhbach","labels":{"generative-language":"enabled","firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-07-30T14:37:45.233984Z"}
+[warn] ⚠  hub: Error when trying to check port 4400 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4400 {"metadata":{"emulator":{"name":"hub"},"message":"Error when trying to check port 4400 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4400"}}
+[warn] ⚠  hub: Port 4400 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"hub"},"message":"Port 4400 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  hub: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"hub"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  ui: Error when trying to check port 4000 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4000 {"metadata":{"emulator":{"name":"ui"},"message":"Error when trying to check port 4000 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4000"}}
+[warn] ⚠  ui: Port 4000 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"ui"},"message":"Port 4000 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  ui: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"ui"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  logging: Error when trying to check port 4500 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4500 {"metadata":{"emulator":{"name":"logging"},"message":"Error when trying to check port 4500 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4500"}}
+[warn] ⚠  logging: Port 4500 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"logging"},"message":"Port 4500 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  logging: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"logging"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[debug] [2025-08-08T13:48:06.274Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2025-08-08T13:48:06.284Z] [hub] writing locator at /tmp/hub-omega-sorter-467514-q6.json
+[debug] [2025-08-08T13:48:06.302Z] [Extensions] Started Extensions emulator, this is a noop.
+[warn] ⚠  functions: Error when trying to check port 5001 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:5001 {"metadata":{"emulator":{"name":"functions"},"message":"Error when trying to check port 5001 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:5001"}}
+[warn] ⚠  functions: Port 5001 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"functions"},"message":"Port 5001 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  functions: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"functions"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  eventarc: Error when trying to check port 9299 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9299 {"metadata":{"emulator":{"name":"eventarc"},"message":"Error when trying to check port 9299 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9299"}}
+[warn] ⚠  eventarc: Port 9299 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"eventarc"},"message":"Port 9299 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  eventarc: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"eventarc"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  tasks: Error when trying to check port 9499 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9499 {"metadata":{"emulator":{"name":"tasks"},"message":"Error when trying to check port 9499 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9499"}}
+[warn] ⚠  tasks: Port 9499 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"tasks"},"message":"Port 9499 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  tasks: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"tasks"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[debug] [2025-08-08T13:48:06.306Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}],"tasks":[{"address":"127.0.0.1","family":"IPv4","port":9499}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[warn] ⚠  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: apphosting, auth, firestore, database, hosting, pubsub, storage, dataconnect {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: \u001b[1mapphosting, auth, firestore, database, hosting, pubsub, storage, dataconnect\u001b[22m"}}
+[warn] ⚠  functions: Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful! {"metadata":{"emulator":{"name":"functions"},"message":"Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful!"}}
+[debug] [2025-08-08T13:48:25.549Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T13:48:25.549Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T13:48:25.549Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/omega-sorter-467514-q6/adminSdkConfig [none]
+[debug] [2025-08-08T13:48:25.811Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/omega-sorter-467514-q6/adminSdkConfig 200
+[debug] [2025-08-08T13:48:25.815Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/omega-sorter-467514-q6/adminSdkConfig {"projectId":"omega-sorter-467514-q6","storageBucket":"omega-sorter-467514-q6.firebasestorage.app"}
+[debug] [2025-08-08T13:48:25.869Z] [Extensions] Connecting Extensions emulator, this is a noop.
+[info] i  functions: Watching "/home/user/nhaminhbach/packages/functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"/home/user/nhaminhbach/packages/functions\" for Cloud Functions..."}}
+[debug] [2025-08-08T13:48:25.888Z] Customer code is not Node
+[debug] [2025-08-08T13:48:25.895Z] Validating python source
+[debug] [2025-08-08T13:48:25.896Z] Building python source
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2025-08-08T13:48:25.904Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-08-08T13:48:25.908Z] Running command with virtualenv: command=., args=["\"/home/user/nhaminhbach/packages/functions/venv/bin/activate\"","&&","python3.13","-c","\"import firebase_functions; import os; print(os.path.dirname(firebase_functions.__file__))\""]
+[debug] [2025-08-08T13:48:25.991Z] stdout: /home/user/nhaminhbach/packages/functions/venv/lib/python3.13/site-packages/firebase_functions
+
+[debug] [2025-08-08T13:48:26.002Z] Running admin server with args: ["python3.13","\"/home/user/nhaminhbach/packages/functions/venv/lib/python3.13/site-packages/firebase_functions/private/serving.py\""] and env: {"GCLOUD_PROJECT":"omega-sorter-467514-q6","K_REVISION":"1","PORT":"80","GOOGLE_CLOUD_QUOTA_PROJECT":"omega-sorter-467514-q6","FUNCTIONS_EMULATOR":"true","TZ":"UTC","FIREBASE_DEBUG_MODE":"true","FIREBASE_DEBUG_FEATURES":"{\"skipTokenVerification\":true,\"enableCors\":true}","FIREBASE_EMULATOR_HUB":"127.0.0.1:4400","CLOUD_EVENTARC_EMULATOR_HOST":"http://127.0.0.1:9299","CLOUD_TASKS_EMULATOR_HOST":"127.0.0.1:9499","FIREBASE_CONFIG":"{\"storageBucket\":\"omega-sorter-467514-q6.firebasestorage.app\",\"projectId\":\"omega-sorter-467514-q6\"}","ADMIN_PORT":"8081"} in /home/user/nhaminhbach/packages/functions
+[debug] [2025-08-08T13:48:26.003Z] Running command with virtualenv: command=., args=["\"/home/user/nhaminhbach/packages/functions/venv/bin/activate\"","&&","python3.13","\"/home/user/nhaminhbach/packages/functions/venv/lib/python3.13/site-packages/firebase_functions/private/serving.py\""]
+[debug] [2025-08-08T13:48:29.239Z] Functions emulator received unknown request at path /
+[debug] [2025-08-08T13:48:29.251Z] Eventarc emulator received unknown request at path / {"metadata":{"emulator":{"name":"eventarc"},"message":"Eventarc emulator received unknown request at path /"}}
+[error]  * Tip: There are .env files present. Install python-dotenv to use them.
+
+[info]  * Serving Flask app 'serving'
+ * Debug mode: off
+
+[error] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8081
+Press CTRL+C to quit
+
+[error] 127.0.0.1 - - [08/Aug/2025 13:48:31] "GET /__/functions.yaml HTTP/1.1" 200 -
+
+[debug] [2025-08-08T13:48:31.543Z] Got response from /__/functions.yaml endpoints:
+  create_listing:
+    availableMemoryMb: null
+    concurrency: null
+    cpu: gcf_gen1
+    entryPoint: create_listing
+    httpsTrigger: {}
+    ingressSettings: null
+    labels: {}
+    maxInstances: 5
+    minInstances: null
+    platform: gcfv2
+    region:
+    - asia-southeast1
+    secretEnvironmentVariables: []
+    serviceAccountEmail: null
+    timeoutSeconds: null
+  get_all_attributes:
+    availableMemoryMb: null
+    concurrency: null
+    cpu: gcf_gen1
+    entryPoint: get_all_attributes
+    httpsTrigger: {}
+    ingressSettings: null
+    labels: {}
+    maxInstances: 5
+    minInstances: null
+    platform: gcfv2
+    region:
+    - asia-southeast1
+    secretEnvironmentVariables: []
+    serviceAccountEmail: null
+    timeoutSeconds: null
+  get_listing_by_id:
+    availableMemoryMb: null
+    concurrency: null
+    cpu: gcf_gen1
+    entryPoint: get_listing_by_id
+    httpsTrigger: {}
+    ingressSettings: null
+    labels: {}
+    maxInstances: 5
+    minInstances: null
+    platform: gcfv2
+    region:
+    - asia-southeast1
+    secretEnvironmentVariables: []
+    serviceAccountEmail: null
+    timeoutSeconds: null
+  get_listings:
+    availableMemoryMb: null
+    concurrency: null
+    cpu: gcf_gen1
+    entryPoint: get_listings
+    httpsTrigger: {}
+    ingressSettings: null
+    labels: {}
+    maxInstances: 5
+    minInstances: null
+    platform: gcfv2
+    region:
+    - asia-southeast1
+    secretEnvironmentVariables: []
+    serviceAccountEmail: null
+    timeoutSeconds: null
+params: []
+requiredAPIs: []
+specVersion: v1alpha1
+
+[error] 127.0.0.1 - - [08/Aug/2025 13:48:31] "GET /__/quitquitquit HTTP/1.1" 200 -
+
+[info] ✔  functions: Loaded functions definitions from source: create_listing, get_all_attributes, get_listing_by_id, get_listings. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: create_listing, get_all_attributes, get_listing_by_id, get_listings."}}
+[info] ✔  functions[asia-southeast1-create_listing]: http function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/create_listing). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/create_listing)."}}
+[info] ✔  functions[asia-southeast1-get_all_attributes]: http function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_all_attributes). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_all_attributes)."}}
+[info] ✔  functions[asia-southeast1-get_listing_by_id]: http function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listing_by_id). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listing_by_id)."}}
+[info] ✔  functions[asia-southeast1-get_listings]: http function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listings). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listings)."}}
+[debug] [2025-08-08T13:48:31.751Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: connect ECONNREFUSED 127.0.0.1:40001. If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌────────────┬────────────────┬──────────────────────────────────┐
+│ Emulator   │ Host:Port      │ View in Emulator UI              │
+├────────────┼────────────────┼──────────────────────────────────┤
+│ Functions  │ 127.0.0.1:5001 │ http://127.0.0.1:4000/functions  │
+├────────────┼────────────────┼──────────────────────────────────┤
+│ Extensions │ 127.0.0.1:5001 │ http://127.0.0.1:4000/extensions │
+└────────────┴────────────────┴──────────────────────────────────┘
+  Emulator Hub host: 127.0.0.1 port: 4400
+  Other reserved ports: 4500
+┌─────────────────────────┬───────────────┬─────────────────────┐
+│ Extension Instance Name │ Extension Ref │ View in Emulator UI │
+└─────────────────────────┴───────────────┴─────────────────────┘
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
+[debug] [2025-08-08T13:48:42.890Z] [work-queue] {"queuedWork":["/omega-sorter-467514-q6/asia-southeast1/get_listings-2025-08-08T13:48:42.888Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-08-08T13:48:42.891Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/omega-sorter-467514-q6/asia-southeast1/get_listings-2025-08-08T13:48:42.888Z"],"workRunningCount":1}
+[debug] [2025-08-08T13:48:42.892Z] Accepted request GET /omega-sorter-467514-q6/asia-southeast1/get_listings --> asia-southeast1-get_listings
+[debug] [2025-08-08T13:48:42.896Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-08-08T13:48:42.896Z] [functions] Got req.url=/omega-sorter-467514-q6/asia-southeast1/get_listings, mapping to path=/ {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/omega-sorter-467514-q6/asia-southeast1/get_listings, mapping to path=/"}}
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2025-08-08T13:48:42.902Z] Running command with virtualenv: command=., args=["\"/home/user/nhaminhbach/packages/functions/venv/bin/activate\"","&&","functions-framework"]
+[debug] [2025-08-08T13:48:42.909Z] [worker-pool] addWorker(asia-southeast1-get_listings) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] addWorker(asia-southeast1-get_listings)"}}
+[debug] [2025-08-08T13:48:42.913Z] [worker-pool] Adding worker with key asia-southeast1-get_listings, total=1 {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] Adding worker with key asia-southeast1-get_listings, total=1"}}
+[info] >   * Tip: There are .env files present. Install python-dotenv to use them. {"user":" * Tip: There are .env files present. Install python-dotenv to use them.","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Tip: There are .env files present. Install python-dotenv to use them."}}
+[info] >   * Serving Flask app 'get_listings' {"user":" * Serving Flask app 'get_listings'","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Serving Flask app 'get_listings'"}}
+[info] >   * Debug mode: on {"user":" * Debug mode: on","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Debug mode: on"}}
+[info] >  WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. {"user":"\u001b[31m\u001b[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.\u001b[0m","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m \u001b[31m\u001b[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.\u001b[0m"}}
+[info] >   * Running on http://127.0.0.1:8443 {"user":" * Running on http://127.0.0.1:8443","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Running on http://127.0.0.1:8443"}}
+[info] >  Press CTRL+C to quit {"user":"\u001b[33mPress CTRL+C to quit\u001b[0m","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m \u001b[33mPress CTRL+C to quit\u001b[0m"}}
+[info] >   * Restarting with watchdog (inotify) {"user":" * Restarting with watchdog (inotify)","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Restarting with watchdog (inotify)"}}
+[info] >   * Tip: There are .env files present. Install python-dotenv to use them. {"user":" * Tip: There are .env files present. Install python-dotenv to use them.","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Tip: There are .env files present. Install python-dotenv to use them."}}
+[info] >   * Debugger is active! {"user":" * Debugger is active!","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Debugger is active!"}}
+[info] >   * Debugger PIN: 106-086-827 {"user":" * Debugger PIN: 106-086-827","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Debugger PIN: 106-086-827"}}
+[info] >  {"severity": "INFO", "message": "Database engine initialized."} {"user":{"severity":"INFO","message":"Database engine initialized."},"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m {\"severity\": \"INFO\", \"message\": \"Database engine initialized.\"}"}}
+[info] >  127.0.0.1 - - [08/Aug/2025 13:48:50] "GET / HTTP/1.1" 200 - {"user":"127.0.0.1 - - [08/Aug/2025 13:48:50] \"GET / HTTP/1.1\" 200 -","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m 127.0.0.1 - - [08/Aug/2025 13:48:50] \"GET / HTTP/1.1\" 200 -"}}
+[info] >  127.0.0.1 - - [08/Aug/2025 13:48:50] "GET /__/health HTTP/1.1" 200 - {"user":"127.0.0.1 - - [08/Aug/2025 13:48:50] \"GET /__/health HTTP/1.1\" 200 -","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m 127.0.0.1 - - [08/Aug/2025 13:48:50] \"GET /__/health HTTP/1.1\" 200 -"}}
+[debug] [2025-08-08T13:48:50.435Z] [worker-asia-southeast1-get_listings-d4bb2493-8de8-4d0d-ad7c-c452c004b1de]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-d4bb2493-8de8-4d0d-ad7c-c452c004b1de]: IDLE"}}
+[debug] [2025-08-08T13:48:50.436Z] [worker-pool] submitRequest(triggerId=asia-southeast1-get_listings) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=asia-southeast1-get_listings)"}}
+[info] i  functions: Beginning execution of "asia-southeast1-get_listings" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Beginning execution of \"asia-southeast1-get_listings\""}}
+[debug] [2025-08-08T13:48:50.441Z] [worker-asia-southeast1-get_listings-d4bb2493-8de8-4d0d-ad7c-c452c004b1de]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-d4bb2493-8de8-4d0d-ad7c-c452c004b1de]: BUSY"}}
+[info] >  127.0.0.1 - - [08/Aug/2025 13:48:50] "GET / HTTP/1.1" 200 - {"user":"127.0.0.1 - - [08/Aug/2025 13:48:50] \"GET / HTTP/1.1\" 200 -","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m 127.0.0.1 - - [08/Aug/2025 13:48:50] \"GET / HTTP/1.1\" 200 -"}}
+[debug] [2025-08-08T13:48:50.721Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "asia-southeast1-get_listings" in 280.04174ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finished \"asia-southeast1-get_listings\" in 280.04174ms"}}
+[debug] [2025-08-08T13:48:50.723Z] [worker-asia-southeast1-get_listings-d4bb2493-8de8-4d0d-ad7c-c452c004b1de]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-d4bb2493-8de8-4d0d-ad7c-c452c004b1de]: IDLE"}}
+[debug] [2025-08-08T13:48:50.723Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-08-08T13:48:50.724Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-08-08T13:48:50.724Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-08-08T13:48:51.009Z] [work-queue] {"queuedWork":["/omega-sorter-467514-q6/asia-southeast1/get_listings-2025-08-08T13:48:51.008Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-08-08T13:48:51.020Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/omega-sorter-467514-q6/asia-southeast1/get_listings-2025-08-08T13:48:51.008Z"],"workRunningCount":1}
+[debug] [2025-08-08T13:48:51.020Z] Accepted request GET /omega-sorter-467514-q6/asia-southeast1/get_listings --> asia-southeast1-get_listings
+[debug] [2025-08-08T13:48:51.030Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-08-08T13:48:51.031Z] [functions] Got req.url=/omega-sorter-467514-q6/asia-southeast1/get_listings, mapping to path=/ {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/omega-sorter-467514-q6/asia-southeast1/get_listings, mapping to path=/"}}
+[debug] [2025-08-08T13:48:51.038Z] [worker-pool] submitRequest(triggerId=asia-southeast1-get_listings) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=asia-southeast1-get_listings)"}}
+[info] i  functions: Beginning execution of "asia-southeast1-get_listings" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Beginning execution of \"asia-southeast1-get_listings\""}}
+[debug] [2025-08-08T13:48:51.038Z] [worker-asia-southeast1-get_listings-d4bb2493-8de8-4d0d-ad7c-c452c004b1de]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-d4bb2493-8de8-4d0d-ad7c-c452c004b1de]: BUSY"}}
+[info] >  127.0.0.1 - - [08/Aug/2025 13:48:51] "GET / HTTP/1.1" 200 - {"user":"127.0.0.1 - - [08/Aug/2025 13:48:51] \"GET / HTTP/1.1\" 200 -","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m 127.0.0.1 - - [08/Aug/2025 13:48:51] \"GET / HTTP/1.1\" 200 -"}}
+[debug] [2025-08-08T13:48:51.318Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "asia-southeast1-get_listings" in 280.282352ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finished \"asia-southeast1-get_listings\" in 280.282352ms"}}
+[debug] [2025-08-08T13:48:51.329Z] [worker-asia-southeast1-get_listings-d4bb2493-8de8-4d0d-ad7c-c452c004b1de]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-d4bb2493-8de8-4d0d-ad7c-c452c004b1de]: IDLE"}}
+[debug] [2025-08-08T13:48:51.330Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-08-08T13:48:51.330Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-08-08T13:48:51.330Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-08-08T13:57:14.735Z] ----------------------------------------------------------------------
+[debug] [2025-08-08T13:57:14.738Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/4ba3nh7p56fsnidgr9jcqnpv4k7nwwrv-firebase-tools-14.12.0/lib/node_modules/firebase-tools/lib/bin/firebase.js emulators:start
+[debug] [2025-08-08T13:57:14.739Z] CLI Version:   14.12.0
+[debug] [2025-08-08T13:57:14.739Z] Platform:      linux
+[debug] [2025-08-08T13:57:14.740Z] Node Version:  v20.19.1
+[debug] [2025-08-08T13:57:14.740Z] Time:          Fri Aug 08 2025 13:57:14 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-08-08T13:57:14.740Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-08-08T13:57:15.304Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T13:57:15.304Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T13:57:15.310Z] >>> [apiv2][query] GET https://monospace-pa.googleapis.com/v1/workspaces/nhaminhbach-62972861 [none]
+[debug] [2025-08-08T13:57:16.317Z] <<< [apiv2][status] GET https://monospace-pa.googleapis.com/v1/workspaces/nhaminhbach-62972861 200
+[debug] [2025-08-08T13:57:16.324Z] <<< [apiv2][body] GET https://monospace-pa.googleapis.com/v1/workspaces/nhaminhbach-62972861 {"workspaceId":"nhaminhbach-62972861","name":"nhaminhbach","workspaceRedirectUrl":"firebase-nhaminhbach-1754197535766.cluster-ikxjzjhlifcwuroomfkjrx437g.cloudworkstations.dev","status":"WORKSPACE_STATUS_RUNNING","lastAccessDatetime":"2025-08-08T13:46:16.095035Z","workspaceTemplate":"WORKSPACE_TEMPLATE_BLANK_WEB","owner":"SELF","serviceAccountEmail":"msp-4714763537869207739@monospace-per-ws-sa-4.iam.gserviceaccount.com","gitRepoUrl":"https://github.com/bnmbanhmi/nhaminhbach","enableNix":true,"ownerEmail":"minhbach0212@gmail.com","workstationAccessToken":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2Nsb3VkLmdvb2dsZS5jb20vd29ya3N0YXRpb25zIiwiYXVkIjoiZmlyZWJhc2UtbmhhbWluaGJhY2gtMTc1NDE5NzUzNTc2Ni5jbHVzdGVyLWlreGp6amhsaWZjd3Vyb29tZmtqcng0MzdnLmNsb3Vkd29ya3N0YXRpb25zLmRldiIsImlhdCI6MTc1NDY2MTQzNiwiZXhwIjoxNzU0NzQ3ODM1fQ.dZWpm81wJyxN5XS-LQdSLS13q6_ZTCtSYaf4a1Ine_ftYrbJdQAn5QLIH_rDxiMBR-ET8DVUQWD3NbYqAjsVI2JtNtsrc_AXY_tCc18iByk71qCyrIFx1rp1hZwbua32RALvl2tBl4yzQyL1u1qYroA3o1ojWYXyvx8jtCcu1p_oPiRBORV1AflgOvEiDh4Erbjyxu27BPYAgiGVFTKFklSGZI3d_ReEFv4cO-1WbdkotvaE3vFspeF54FfgSIsyuRc0mqlte8MZcQxUQaM8F_5eQcz8NBqtBG7oWHYzLvPWyLDA55JsJxqzBgkW0AGWIbSv8AtTa1LQI82no_5Oyg","firebaseProjectId":"omega-sorter-467514-q6"}
+[debug] [2025-08-08T13:57:16.364Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-08-08T13:57:16.377Z] > authorizing via signed-in user (minhbach0212@gmail.com)
+[info] i  emulators: Starting emulators: functions, extensions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions, extensions"}}
+[debug] [2025-08-08T13:57:16.491Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T13:57:16.496Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T13:57:16.501Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/omega-sorter-467514-q6 [none]
+[debug] [2025-08-08T13:57:17.618Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/omega-sorter-467514-q6 200
+[debug] [2025-08-08T13:57:17.618Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/omega-sorter-467514-q6 {"projectNumber":"967311112997","projectId":"omega-sorter-467514-q6","lifecycleState":"ACTIVE","name":"nhaminhbach","labels":{"generative-language":"enabled","firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-07-30T14:37:45.233984Z"}
+[warn] ⚠  hub: Error when trying to check port 4400 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4400 {"metadata":{"emulator":{"name":"hub"},"message":"Error when trying to check port 4400 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4400"}}
+[warn] ⚠  hub: Port 4400 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"hub"},"message":"Port 4400 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  hub: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"hub"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  ui: Error when trying to check port 4000 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4000 {"metadata":{"emulator":{"name":"ui"},"message":"Error when trying to check port 4000 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4000"}}
+[warn] ⚠  ui: Port 4000 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"ui"},"message":"Port 4000 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  ui: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"ui"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  logging: Error when trying to check port 4500 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4500 {"metadata":{"emulator":{"name":"logging"},"message":"Error when trying to check port 4500 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4500"}}
+[warn] ⚠  logging: Port 4500 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"logging"},"message":"Port 4500 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  logging: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"logging"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[debug] [2025-08-08T13:57:17.671Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[warn] ⚠  emulators: It seems that you are running multiple instances of the emulator suite for project omega-sorter-467514-q6. This may result in unexpected behavior. 
+[debug] [2025-08-08T13:57:17.681Z] [hub] writing locator at /tmp/hub-omega-sorter-467514-q6.json
+[debug] [2025-08-08T13:57:17.704Z] [Extensions] Started Extensions emulator, this is a noop.
+[warn] ⚠  functions: Error when trying to check port 5001 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:5001 {"metadata":{"emulator":{"name":"functions"},"message":"Error when trying to check port 5001 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:5001"}}
+[warn] ⚠  functions: Port 5001 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"functions"},"message":"Port 5001 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  functions: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"functions"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  eventarc: Error when trying to check port 9299 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9299 {"metadata":{"emulator":{"name":"eventarc"},"message":"Error when trying to check port 9299 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9299"}}
+[warn] ⚠  eventarc: Port 9299 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"eventarc"},"message":"Port 9299 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  eventarc: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"eventarc"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  tasks: Error when trying to check port 9499 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9499 {"metadata":{"emulator":{"name":"tasks"},"message":"Error when trying to check port 9499 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9499"}}
+[warn] ⚠  tasks: Port 9499 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"tasks"},"message":"Port 9499 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  tasks: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"tasks"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[debug] [2025-08-08T13:57:17.711Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}],"tasks":[{"address":"127.0.0.1","family":"IPv4","port":9499}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[warn] ⚠  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: apphosting, auth, firestore, database, hosting, pubsub, storage, dataconnect {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: \u001b[1mapphosting, auth, firestore, database, hosting, pubsub, storage, dataconnect\u001b[22m"}}
+[warn] ⚠  functions: Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful! {"metadata":{"emulator":{"name":"functions"},"message":"Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful!"}}
+[debug] [2025-08-08T13:57:31.116Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T13:57:31.117Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T13:57:31.117Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/omega-sorter-467514-q6/adminSdkConfig [none]
+[debug] [2025-08-08T13:57:31.372Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/omega-sorter-467514-q6/adminSdkConfig 200
+[debug] [2025-08-08T13:57:31.375Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/omega-sorter-467514-q6/adminSdkConfig {"projectId":"omega-sorter-467514-q6","storageBucket":"omega-sorter-467514-q6.firebasestorage.app"}
+[debug] [2025-08-08T13:57:31.445Z] [Extensions] Connecting Extensions emulator, this is a noop.
+[info] i  functions: Watching "/home/user/nhaminhbach/packages/functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"/home/user/nhaminhbach/packages/functions\" for Cloud Functions..."}}
+[debug] [2025-08-08T13:57:31.480Z] Customer code is not Node
+[debug] [2025-08-08T13:57:31.496Z] Validating python source
+[debug] [2025-08-08T13:57:31.496Z] Building python source
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2025-08-08T13:57:31.522Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-08-08T13:57:31.530Z] Running command with virtualenv: command=., args=["\"/home/user/nhaminhbach/packages/functions/venv/bin/activate\"","&&","python3.13","-c","\"import firebase_functions; import os; print(os.path.dirname(firebase_functions.__file__))\""]
+[debug] [2025-08-08T13:57:31.613Z] stdout: /home/user/nhaminhbach/packages/functions/venv/lib/python3.13/site-packages/firebase_functions
+
+[debug] [2025-08-08T13:57:31.634Z] Running admin server with args: ["python3.13","\"/home/user/nhaminhbach/packages/functions/venv/lib/python3.13/site-packages/firebase_functions/private/serving.py\""] and env: {"GCLOUD_PROJECT":"omega-sorter-467514-q6","K_REVISION":"1","PORT":"80","GOOGLE_CLOUD_QUOTA_PROJECT":"omega-sorter-467514-q6","FUNCTIONS_EMULATOR":"true","TZ":"UTC","FIREBASE_DEBUG_MODE":"true","FIREBASE_DEBUG_FEATURES":"{\"skipTokenVerification\":true,\"enableCors\":true}","FIREBASE_EMULATOR_HUB":"127.0.0.1:4400","CLOUD_EVENTARC_EMULATOR_HOST":"http://127.0.0.1:9299","CLOUD_TASKS_EMULATOR_HOST":"127.0.0.1:9499","FIREBASE_CONFIG":"{\"storageBucket\":\"omega-sorter-467514-q6.firebasestorage.app\",\"projectId\":\"omega-sorter-467514-q6\"}","ADMIN_PORT":"8081"} in /home/user/nhaminhbach/packages/functions
+[debug] [2025-08-08T13:57:31.639Z] Running command with virtualenv: command=., args=["\"/home/user/nhaminhbach/packages/functions/venv/bin/activate\"","&&","python3.13","\"/home/user/nhaminhbach/packages/functions/venv/lib/python3.13/site-packages/firebase_functions/private/serving.py\""]
+[debug] [2025-08-08T13:57:33.865Z] Functions emulator received unknown request at path /
+[debug] [2025-08-08T13:57:33.995Z] Eventarc emulator received unknown request at path / {"metadata":{"emulator":{"name":"eventarc"},"message":"Eventarc emulator received unknown request at path /"}}
+[error]  * Tip: There are .env files present. Install python-dotenv to use them.
+
+[info]  * Serving Flask app 'serving'
+ * Debug mode: off
+
+[error] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8081
+Press CTRL+C to quit
+
+[error] 127.0.0.1 - - [08/Aug/2025 13:57:35] "GET /__/functions.yaml HTTP/1.1" 200 -
+
+[debug] [2025-08-08T13:57:35.882Z] Got response from /__/functions.yaml endpoints:
+  create_listing:
+    availableMemoryMb: null
+    concurrency: null
+    cpu: gcf_gen1
+    entryPoint: create_listing
+    httpsTrigger: {}
+    ingressSettings: null
+    labels: {}
+    maxInstances: 5
+    minInstances: null
+    platform: gcfv2
+    region:
+    - asia-southeast1
+    secretEnvironmentVariables: []
+    serviceAccountEmail: null
+    timeoutSeconds: null
+  get_all_attributes:
+    availableMemoryMb: null
+    concurrency: null
+    cpu: gcf_gen1
+    entryPoint: get_all_attributes
+    httpsTrigger: {}
+    ingressSettings: null
+    labels: {}
+    maxInstances: 5
+    minInstances: null
+    platform: gcfv2
+    region:
+    - asia-southeast1
+    secretEnvironmentVariables: []
+    serviceAccountEmail: null
+    timeoutSeconds: null
+  get_listing_by_id:
+    availableMemoryMb: null
+    concurrency: null
+    cpu: gcf_gen1
+    entryPoint: get_listing_by_id
+    httpsTrigger: {}
+    ingressSettings: null
+    labels: {}
+    maxInstances: 5
+    minInstances: null
+    platform: gcfv2
+    region:
+    - asia-southeast1
+    secretEnvironmentVariables: []
+    serviceAccountEmail: null
+    timeoutSeconds: null
+  get_listings:
+    availableMemoryMb: null
+    concurrency: null
+    cpu: gcf_gen1
+    entryPoint: get_listings
+    httpsTrigger: {}
+    ingressSettings: null
+    labels: {}
+    maxInstances: 5
+    minInstances: null
+    platform: gcfv2
+    region:
+    - asia-southeast1
+    secretEnvironmentVariables: []
+    serviceAccountEmail: null
+    timeoutSeconds: null
+params: []
+requiredAPIs: []
+specVersion: v1alpha1
+
+[error] 127.0.0.1 - - [08/Aug/2025 13:57:35] "GET /__/quitquitquit HTTP/1.1" 200 -
+
+[info] ✔  functions: Loaded functions definitions from source: create_listing, get_all_attributes, get_listing_by_id, get_listings. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: create_listing, get_all_attributes, get_listing_by_id, get_listings."}}
+[info] ✔  functions[asia-southeast1-create_listing]: http function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/create_listing). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/create_listing)."}}
+[info] ✔  functions[asia-southeast1-get_all_attributes]: http function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_all_attributes). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_all_attributes)."}}
+[info] ✔  functions[asia-southeast1-get_listing_by_id]: http function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listing_by_id). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listing_by_id)."}}
+[info] ✔  functions[asia-southeast1-get_listings]: http function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listings). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listings)."}}
+[debug] [2025-08-08T13:57:35.998Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: connect ECONNREFUSED 127.0.0.1:40001. If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌────────────┬────────────────┬──────────────────────────────────┐
+│ Emulator   │ Host:Port      │ View in Emulator UI              │
+├────────────┼────────────────┼──────────────────────────────────┤
+│ Functions  │ 127.0.0.1:5001 │ http://127.0.0.1:4000/functions  │
+├────────────┼────────────────┼──────────────────────────────────┤
+│ Extensions │ 127.0.0.1:5001 │ http://127.0.0.1:4000/extensions │
+└────────────┴────────────────┴──────────────────────────────────┘
+  Emulator Hub host: 127.0.0.1 port: 4400
+  Other reserved ports: 4500
+┌─────────────────────────┬───────────────┬─────────────────────┐
+│ Extension Instance Name │ Extension Ref │ View in Emulator UI │
+└─────────────────────────┴───────────────┴─────────────────────┘
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
+[debug] [2025-08-08T13:57:41.052Z] [work-queue] {"queuedWork":["/omega-sorter-467514-q6/asia-southeast1/get_listings-2025-08-08T13:57:41.050Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-08-08T13:57:41.053Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/omega-sorter-467514-q6/asia-southeast1/get_listings-2025-08-08T13:57:41.050Z"],"workRunningCount":1}
+[debug] [2025-08-08T13:57:41.054Z] Accepted request GET /omega-sorter-467514-q6/asia-southeast1/get_listings --> asia-southeast1-get_listings
+[debug] [2025-08-08T13:57:41.069Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-08-08T13:57:41.070Z] [functions] Got req.url=/omega-sorter-467514-q6/asia-southeast1/get_listings, mapping to path=/ {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/omega-sorter-467514-q6/asia-southeast1/get_listings, mapping to path=/"}}
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2025-08-08T13:57:41.077Z] Running command with virtualenv: command=., args=["\"/home/user/nhaminhbach/packages/functions/venv/bin/activate\"","&&","functions-framework"]
+[debug] [2025-08-08T13:57:41.085Z] [worker-pool] addWorker(asia-southeast1-get_listings) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] addWorker(asia-southeast1-get_listings)"}}
+[debug] [2025-08-08T13:57:41.088Z] [worker-pool] Adding worker with key asia-southeast1-get_listings, total=1 {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] Adding worker with key asia-southeast1-get_listings, total=1"}}
+[info] >   * Tip: There are .env files present. Install python-dotenv to use them. {"user":" * Tip: There are .env files present. Install python-dotenv to use them.","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Tip: There are .env files present. Install python-dotenv to use them."}}
+[info] >   * Serving Flask app 'get_listings' {"user":" * Serving Flask app 'get_listings'","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Serving Flask app 'get_listings'"}}
+[info] >   * Debug mode: on {"user":" * Debug mode: on","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Debug mode: on"}}
+[info] >  WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. {"user":"\u001b[31m\u001b[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.\u001b[0m","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m \u001b[31m\u001b[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.\u001b[0m"}}
+[info] >   * Running on http://127.0.0.1:8689 {"user":" * Running on http://127.0.0.1:8689","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Running on http://127.0.0.1:8689"}}
+[info] >  Press CTRL+C to quit {"user":"\u001b[33mPress CTRL+C to quit\u001b[0m","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m \u001b[33mPress CTRL+C to quit\u001b[0m"}}
+[info] >   * Restarting with watchdog (inotify) {"user":" * Restarting with watchdog (inotify)","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Restarting with watchdog (inotify)"}}
+[info] >   * Tip: There are .env files present. Install python-dotenv to use them. {"user":" * Tip: There are .env files present. Install python-dotenv to use them.","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Tip: There are .env files present. Install python-dotenv to use them."}}
+[info] >   * Debugger is active! {"user":" * Debugger is active!","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Debugger is active!"}}
+[info] >   * Debugger PIN: 106-086-827 {"user":" * Debugger PIN: 106-086-827","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Debugger PIN: 106-086-827"}}
+[info] >  {"severity": "INFO", "message": "Database engine initialized."} {"user":{"severity":"INFO","message":"Database engine initialized."},"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m {\"severity\": \"INFO\", \"message\": \"Database engine initialized.\"}"}}
+[info] >  127.0.0.1 - - [08/Aug/2025 13:57:48] "GET /__/health HTTP/1.1" 200 - {"user":"127.0.0.1 - - [08/Aug/2025 13:57:48] \"GET /__/health HTTP/1.1\" 200 -","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m 127.0.0.1 - - [08/Aug/2025 13:57:48] \"GET /__/health HTTP/1.1\" 200 -"}}
+[debug] [2025-08-08T13:57:48.795Z] [worker-asia-southeast1-get_listings-8d55c6b9-55ed-4393-8d52-01d5df36c541]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-8d55c6b9-55ed-4393-8d52-01d5df36c541]: IDLE"}}
+[debug] [2025-08-08T13:57:48.796Z] [worker-pool] submitRequest(triggerId=asia-southeast1-get_listings) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=asia-southeast1-get_listings)"}}
+[info] i  functions: Beginning execution of "asia-southeast1-get_listings" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Beginning execution of \"asia-southeast1-get_listings\""}}
+[debug] [2025-08-08T13:57:48.810Z] [worker-asia-southeast1-get_listings-8d55c6b9-55ed-4393-8d52-01d5df36c541]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-8d55c6b9-55ed-4393-8d52-01d5df36c541]: BUSY"}}
+[info] >  127.0.0.1 - - [08/Aug/2025 13:57:48] "GET / HTTP/1.1" 200 - {"user":"127.0.0.1 - - [08/Aug/2025 13:57:48] \"GET / HTTP/1.1\" 200 -","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m 127.0.0.1 - - [08/Aug/2025 13:57:48] \"GET / HTTP/1.1\" 200 -"}}
+[info] >  127.0.0.1 - - [08/Aug/2025 13:57:49] "GET / HTTP/1.1" 200 - {"user":"127.0.0.1 - - [08/Aug/2025 13:57:49] \"GET / HTTP/1.1\" 200 -","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m 127.0.0.1 - - [08/Aug/2025 13:57:49] \"GET / HTTP/1.1\" 200 -"}}
+[debug] [2025-08-08T13:57:49.084Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "asia-southeast1-get_listings" in 274.236228ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finished \"asia-southeast1-get_listings\" in 274.236228ms"}}
+[debug] [2025-08-08T13:57:49.087Z] [worker-asia-southeast1-get_listings-8d55c6b9-55ed-4393-8d52-01d5df36c541]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-8d55c6b9-55ed-4393-8d52-01d5df36c541]: IDLE"}}
+[debug] [2025-08-08T13:57:49.087Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-08-08T13:57:49.088Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-08-08T13:57:49.088Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-08-08T13:57:49.416Z] [work-queue] {"queuedWork":["/omega-sorter-467514-q6/asia-southeast1/get_listings-2025-08-08T13:57:49.415Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-08-08T13:57:49.418Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/omega-sorter-467514-q6/asia-southeast1/get_listings-2025-08-08T13:57:49.415Z"],"workRunningCount":1}
+[debug] [2025-08-08T13:57:49.419Z] Accepted request GET /omega-sorter-467514-q6/asia-southeast1/get_listings --> asia-southeast1-get_listings
+[debug] [2025-08-08T13:57:49.432Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-08-08T13:57:49.433Z] [functions] Got req.url=/omega-sorter-467514-q6/asia-southeast1/get_listings, mapping to path=/ {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/omega-sorter-467514-q6/asia-southeast1/get_listings, mapping to path=/"}}
+[debug] [2025-08-08T13:57:49.435Z] [worker-pool] submitRequest(triggerId=asia-southeast1-get_listings) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=asia-southeast1-get_listings)"}}
+[info] i  functions: Beginning execution of "asia-southeast1-get_listings" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Beginning execution of \"asia-southeast1-get_listings\""}}
+[debug] [2025-08-08T13:57:49.435Z] [worker-asia-southeast1-get_listings-8d55c6b9-55ed-4393-8d52-01d5df36c541]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-8d55c6b9-55ed-4393-8d52-01d5df36c541]: BUSY"}}
+[info] >  127.0.0.1 - - [08/Aug/2025 13:57:49] "GET / HTTP/1.1" 200 - {"user":"127.0.0.1 - - [08/Aug/2025 13:57:49] \"GET / HTTP/1.1\" 200 -","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m 127.0.0.1 - - [08/Aug/2025 13:57:49] \"GET / HTTP/1.1\" 200 -"}}
+[debug] [2025-08-08T13:57:49.707Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "asia-southeast1-get_listings" in 271.50036ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finished \"asia-southeast1-get_listings\" in 271.50036ms"}}
+[debug] [2025-08-08T13:57:49.707Z] [worker-asia-southeast1-get_listings-8d55c6b9-55ed-4393-8d52-01d5df36c541]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-8d55c6b9-55ed-4393-8d52-01d5df36c541]: IDLE"}}
+[debug] [2025-08-08T13:57:49.715Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-08-08T13:57:49.716Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-08-08T13:57:49.716Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-08-08T14:10:11.362Z] ----------------------------------------------------------------------
+[debug] [2025-08-08T14:10:11.370Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/4ba3nh7p56fsnidgr9jcqnpv4k7nwwrv-firebase-tools-14.12.0/lib/node_modules/firebase-tools/lib/bin/firebase.js emulators:start
+[debug] [2025-08-08T14:10:11.373Z] CLI Version:   14.12.0
+[debug] [2025-08-08T14:10:11.373Z] Platform:      linux
+[debug] [2025-08-08T14:10:11.376Z] Node Version:  v20.19.1
+[debug] [2025-08-08T14:10:11.376Z] Time:          Fri Aug 08 2025 14:10:11 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-08-08T14:10:11.376Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-08-08T14:10:11.386Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2025-08-08T14:10:12.395Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T14:10:12.397Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T14:10:12.415Z] >>> [apiv2][query] GET https://monospace-pa.googleapis.com/v1/workspaces/nhaminhbach-62972861 [none]
+[debug] [2025-08-08T14:10:12.757Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2025-08-08T14:10:12.758Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2025-08-08T14:10:13.491Z] <<< [apiv2][status] GET https://monospace-pa.googleapis.com/v1/workspaces/nhaminhbach-62972861 200
+[debug] [2025-08-08T14:10:13.492Z] <<< [apiv2][body] GET https://monospace-pa.googleapis.com/v1/workspaces/nhaminhbach-62972861 {"workspaceId":"nhaminhbach-62972861","name":"nhaminhbach","workspaceRedirectUrl":"firebase-nhaminhbach-1754197535766.cluster-ikxjzjhlifcwuroomfkjrx437g.cloudworkstations.dev","status":"WORKSPACE_STATUS_RUNNING","lastAccessDatetime":"2025-08-08T13:46:16.095035Z","workspaceTemplate":"WORKSPACE_TEMPLATE_BLANK_WEB","owner":"SELF","serviceAccountEmail":"msp-4714763537869207739@monospace-per-ws-sa-4.iam.gserviceaccount.com","gitRepoUrl":"https://github.com/bnmbanhmi/nhaminhbach","enableNix":true,"ownerEmail":"minhbach0212@gmail.com","workstationAccessToken":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2Nsb3VkLmdvb2dsZS5jb20vd29ya3N0YXRpb25zIiwiYXVkIjoiZmlyZWJhc2UtbmhhbWluaGJhY2gtMTc1NDE5NzUzNTc2Ni5jbHVzdGVyLWlreGp6amhsaWZjd3Vyb29tZmtqcng0MzdnLmNsb3Vkd29ya3N0YXRpb25zLmRldiIsImlhdCI6MTc1NDY2MjIxMywiZXhwIjoxNzU0NzQ4NjEzfQ.Eq-r4QllUY3O0PAGrKmzVkDtTZCC3SmkdPcvs2fr3vh6HWbjxfayhf1t0Gg1PqkHlXm7mu1Zf3v0UCeOhKruspmGgi7fFaBEkQAu_rGV_uQsHFU9on1CckYy6VYgzuC4AZtum56asOSvW5yAxC6hvO81aQ8QdfWgn0kfw0Y6qpfXgcfyLQ9qkDTTkVrzzhNUtnkBaIh1t80KloR-XrMMfjyhHz5NDrwA92u-uPQevSu9qrMqfmwXv9mprutgPCb4anM7sfdKZky1nPafaF0WA-5zWDPk9ErQ2aw23avwOcfmBtCatPZQjyRN0OeNnkI2gsTdGULY974TYcPLzLJRxg","firebaseProjectId":"omega-sorter-467514-q6"}
+[debug] [2025-08-08T14:10:13.495Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-08-08T14:10:13.495Z] > authorizing via signed-in user (minhbach0212@gmail.com)
+[info] i  emulators: Starting emulators: functions, extensions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions, extensions"}}
+[debug] [2025-08-08T14:10:13.503Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T14:10:13.504Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T14:10:13.504Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/omega-sorter-467514-q6 [none]
+[debug] [2025-08-08T14:10:14.319Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/omega-sorter-467514-q6 200
+[debug] [2025-08-08T14:10:14.319Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/omega-sorter-467514-q6 {"projectNumber":"967311112997","projectId":"omega-sorter-467514-q6","lifecycleState":"ACTIVE","name":"nhaminhbach","labels":{"generative-language":"enabled","firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-07-30T14:37:45.233984Z"}
+[warn] ⚠  hub: Error when trying to check port 4400 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4400 {"metadata":{"emulator":{"name":"hub"},"message":"Error when trying to check port 4400 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4400"}}
+[warn] ⚠  hub: Port 4400 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"hub"},"message":"Port 4400 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  hub: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"hub"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  ui: Error when trying to check port 4000 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4000 {"metadata":{"emulator":{"name":"ui"},"message":"Error when trying to check port 4000 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4000"}}
+[warn] ⚠  ui: Port 4000 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"ui"},"message":"Port 4000 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  ui: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"ui"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  logging: Error when trying to check port 4500 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4500 {"metadata":{"emulator":{"name":"logging"},"message":"Error when trying to check port 4500 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:4500"}}
+[warn] ⚠  logging: Port 4500 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"logging"},"message":"Port 4500 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  logging: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"logging"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[debug] [2025-08-08T14:10:14.334Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[warn] ⚠  emulators: It seems that you are running multiple instances of the emulator suite for project omega-sorter-467514-q6. This may result in unexpected behavior. 
+[debug] [2025-08-08T14:10:14.343Z] [hub] writing locator at /tmp/hub-omega-sorter-467514-q6.json
+[debug] [2025-08-08T14:10:14.362Z] [Extensions] Started Extensions emulator, this is a noop.
+[warn] ⚠  functions: Error when trying to check port 5001 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:5001 {"metadata":{"emulator":{"name":"functions"},"message":"Error when trying to check port 5001 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:5001"}}
+[warn] ⚠  functions: Port 5001 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"functions"},"message":"Port 5001 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  functions: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"functions"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  eventarc: Error when trying to check port 9299 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9299 {"metadata":{"emulator":{"name":"eventarc"},"message":"Error when trying to check port 9299 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9299"}}
+[warn] ⚠  eventarc: Port 9299 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"eventarc"},"message":"Port 9299 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  eventarc: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"eventarc"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  tasks: Error when trying to check port 9499 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9499 {"metadata":{"emulator":{"name":"tasks"},"message":"Error when trying to check port 9499 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9499"}}
+[warn] ⚠  tasks: Port 9499 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"tasks"},"message":"Port 9499 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  tasks: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"tasks"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[debug] [2025-08-08T14:10:14.367Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}],"tasks":[{"address":"127.0.0.1","family":"IPv4","port":9499}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[warn] ⚠  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: apphosting, auth, firestore, database, hosting, pubsub, storage, dataconnect {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: \u001b[1mapphosting, auth, firestore, database, hosting, pubsub, storage, dataconnect\u001b[22m"}}
+[warn] ⚠  functions: Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful! {"metadata":{"emulator":{"name":"functions"},"message":"Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful!"}}
+[debug] [2025-08-08T14:10:18.168Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T14:10:18.172Z] Checked if tokens are valid: true, expires at: 1754664483346
+[debug] [2025-08-08T14:10:18.172Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/omega-sorter-467514-q6/adminSdkConfig [none]
+[debug] [2025-08-08T14:10:18.495Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/omega-sorter-467514-q6/adminSdkConfig 200
+[debug] [2025-08-08T14:10:18.498Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/omega-sorter-467514-q6/adminSdkConfig {"projectId":"omega-sorter-467514-q6","storageBucket":"omega-sorter-467514-q6.firebasestorage.app"}
+[debug] [2025-08-08T14:10:18.624Z] [Extensions] Connecting Extensions emulator, this is a noop.
+[info] i  functions: Watching "/home/user/nhaminhbach/packages/functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"/home/user/nhaminhbach/packages/functions\" for Cloud Functions..."}}
+[debug] [2025-08-08T14:10:18.662Z] Customer code is not Node
+[debug] [2025-08-08T14:10:18.711Z] Validating python source
+[debug] [2025-08-08T14:10:18.711Z] Building python source
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2025-08-08T14:10:18.722Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-08-08T14:10:18.727Z] Running command with virtualenv: command=., args=["\"/home/user/nhaminhbach/packages/functions/venv/bin/activate\"","&&","python3.13","-c","\"import firebase_functions; import os; print(os.path.dirname(firebase_functions.__file__))\""]
+[debug] [2025-08-08T14:10:18.816Z] stdout: /home/user/nhaminhbach/packages/functions/venv/lib/python3.13/site-packages/firebase_functions
+
+[debug] [2025-08-08T14:10:18.828Z] Running admin server with args: ["python3.13","\"/home/user/nhaminhbach/packages/functions/venv/lib/python3.13/site-packages/firebase_functions/private/serving.py\""] and env: {"GCLOUD_PROJECT":"omega-sorter-467514-q6","K_REVISION":"1","PORT":"80","GOOGLE_CLOUD_QUOTA_PROJECT":"omega-sorter-467514-q6","FUNCTIONS_EMULATOR":"true","TZ":"UTC","FIREBASE_DEBUG_MODE":"true","FIREBASE_DEBUG_FEATURES":"{\"skipTokenVerification\":true,\"enableCors\":true}","FIREBASE_EMULATOR_HUB":"127.0.0.1:4400","CLOUD_EVENTARC_EMULATOR_HOST":"http://127.0.0.1:9299","CLOUD_TASKS_EMULATOR_HOST":"127.0.0.1:9499","FIREBASE_CONFIG":"{\"storageBucket\":\"omega-sorter-467514-q6.firebasestorage.app\",\"projectId\":\"omega-sorter-467514-q6\"}","ADMIN_PORT":"8081"} in /home/user/nhaminhbach/packages/functions
+[debug] [2025-08-08T14:10:18.828Z] Running command with virtualenv: command=., args=["\"/home/user/nhaminhbach/packages/functions/venv/bin/activate\"","&&","python3.13","\"/home/user/nhaminhbach/packages/functions/venv/lib/python3.13/site-packages/firebase_functions/private/serving.py\""]
+[error]  * Tip: There are .env files present. Install python-dotenv to use them.
+
+[info]  * Serving Flask app 'serving'
+ * Debug mode: off
+
+[error] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8081
+Press CTRL+C to quit
+
+[error] 127.0.0.1 - - [08/Aug/2025 14:10:21] "GET /__/functions.yaml HTTP/1.1" 200 -
+
+[debug] [2025-08-08T14:10:21.696Z] Got response from /__/functions.yaml endpoints:
+  create_listing:
+    availableMemoryMb: null
+    concurrency: null
+    cpu: gcf_gen1
+    entryPoint: create_listing
+    httpsTrigger: {}
+    ingressSettings: null
+    labels: {}
+    maxInstances: 5
+    minInstances: null
+    platform: gcfv2
+    region:
+    - asia-southeast1
+    secretEnvironmentVariables: []
+    serviceAccountEmail: null
+    timeoutSeconds: null
+  get_all_attributes:
+    availableMemoryMb: null
+    concurrency: null
+    cpu: gcf_gen1
+    entryPoint: get_all_attributes
+    httpsTrigger: {}
+    ingressSettings: null
+    labels: {}
+    maxInstances: 5
+    minInstances: null
+    platform: gcfv2
+    region:
+    - asia-southeast1
+    secretEnvironmentVariables: []
+    serviceAccountEmail: null
+    timeoutSeconds: null
+  get_listing_by_id:
+    availableMemoryMb: null
+    concurrency: null
+    cpu: gcf_gen1
+    entryPoint: get_listing_by_id
+    httpsTrigger: {}
+    ingressSettings: null
+    labels: {}
+    maxInstances: 5
+    minInstances: null
+    platform: gcfv2
+    region:
+    - asia-southeast1
+    secretEnvironmentVariables: []
+    serviceAccountEmail: null
+    timeoutSeconds: null
+  get_listings:
+    availableMemoryMb: null
+    concurrency: null
+    cpu: gcf_gen1
+    entryPoint: get_listings
+    httpsTrigger: {}
+    ingressSettings: null
+    labels: {}
+    maxInstances: 5
+    minInstances: null
+    platform: gcfv2
+    region:
+    - asia-southeast1
+    secretEnvironmentVariables: []
+    serviceAccountEmail: null
+    timeoutSeconds: null
+params: []
+requiredAPIs: []
+specVersion: v1alpha1
+
+[error] 127.0.0.1 - - [08/Aug/2025 14:10:21] "GET /__/quitquitquit HTTP/1.1" 200 -
+
+[debug] [2025-08-08T14:10:21.804Z] Functions emulator received unknown request at path /
+[info] ✔  functions: Loaded functions definitions from source: create_listing, get_all_attributes, get_listing_by_id, get_listings. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: create_listing, get_all_attributes, get_listing_by_id, get_listings."}}
+[info] ✔  functions[asia-southeast1-create_listing]: http function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/create_listing). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/create_listing)."}}
+[info] ✔  functions[asia-southeast1-get_all_attributes]: http function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_all_attributes). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_all_attributes)."}}
+[info] ✔  functions[asia-southeast1-get_listing_by_id]: http function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listing_by_id). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listing_by_id)."}}
+[info] ✔  functions[asia-southeast1-get_listings]: http function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listings). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1/get_listings)."}}
+[debug] [2025-08-08T14:10:21.839Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: connect ECONNREFUSED 127.0.0.1:40001. If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌────────────┬────────────────┬──────────────────────────────────┐
+│ Emulator   │ Host:Port      │ View in Emulator UI              │
+├────────────┼────────────────┼──────────────────────────────────┤
+│ Functions  │ 127.0.0.1:5001 │ http://127.0.0.1:4000/functions  │
+├────────────┼────────────────┼──────────────────────────────────┤
+│ Extensions │ 127.0.0.1:5001 │ http://127.0.0.1:4000/extensions │
+└────────────┴────────────────┴──────────────────────────────────┘
+  Emulator Hub host: 127.0.0.1 port: 4400
+  Other reserved ports: 4500
+┌─────────────────────────┬───────────────┬─────────────────────┐
+│ Extension Instance Name │ Extension Ref │ View in Emulator UI │
+└─────────────────────────┴───────────────┴─────────────────────┘
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
+[debug] [2025-08-08T14:10:21.901Z] Eventarc emulator received unknown request at path / {"metadata":{"emulator":{"name":"eventarc"},"message":"Eventarc emulator received unknown request at path /"}}
+[debug] [2025-08-08T14:10:28.887Z] [work-queue] {"queuedWork":["/omega-sorter-467514-q6/asia-southeast1/get_listings-2025-08-08T14:10:28.887Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-08-08T14:10:28.894Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/omega-sorter-467514-q6/asia-southeast1/get_listings-2025-08-08T14:10:28.887Z"],"workRunningCount":1}
+[debug] [2025-08-08T14:10:28.894Z] Accepted request GET /omega-sorter-467514-q6/asia-southeast1/get_listings --> asia-southeast1-get_listings
+[debug] [2025-08-08T14:10:28.905Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-08-08T14:10:28.907Z] [functions] Got req.url=/omega-sorter-467514-q6/asia-southeast1/get_listings, mapping to path=/ {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/omega-sorter-467514-q6/asia-southeast1/get_listings, mapping to path=/"}}
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2025-08-08T14:10:28.912Z] Running command with virtualenv: command=., args=["\"/home/user/nhaminhbach/packages/functions/venv/bin/activate\"","&&","functions-framework"]
+[debug] [2025-08-08T14:10:28.920Z] [worker-pool] addWorker(asia-southeast1-get_listings) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] addWorker(asia-southeast1-get_listings)"}}
+[debug] [2025-08-08T14:10:28.928Z] [worker-pool] Adding worker with key asia-southeast1-get_listings, total=1 {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] Adding worker with key asia-southeast1-get_listings, total=1"}}
+[info] >   * Tip: There are .env files present. Install python-dotenv to use them. {"user":" * Tip: There are .env files present. Install python-dotenv to use them.","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Tip: There are .env files present. Install python-dotenv to use them."}}
+[info] >   * Serving Flask app 'get_listings' {"user":" * Serving Flask app 'get_listings'","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Serving Flask app 'get_listings'"}}
+[info] >   * Debug mode: on {"user":" * Debug mode: on","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Debug mode: on"}}
+[info] >  WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. {"user":"\u001b[31m\u001b[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.\u001b[0m","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m \u001b[31m\u001b[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.\u001b[0m"}}
+[info] >   * Running on http://127.0.0.1:8390 {"user":" * Running on http://127.0.0.1:8390","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Running on http://127.0.0.1:8390"}}
+[info] >  Press CTRL+C to quit {"user":"\u001b[33mPress CTRL+C to quit\u001b[0m","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m \u001b[33mPress CTRL+C to quit\u001b[0m"}}
+[info] >   * Restarting with watchdog (inotify) {"user":" * Restarting with watchdog (inotify)","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Restarting with watchdog (inotify)"}}
+[info] >   * Tip: There are .env files present. Install python-dotenv to use them. {"user":" * Tip: There are .env files present. Install python-dotenv to use them.","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Tip: There are .env files present. Install python-dotenv to use them."}}
+[info] >   * Debugger is active! {"user":" * Debugger is active!","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Debugger is active!"}}
+[info] >   * Debugger PIN: 106-086-827 {"user":" * Debugger PIN: 106-086-827","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m  * Debugger PIN: 106-086-827"}}
+[info] >  {"severity": "INFO", "message": "Database engine initialized."} {"user":{"severity":"INFO","message":"Database engine initialized."},"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m {\"severity\": \"INFO\", \"message\": \"Database engine initialized.\"}"}}
+[info] >  127.0.0.1 - - [08/Aug/2025 14:10:35] "GET /__/health HTTP/1.1" 200 - {"user":"127.0.0.1 - - [08/Aug/2025 14:10:35] \"GET /__/health HTTP/1.1\" 200 -","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m 127.0.0.1 - - [08/Aug/2025 14:10:35] \"GET /__/health HTTP/1.1\" 200 -"}}
+[debug] [2025-08-08T14:10:35.822Z] [worker-asia-southeast1-get_listings-bfc01f02-0b16-48a0-89cf-21d05990e04e]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-bfc01f02-0b16-48a0-89cf-21d05990e04e]: IDLE"}}
+[debug] [2025-08-08T14:10:35.823Z] [worker-pool] submitRequest(triggerId=asia-southeast1-get_listings) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=asia-southeast1-get_listings)"}}
+[info] i  functions: Beginning execution of "asia-southeast1-get_listings" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Beginning execution of \"asia-southeast1-get_listings\""}}
+[debug] [2025-08-08T14:10:35.828Z] [worker-asia-southeast1-get_listings-bfc01f02-0b16-48a0-89cf-21d05990e04e]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-bfc01f02-0b16-48a0-89cf-21d05990e04e]: BUSY"}}
+[info] >  127.0.0.1 - - [08/Aug/2025 14:10:35] "GET / HTTP/1.1" 200 - {"user":"127.0.0.1 - - [08/Aug/2025 14:10:35] \"GET / HTTP/1.1\" 200 -","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m 127.0.0.1 - - [08/Aug/2025 14:10:35] \"GET / HTTP/1.1\" 200 -"}}
+[info] >  127.0.0.1 - - [08/Aug/2025 14:10:36] "GET / HTTP/1.1" 200 - {"user":"127.0.0.1 - - [08/Aug/2025 14:10:36] \"GET / HTTP/1.1\" 200 -","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m 127.0.0.1 - - [08/Aug/2025 14:10:36] \"GET / HTTP/1.1\" 200 -"}}
+[debug] [2025-08-08T14:10:36.120Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "asia-southeast1-get_listings" in 295.313878ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finished \"asia-southeast1-get_listings\" in 295.313878ms"}}
+[debug] [2025-08-08T14:10:36.124Z] [worker-asia-southeast1-get_listings-bfc01f02-0b16-48a0-89cf-21d05990e04e]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-bfc01f02-0b16-48a0-89cf-21d05990e04e]: IDLE"}}
+[debug] [2025-08-08T14:10:36.125Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-08-08T14:10:36.125Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-08-08T14:10:36.126Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-08-08T14:10:36.293Z] [work-queue] {"queuedWork":["/omega-sorter-467514-q6/asia-southeast1/get_listings-2025-08-08T14:10:36.293Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-08-08T14:10:36.296Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/omega-sorter-467514-q6/asia-southeast1/get_listings-2025-08-08T14:10:36.293Z"],"workRunningCount":1}
+[debug] [2025-08-08T14:10:36.296Z] Accepted request GET /omega-sorter-467514-q6/asia-southeast1/get_listings --> asia-southeast1-get_listings
+[debug] [2025-08-08T14:10:36.315Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-08-08T14:10:36.316Z] [functions] Got req.url=/omega-sorter-467514-q6/asia-southeast1/get_listings, mapping to path=/ {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/omega-sorter-467514-q6/asia-southeast1/get_listings, mapping to path=/"}}
+[debug] [2025-08-08T14:10:36.317Z] [worker-pool] submitRequest(triggerId=asia-southeast1-get_listings) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=asia-southeast1-get_listings)"}}
+[info] i  functions: Beginning execution of "asia-southeast1-get_listings" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Beginning execution of \"asia-southeast1-get_listings\""}}
+[debug] [2025-08-08T14:10:36.317Z] [worker-asia-southeast1-get_listings-bfc01f02-0b16-48a0-89cf-21d05990e04e]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-bfc01f02-0b16-48a0-89cf-21d05990e04e]: BUSY"}}
+[info] >  127.0.0.1 - - [08/Aug/2025 14:10:36] "GET / HTTP/1.1" 200 - {"user":"127.0.0.1 - - [08/Aug/2025 14:10:36] \"GET / HTTP/1.1\" 200 -","metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"\u001b[90m> \u001b[39m 127.0.0.1 - - [08/Aug/2025 14:10:36] \"GET / HTTP/1.1\" 200 -"}}
+[debug] [2025-08-08T14:10:36.589Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "asia-southeast1-get_listings" in 277.814359ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finished \"asia-southeast1-get_listings\" in 277.814359ms"}}
+[debug] [2025-08-08T14:10:36.597Z] [worker-asia-southeast1-get_listings-bfc01f02-0b16-48a0-89cf-21d05990e04e]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"[worker-asia-southeast1-get_listings-bfc01f02-0b16-48a0-89cf-21d05990e04e]: IDLE"}}
+[debug] [2025-08-08T14:10:36.597Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-08-08T14:10:36.597Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"asia-southeast1-get_listings"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-08-08T14:10:36.597Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
