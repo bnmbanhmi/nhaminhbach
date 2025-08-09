@@ -3,3 +3,5 @@ steps:
   args: ['build', '-t', 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/nhaminhbach-repo/scraper:latest', '.']
 images:
 - 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/nhaminhbach-repo/scraper:latest'
+options:
+  logging: CLOUD_LOGGING_ONLY
