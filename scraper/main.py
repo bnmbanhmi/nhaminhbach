@@ -7,6 +7,7 @@ import sys
 import time
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse, urlunparse  # added for permalink cleaning
+from dataclasses import dataclass, asdict  # dataclass for structured posts
 
 from playwright.async_api import async_playwright, Browser, Page, TimeoutError as PlaywrightTimeoutError
 
@@ -121,45 +122,49 @@ def clean_permalink(url: str) -> str:
         return url
 
 
-async def parse_post(article) -> Optional[Dict[str, str]]:
-    """Parse a single post article locator to extract permalink and text content.
+# Patterns for images we want to exclude (emoji / decorative assets)
+EXCLUDED_IMAGE_SUBSTRINGS = [
+    "emoji.php",
+    "/assets/?",  # generic, may refine later
+]
 
-    Returns a dict {"permalink": str, "content": str} or None on failure.
+
+@dataclass
+class ScrapedPost:
+    permalink: str
+    content: str
+    image_urls: List[str]
+    video_thumbnail_url: Optional[str]
+
+
+async def parse_post(article, media_enabled: bool) -> Optional[ScrapedPost]:
+    """Parse a single post article locator to extract permalink, text content and media.
+
+    Returns a ScrapedPost or None on failure.
+    media_enabled controls whether images / video thumbnail are scraped.
     """
     try:
-        # Expand any truncated text
         await expand_post_text(article)
 
-        # Find permalink: scan links within the article for a canonical post URL
-        links = article.locator("a[href*='/groups/']")
+        # Consolidated permalink discovery
         href: Optional[str] = None
         try:
-            count = await links.count()
-        except Exception:
-            count = 0
-        for i in range(count):
-            try:
-                el = links.nth(i)
-                url = await el.get_attribute("href")
+            link_loc = article.locator("a[href*='/groups/']")
+            for i in range(await link_loc.count()):
+                url = await link_loc.nth(i).get_attribute("href")
                 if not url:
                     continue
-                base_part = url.split("?")[0]
-                if PERMALINK_REGEX.search(base_part):
+                if PERMALINK_REGEX.search(url.split("?")[0]):
                     href = url
                     break
-            except Exception:
-                continue
-
-        if not href:
-            # Fallback: timestamp links often still useful even if regex doesn't match
-            ts_candidates = article.locator(
-                "a[aria-label*=' ago'], a[aria-label*='Yesterday'], a[aria-label*='mins'], a[aria-label*='hrs']"
-            )
-            try:
-                if await ts_candidates.count() > 0:
-                    href = await ts_candidates.first.get_attribute("href")
-            except Exception:
-                pass
+            if not href:
+                ts_loc = article.locator(
+                    "a[aria-label*=' ago'], a[aria-label*='Yesterday'], a[aria-label*='mins'], a[aria-label*='hrs']"
+                )
+                if await ts_loc.count() > 0:
+                    href = await ts_loc.first.get_attribute("href")
+        except Exception:
+            pass
 
         if not href:
             logger.debug("No permalink found for a post; skipping")
@@ -171,47 +176,77 @@ async def parse_post(article) -> Optional[Dict[str, str]]:
             permalink = href
         else:
             permalink = FB_BASE + "/" + href.lstrip("/")
-
         permalink = clean_permalink(permalink)
 
-        # Skip comment permalinks
         if is_comment_permalink(permalink):
             logger.debug("Comment permalink detected; skipping %s", permalink)
             return None
 
-        # Extract content: prioritize the message container, fallback to a simpler text block selector
         content_text = ""
-        # Primary selector used by FB for post message
-        message_container = article.locator("div[data-ad-preview='message']")
+        msg_loc = article.locator("div[data-ad-preview='message']")
         try:
-            if await message_container.count() > 0:
-                content_text = (await message_container.first.inner_text()).strip()
+            if await msg_loc.count() > 0:
+                content_text = (await msg_loc.first.inner_text()).strip()
         except Exception:
             pass
-
         if not content_text:
-            # Secondary simple selector often used for text blocks
             secondary = article.locator("div[data-ad-preview] > div > span")
             try:
                 if await secondary.count() > 0:
                     content_text = (await secondary.first.inner_text()).strip()
             except Exception:
                 pass
-
-        # Final sanity
         if not content_text:
             logger.debug("Empty content for post %s; skipping", permalink)
             return None
 
-        return {"permalink": permalink, "content": content_text}
+        image_urls: List[str] = []
+        video_thumbnail_url: Optional[str] = None
+        if media_enabled:
+            try:
+                imgs = article.locator("img")
+                for i in range(min(await imgs.count(), 40)):
+                    try:
+                        src = await imgs.nth(i).get_attribute("src")
+                        if (
+                            src
+                            and src.startswith("http")
+                            and not any(pat in src for pat in EXCLUDED_IMAGE_SUBSTRINGS)
+                            and src not in image_urls
+                        ):
+                            image_urls.append(src)
+                    except Exception:
+                        continue
+            except Exception:
+                pass
+            try:
+                thumb_parent = article.locator("div[role='button']:has(svg[aria-label='Play'])")
+                if await thumb_parent.count() > 0:
+                    img_in = thumb_parent.first.locator("img").first
+                    if await img_in.count() > 0:
+                        src = await img_in.get_attribute("src")
+                        if src and src.startswith("http") and not any(p in src for p in EXCLUDED_IMAGE_SUBSTRINGS):
+                            video_thumbnail_url = src
+            except Exception:
+                pass
+
+        return ScrapedPost(
+            permalink=permalink,
+            content=content_text,
+            image_urls=image_urls,
+            video_thumbnail_url=video_thumbnail_url,
+        )
 
     except Exception as e:
         logger.warning("Failed to parse a post: %s", e)
         return None
 
 
-async def scrape_group(browser: Browser, group_url: str) -> List[Dict[str, str]]:
-    """Scrape a Facebook group page (no-login) for visible posts and their permalinks."""
+async def scrape_group(browser: Browser, group_url: str, media_enabled: bool) -> List[ScrapedPost]:
+    """Scrape a Facebook group page (no-login) for visible posts and their permalinks.
+
+    media_enabled toggles media extraction.
+    """
     context = await browser.new_context(
         user_agent=(
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -277,7 +312,7 @@ async def scrape_group(browser: Browser, group_url: str) -> List[Dict[str, str]]
         final_count = last_count
         logger.info("Final article count after scroll/poll: %d", final_count)
 
-        results: List[Dict[str, str]] = []
+        results: List[ScrapedPost] = []
         seen = set()  # in-run deduplication by permalink
 
         # Iterate current set of posts (cap at 40 now that we may have more)
@@ -289,9 +324,9 @@ async def scrape_group(browser: Browser, group_url: str) -> List[Dict[str, str]]
                     continue
             except Exception:
                 pass
-            parsed = await parse_post(art)
+            parsed = await parse_post(art, media_enabled=media_enabled)
             if parsed:
-                pl = parsed.get("permalink")
+                pl = parsed.permalink
                 if pl and pl not in seen:
                     seen.add(pl)
                     results.append(parsed)
@@ -311,9 +346,8 @@ async def scrape_group(browser: Browser, group_url: str) -> List[Dict[str, str]]
             pass
 
 
-async def main_async(group_url: str, headless: bool) -> int:
+async def main_async(group_url: str, headless: bool, media_enabled: bool) -> int:
     """Entry point for async scraping job. Returns exit code."""
-    # Launch Chromium with flags suitable for containers like Cloud Run
     launch_args = {
         "headless": headless,
         "args": [
@@ -332,18 +366,19 @@ async def main_async(group_url: str, headless: bool) -> int:
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(**launch_args)
         try:
-            posts = await scrape_group(browser, group_url)
+            posts = await scrape_group(browser, group_url, media_enabled=media_enabled)
         except Exception as e:
             logger.error("Unhandled error during scrape: %s", e)
-            posts = []
+            posts: List[ScrapedPost] = []
         finally:
             try:
                 await browser.close()
             except Exception:
                 pass
 
-    # Print as JSON array to stdout
-    print(json.dumps(posts, ensure_ascii=False))
+    # Convert dataclasses to dicts for JSON serialization
+    posts_json = [asdict(p) for p in posts]
+    print(json.dumps(posts_json, ensure_ascii=False))
     # Return success even if empty; the pipeline can decide how to handle it
     return 0
 
@@ -352,17 +387,21 @@ def parse_args(argv: List[str]) -> Optional[Dict[str, Any]]:
     """Parse CLI args.
 
     Supports:
-      --headful  (optional) run with a visible browser
-    Returns dict with keys: url, headless
+      --headful   run with a visible browser
+      --no-media  disable image & video thumbnail scraping
+    Returns dict with keys: url, headless, media_enabled
     """
     if len(argv) < 2:
-        logger.error("Usage: python -m scraper.main [--headful] <facebook_group_url>")
+        logger.error("Usage: python -m scraper.main [--headful] [--no-media] <facebook_group_url>")
         return None
     headless = True
+    media_enabled = True
     positional: List[str] = []
     for arg in argv[1:]:
         if arg == "--headful":
             headless = False
+        elif arg == "--no-media":
+            media_enabled = False
         elif arg.startswith("--"):
             logger.warning("Unknown flag ignored: %s", arg)
         else:
@@ -370,7 +409,7 @@ def parse_args(argv: List[str]) -> Optional[Dict[str, Any]]:
     if not positional:
         logger.error("Group URL missing")
         return None
-    return {"url": positional[-1], "headless": headless}
+    return {"url": positional[-1], "headless": headless, "media_enabled": media_enabled}
 
 
 def main() -> None:
@@ -378,7 +417,7 @@ def main() -> None:
     if not parsed:
         sys.exit(2)
     try:
-        exit_code = asyncio.run(main_async(parsed["url"], parsed["headless"]))
+        exit_code = asyncio.run(main_async(parsed["url"], parsed["headless"], parsed["media_enabled"]))
         sys.exit(exit_code)
     except KeyboardInterrupt:
         logger.warning("Interrupted by user")
