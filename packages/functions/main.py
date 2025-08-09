@@ -10,6 +10,7 @@ from datetime import datetime
 from firebase_functions import https_fn, options, logger, pubsub_fn
 from google.cloud.sql.connector import Connector, IPTypes
 from google.cloud import pubsub_v1, run_v2
+from google.api_core import gapic_v1
 import sqlalchemy
 
 # =================================================================================
@@ -67,11 +68,25 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
     return db_engine
 
 def get_publisher_client() -> pubsub_v1.PublisherClient:
-    """Initializes and returns a global Pub/Sub client."""
+    """Initializes and returns a global Pub/Sub client with a timeout."""
     global publisher_client
     if publisher_client is None:
-        publisher_client = pubsub_v1.PublisherClient()
-        logger.info("Pub/Sub publisher client initialized.")
+        # Configure transport with custom channel options for timeout
+        transport = pubsub_v1.services.publisher.transports.PublisherGrpcTransport(
+            channel=pubsub_v1.services.publisher.transports.PublisherGrpcTransport.create_channel(
+                client_options={"api_endpoint": "pubsub.googleapis.com:443"}
+            )
+        )
+        # Configure publisher options with a 60-second timeout
+        publisher_options = pubsub_v1.types.PublisherOptions(
+            enable_message_ordering=False,
+            timeout=60.0,  # 60 second timeout for publish requests
+        )
+        # Initialize the client with the custom transport and options
+        publisher_client = pubsub_v1.PublisherClient(
+            transport=transport, publisher_options=publisher_options
+        )
+        logger.info("Pub/Sub publisher client initialized with custom timeout.")
     return publisher_client
 
 def get_run_client() -> run_v2.JobsClient:
@@ -355,8 +370,9 @@ def execute_scrape_job(event: pubsub_fn.CloudEvent) -> None:
 @https_fn.on_request(cors=CORS_CONFIG)
 def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
     """
-    Reads active groups from the DB and publishes scrape jobs to Pub/Sub.
-    Refactored for performance with batch publishing and parallel waiting.
+    Reads active groups from the DB, publishes scrape jobs to Pub/Sub,
+    and updates their last_scraped_at timestamp.
+    Refactored for resilience, workload management, and performance.
     Triggered securely by Cloud Scheduler.
     """
     # 1. Security Check
@@ -371,6 +387,9 @@ def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
         logger.error("GCP_PROJECT environment variable not set.")
         return https_fn.Response("Server configuration error: GCP_PROJECT not set.", status=500)
 
+    # Workload limit per invocation
+    MAX_JOBS_PER_RUN = 30
+
     try:
         # 2. Get lazily-initialized clients
         publisher = get_publisher_client()
@@ -378,57 +397,79 @@ def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
 
         topic_name = "scrape-requests"
         topic_path = publisher.topic_path(project_id, topic_name)
-
-        # 3. Fetch active groups from the database
-        query = sqlalchemy.text("SELECT url FROM groups WHERE is_active = TRUE;")
-        with engine.connect() as conn:
-            results = conn.execute(query).fetchall()
-
-        if not results:
-            logger.info("No active groups found to scrape.")
-            return https_fn.Response(
-                json.dumps({"message": "No active groups found.", "published_jobs": 0}),
-                status=200,
-                headers={"Content-Type": "application/json"}
-            )
-
-        # 4. Batch Publishing
-        publish_futures = []
-        for row in results:
-            url = row[0]
-            payload = {"url": url}
-            encoded_payload = json.dumps(payload).encode("utf-8")
-            
-            future = publisher.publish(topic_path, encoded_payload)
-            publish_futures.append(future)
-
-        # 5. Wait for all futures to complete in parallel using concurrent.futures
-        done, not_done = concurrent.futures.wait(publish_futures, timeout=30)
-
-        successful_jobs = 0
-        for future in done:
-            try:
-                # Calling .result() on a 'done' future will not block.
-                # It will either return the result or raise an exception immediately.
-                future.result()
-                successful_jobs += 1
-            except Exception as e:
-                logger.error(f"A scrape job failed to publish after completion. Error: {e}")
-
-        # Log any jobs that did not complete within the timeout
-        if not_done:
-            logger.warning(f"{len(not_done)} scrape jobs timed out and were not published.")
         
-        total_jobs = len(results)
-        published_jobs = successful_jobs
-        logger.info(f"Successfully published {published_jobs} of {total_jobs} scrape jobs.")
+        urls_to_update = []
+        results = []
+
+        # 3. Use a transaction to fetch groups and update them atomically
+        with engine.connect() as conn:
+            with conn.begin() as tx:
+                try:
+                    # Fetch groups that need scraping, prioritizing new/old ones
+                    query = sqlalchemy.text("""
+                        SELECT url FROM groups
+                        WHERE is_active = TRUE
+                        ORDER BY last_scraped_at ASC NULLS FIRST
+                        LIMIT :limit;
+                    """)
+                    results = conn.execute(query, {"limit": MAX_JOBS_PER_RUN}).fetchall()
+
+                    if not results:
+                        logger.info("No active groups found to scrape in this run.")
+                        # We still commit the (empty) transaction and return success
+                        tx.commit()
+                        return https_fn.Response(
+                            json.dumps({"message": "No active groups to process."}),
+                            status=200, headers={"Content-Type": "application/json"}
+                        )
+
+                    # 4. Publish jobs and collect futures
+                    publish_futures = []
+                    urls_to_publish = [row.url for row in results]
+                    
+                    for i, url in enumerate(urls_to_publish):
+                        payload = {"url": url}
+                        encoded_payload = json.dumps(payload).encode("utf-8")
+                        # The client-level timeout of 60s applies to each publish call
+                        future = publisher.publish(topic_path, encoded_payload)
+                        # Associate future with its URL for error reporting
+                        publish_futures.append((future, url))
+
+                    # 5. Wait for publish operations to complete and collect results
+                    for future, url in publish_futures:
+                        try:
+                            # result() will block until the message is published or the timeout occurs
+                            future.result()
+                            # If it didn't raise an exception, it was successful
+                            urls_to_update.append(url)
+                        except Exception as e:
+                            logger.error(f"Failed to publish job for URL {url}. Error: {e}")
+
+                    # 6. Update the database for the successfully published jobs
+                    if urls_to_update:
+                        update_stmt = sqlalchemy.text("""
+                            UPDATE groups
+                            SET last_scraped_at = NOW()
+                            WHERE url = ANY(:urls);
+                        """)
+                        conn.execute(update_stmt, {"urls": urls_to_update})
+                        logger.info(f"Updated last_scraped_at for {len(urls_to_update)} groups.")
+
+                    tx.commit()
+
+                except Exception as e:
+                    logger.error(f"Transaction failed, rolling back. Error: {e}")
+                    tx.rollback()
+                    raise # Re-raise the exception to be caught by the outer block
+
+        total_targets = len(results)
+        published_jobs = len(urls_to_update)
         
         return https_fn.Response(
             json.dumps({
-                "message": f"Orchestration complete. Published {published_jobs}/{total_jobs} jobs. {len(not_done)} jobs timed out.",
+                "message": f"Orchestration complete. Successfully published {published_jobs}/{total_targets} jobs.",
                 "published_jobs": published_jobs,
-                "total_targets": total_jobs,
-                "timed_out_jobs": len(not_done)
+                "total_targets": total_targets,
             }),
             status=200,
             headers={"Content-Type": "application/json"}
