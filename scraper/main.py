@@ -6,6 +6,7 @@ import re
 import sys
 import time
 from typing import Any, Dict, List, Optional
+from urllib.parse import urlparse, urlunparse  # added for permalink cleaning
 
 from playwright.async_api import async_playwright, Browser, Page, TimeoutError as PlaywrightTimeoutError
 
@@ -100,6 +101,26 @@ async def expand_post_text(article) -> None:
             continue
 
 
+def clean_permalink(url: str) -> str:
+    """Strip tracking / transient query parameters from a Facebook post URL.
+
+    We keep only scheme + netloc + path. This helps deduplication and gives a
+    stable canonical key for downstream processing.
+    """
+    try:
+        parsed = urlparse(url)
+        # Normalize host to www.facebook.com
+        netloc = parsed.netloc
+        if netloc.endswith("facebook.com") and not netloc.startswith("www."):
+            netloc = "www.facebook.com"
+        # Remove trailing slash (except root)
+        path = re.sub(r"/$", "", parsed.path)
+        cleaned = urlunparse((parsed.scheme or "https", netloc, path, "", "", ""))
+        return cleaned
+    except Exception:
+        return url
+
+
 async def parse_post(article) -> Optional[Dict[str, str]]:
     """Parse a single post article locator to extract permalink and text content.
 
@@ -122,16 +143,18 @@ async def parse_post(article) -> Optional[Dict[str, str]]:
                 url = await el.get_attribute("href")
                 if not url:
                     continue
-                if PERMALINK_REGEX.search(url):
+                base_part = url.split("?")[0]
+                if PERMALINK_REGEX.search(base_part):
                     href = url
                     break
             except Exception:
                 continue
 
         if not href:
-            # Some links are relative, or hidden inside nested elements
-            # Fallback: look for timestamp style links
-            ts_candidates = article.locator("a[aria-label*=' ago'], a[aria-label*='Yesterday'], a[aria-label*='mins'], a[aria-label*='hrs']")
+            # Fallback: timestamp links often still useful even if regex doesn't match
+            ts_candidates = article.locator(
+                "a[aria-label*=' ago'], a[aria-label*='Yesterday'], a[aria-label*='mins'], a[aria-label*='hrs']"
+            )
             try:
                 if await ts_candidates.count() > 0:
                     href = await ts_candidates.first.get_attribute("href")
@@ -148,6 +171,8 @@ async def parse_post(article) -> Optional[Dict[str, str]]:
             permalink = href
         else:
             permalink = FB_BASE + "/" + href.lstrip("/")
+
+        permalink = clean_permalink(permalink)
 
         # Skip comment permalinks
         if is_comment_permalink(permalink):
@@ -208,38 +233,55 @@ async def scrape_group(browser: Browser, group_url: str) -> List[Dict[str, str]]
         # Handle potential blocking popups
         await dismiss_login_popup(page)
 
-        # Wait a bit for initial content to populate
+        # Wait for at least one article (more deterministic than only networkidle)
         try:
-            await page.wait_for_load_state("networkidle", timeout=15000)
+            await page.wait_for_selector("div[role='article']", timeout=15000)
         except PlaywrightTimeoutError:
-            logger.debug("networkidle wait timed out; continuing")
-        await asyncio.sleep(1.5)
+            logger.debug("No article appeared within timeout after navigation")
+        # Additional small delay to let initial batch populate
+        await asyncio.sleep(1.0)
+
+        # Also attempt network idle, but don't rely solely on it
+        try:
+            await page.wait_for_load_state("networkidle", timeout=8000)
+        except PlaywrightTimeoutError:
+            pass
+
+        # Locate articles BEFORE scroll
+        articles = page.locator("div[role='article']")
+        try:
+            initial_count = await articles.count()
+        except Exception:
+            initial_count = 0
+        logger.debug("Initial article count before scroll: %d", initial_count)
 
         # Perform exactly one gentle scroll to load one more batch
         try:
             await page.mouse.wheel(0, 1500)
-            # Give time for new posts to load
-            try:
-                await page.wait_for_load_state("networkidle", timeout=12000)
-            except PlaywrightTimeoutError:
-                pass
-            await asyncio.sleep(2.0)
         except Exception as e:
             logger.debug("Scroll failed or not supported: %s", e)
 
-        # Find visible posts
-        articles = page.locator("div[role='article']")
+        # Poll for growth in article count (up to 8s) after scroll
+        poll_deadline = time.time() + 8.0
+        last_count = initial_count
+        while time.time() < poll_deadline:
+            try:
+                current = await articles.count()
+            except Exception:
+                break
+            if current > last_count:
+                logger.debug("Article count increased %d -> %d", last_count, current)
+                last_count = current
+                # Allow one more short cycle to capture any trailing loads
+            await asyncio.sleep(0.6)
+        final_count = last_count
+        logger.info("Final article count after scroll/poll: %d", final_count)
+
         results: List[Dict[str, str]] = []
         seen = set()  # in-run deduplication by permalink
-        count = 0
-        try:
-            count = await articles.count()
-        except Exception:
-            count = 0
-        logger.info("Found approximately %d article nodes", count)
 
-        # Iterate current set of posts
-        limit = min(count, 20)  # safety cap
+        # Iterate current set of posts (cap at 40 now that we may have more)
+        limit = min(final_count, 40)
         for i in range(limit):
             art = articles.nth(i)
             try:
@@ -269,11 +311,11 @@ async def scrape_group(browser: Browser, group_url: str) -> List[Dict[str, str]]
             pass
 
 
-async def main_async(group_url: str) -> int:
+async def main_async(group_url: str, headless: bool) -> int:
     """Entry point for async scraping job. Returns exit code."""
     # Launch Chromium with flags suitable for containers like Cloud Run
     launch_args = {
-        "headless": True,
+        "headless": headless,
         "args": [
             "--no-sandbox",
             "--disable-setuid-sandbox",
@@ -283,9 +325,9 @@ async def main_async(group_url: str) -> int:
             "--no-first-run",
             "--no-zygote",
         ],
-        # SlowMo can be helpful during debugging; keep it off in production
-        # "slow_mo": 50,
     }
+    if not headless:
+        logger.info("Running in headful (non-headless) mode for debugging")
 
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(**launch_args)
@@ -306,20 +348,37 @@ async def main_async(group_url: str) -> int:
     return 0
 
 
-def parse_args(argv: List[str]) -> Optional[str]:
+def parse_args(argv: List[str]) -> Optional[Dict[str, Any]]:
+    """Parse CLI args.
+
+    Supports:
+      --headful  (optional) run with a visible browser
+    Returns dict with keys: url, headless
+    """
     if len(argv) < 2:
-        logger.error("Usage: python -m scraper.main <facebook_group_url>")
+        logger.error("Usage: python -m scraper.main [--headful] <facebook_group_url>")
         return None
-    return argv[1]
+    headless = True
+    positional: List[str] = []
+    for arg in argv[1:]:
+        if arg == "--headful":
+            headless = False
+        elif arg.startswith("--"):
+            logger.warning("Unknown flag ignored: %s", arg)
+        else:
+            positional.append(arg)
+    if not positional:
+        logger.error("Group URL missing")
+        return None
+    return {"url": positional[-1], "headless": headless}
 
 
 def main() -> None:
-    url = parse_args(sys.argv)
-    if not url:
-        # Don't print anything else to stdout; exit non-zero
+    parsed = parse_args(sys.argv)
+    if not parsed:
         sys.exit(2)
     try:
-        exit_code = asyncio.run(main_async(url))
+        exit_code = asyncio.run(main_async(parsed["url"], parsed["headless"]))
         sys.exit(exit_code)
     except KeyboardInterrupt:
         logger.warning("Interrupted by user")
