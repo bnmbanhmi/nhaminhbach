@@ -2,6 +2,7 @@ import os
 import json
 import uuid
 import base64
+import concurrent.futures
 from decimal import Decimal
 from typing import Any
 from datetime import datetime
@@ -355,7 +356,7 @@ def execute_scrape_job(event: pubsub_fn.CloudEvent) -> None:
 def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
     """
     Reads active groups from the DB and publishes scrape jobs to Pub/Sub.
-    Refactored for performance with batch publishing and client reuse.
+    Refactored for performance with batch publishing and parallel waiting.
     Triggered securely by Cloud Scheduler.
     """
     # 1. Security Check
@@ -365,7 +366,6 @@ def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
         logger.error("Unauthorized access attempt to orchestrate_scrapes.")
         return https_fn.Response("Unauthorized", status=401)
 
-    # Get Google Cloud Project ID from environment variables
     project_id = os.environ.get("GCP_PROJECT")
     if not project_id:
         logger.error("GCP_PROJECT environment variable not set.")
@@ -399,28 +399,36 @@ def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
             payload = {"url": url}
             encoded_payload = json.dumps(payload).encode("utf-8")
             
-            # Publish message and append the future to the list without blocking
             future = publisher.publish(topic_path, encoded_payload)
             publish_futures.append(future)
 
-        # 5. Wait for all futures to complete
-        published_jobs = 0
-        for future in publish_futures:
+        # 5. Wait for all futures to complete in parallel using concurrent.futures
+        done, not_done = concurrent.futures.wait(publish_futures, timeout=30)
+
+        successful_jobs = 0
+        for future in done:
             try:
-                # .result() will block until the message is published and raise an exception on failure
+                # Calling .result() on a 'done' future will not block.
+                # It will either return the result or raise an exception immediately.
                 future.result()
-                published_jobs += 1
+                successful_jobs += 1
             except Exception as e:
-                # It's better to log which jobs failed but allow the function to complete.
-                logger.error(f"Failed to publish a scrape job. Error: {e}")
+                logger.error(f"A scrape job failed to publish after completion. Error: {e}")
+
+        # Log any jobs that did not complete within the timeout
+        if not_done:
+            logger.warning(f"{len(not_done)} scrape jobs timed out and were not published.")
         
         total_jobs = len(results)
+        published_jobs = successful_jobs
         logger.info(f"Successfully published {published_jobs} of {total_jobs} scrape jobs.")
+        
         return https_fn.Response(
             json.dumps({
-                "message": f"Orchestration complete. Published {published_jobs}/{total_jobs} jobs.",
+                "message": f"Orchestration complete. Published {published_jobs}/{total_jobs} jobs. {len(not_done)} jobs timed out.",
                 "published_jobs": published_jobs,
-                "total_targets": total_jobs
+                "total_targets": total_jobs,
+                "timed_out_jobs": len(not_done)
             }),
             status=200,
             headers={"Content-Type": "application/json"}
