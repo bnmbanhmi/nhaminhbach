@@ -362,7 +362,7 @@ def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
     auth_header = req.headers.get("Authorization")
     expected_token = f"Bearer {ORCHESTRATOR_SECRET_KEY}"
     if not ORCHESTRATOR_SECRET_KEY or auth_header != expected_token:
-        logger.warning("Unauthorized access attempt to orchestrate_scrapes.")
+        logger.error("Unauthorized access attempt to orchestrate_scrapes.")
         return https_fn.Response("Unauthorized", status=401)
 
     # Get Google Cloud Project ID from environment variables
