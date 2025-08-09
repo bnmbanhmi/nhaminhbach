@@ -113,15 +113,13 @@ def default_json_serializer(obj):
 
 @https_fn.on_request(
     cors=CORS_CONFIG,
-    run_with=options.RunWith(
-        secrets=["DB_PASS"],
-        environment_variables={
-            "GCP_PROJECT": "omega-sorter-467514-q6",
-            "DB_USER": "postgres",
-            "DB_NAME": "postgres",
-            "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
-        }
-    )
+    secrets=["DB_PASS"],
+    environment_variables={
+        "GCP_PROJECT": "omega-sorter-467514-q6",
+        "DB_USER": "postgres",
+        "DB_NAME": "postgres",
+        "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
+    }
 )
 def create_listing(req: https_fn.Request) -> https_fn.Response:
     """
@@ -219,15 +217,13 @@ def create_listing(req: https_fn.Request) -> https_fn.Response:
 
 @https_fn.on_request(
     cors=CORS_CONFIG,
-    run_with=options.RunWith(
-        secrets=["DB_PASS"],
-        environment_variables={
-            "GCP_PROJECT": "omega-sorter-467514-q6",
-            "DB_USER": "postgres",
-            "DB_NAME": "postgres",
-            "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
-        }
-    )
+    secrets=["DB_PASS"],
+    environment_variables={
+        "GCP_PROJECT": "omega-sorter-467514-q6",
+        "DB_USER": "postgres",
+        "DB_NAME": "postgres",
+        "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
+    }
 )
 def get_listings(req: https_fn.Request) -> https_fn.Response:
     """API Endpoint để lấy tất cả các tin đăng 'available'."""
@@ -264,15 +260,13 @@ def get_listings(req: https_fn.Request) -> https_fn.Response:
 
 @https_fn.on_request(
     cors=CORS_CONFIG,
-    run_with=options.RunWith(
-        secrets=["DB_PASS"],
-        environment_variables={
-            "GCP_PROJECT": "omega-sorter-467514-q6",
-            "DB_USER": "postgres",
-            "DB_NAME": "postgres",
-            "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
-        }
-    )
+    secrets=["DB_PASS"],
+    environment_variables={
+        "GCP_PROJECT": "omega-sorter-467514-q6",
+        "DB_USER": "postgres",
+        "DB_NAME": "postgres",
+        "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
+    }
 )
 def get_listing_by_id(req: https_fn.Request) -> https_fn.Response:
     """Lấy thông tin một tin đăng cụ thể bằng ID (UUID)."""
@@ -321,15 +315,13 @@ def get_listing_by_id(req: https_fn.Request) -> https_fn.Response:
 
 @https_fn.on_request(
     cors=CORS_CONFIG,
-    run_with=options.RunWith(
-        secrets=["DB_PASS"],
-        environment_variables={
-            "GCP_PROJECT": "omega-sorter-467514-q6",
-            "DB_USER": "postgres",
-            "DB_NAME": "postgres",
-            "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
-        }
-    )
+    secrets=["DB_PASS"],
+    environment_variables={
+        "GCP_PROJECT": "omega-sorter-467514-q6",
+        "DB_USER": "postgres",
+        "DB_NAME": "postgres",
+        "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
+    }
 )
 def get_all_attributes(req: https_fn.Request) -> https_fn.Response:
     """
@@ -361,12 +353,10 @@ def get_all_attributes(req: https_fn.Request) -> https_fn.Response:
 # =================================================================================
 @pubsub_fn.on_message_published(
     topic="scrape-requests",
-    run_with=options.RunWith(
-        environment_variables={
-            "GCP_PROJECT": "omega-sorter-467514-q6",
-            "GCP_REGION": "asia-southeast1"
-        }
-    )
+    environment_variables={
+        "GCP_PROJECT": "omega-sorter-467514-q6",
+        "GCP_REGION": "asia-southeast1"
+    }
 )
 def execute_scrape_job(event: pubsub_fn.CloudEvent) -> None:
     """
@@ -419,15 +409,13 @@ def execute_scrape_job(event: pubsub_fn.CloudEvent) -> None:
 
 @https_fn.on_request(
     cors=CORS_CONFIG,
-    run_with=options.RunWith(
-        secrets=["ORCHESTRATOR_SECRET_KEY", "DB_PASS"],
-        environment_variables={
-            "GCP_PROJECT": "omega-sorter-467514-q6",
-            "DB_USER": "postgres",
-            "DB_NAME": "postgres",
-            "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
-        }
-    )
+    secrets=["ORCHESTRATOR_SECRET_KEY", "DB_PASS"],
+    environment_variables={
+        "GCP_PROJECT": "omega-sorter-467514-q6",
+        "DB_USER": "postgres",
+        "DB_NAME": "postgres",
+        "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
+    }
 )
 def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
     """
