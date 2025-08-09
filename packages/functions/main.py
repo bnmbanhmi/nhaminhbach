@@ -1,12 +1,14 @@
 import os
 import json
 import uuid
+import base64
 from decimal import Decimal
 from typing import Any
 from datetime import datetime
 
-from firebase_functions import https_fn, options, logger
+from firebase_functions import https_fn, options, logger, pubsub_fn
 from google.cloud.sql.connector import Connector, IPTypes
+from google.cloud import pubsub_v1, run_v2
 import sqlalchemy
 
 # =================================================================================
@@ -17,14 +19,21 @@ INSTANCE_CONNECTION_NAME = os.environ.get("INSTANCE_CONNECTION_NAME")
 DB_USER = os.environ.get("DB_USER")
 DB_PASS = os.environ.get("DB_PASS")
 DB_NAME = os.environ.get("DB_NAME")
+ORCHESTRATOR_SECRET_KEY = os.environ.get("ORCHESTRATOR_SECRET_KEY")
+GCP_PROJECT = os.environ.get("GCP_PROJECT")
+GCP_REGION = "asia-southeast1"
+
 
 IS_EMULATOR = os.environ.get("FUNCTIONS_EMULATOR") == "true"
 
 # Cài đặt toàn cục cho tất cả các function trong region này
-options.set_global_options(region="asia-southeast1", max_instances=5)
+options.set_global_options(region=GCP_REGION, max_instances=5)
 
 # Biến toàn cục cho SQLAlchemy Engine, được khởi tạo một cách "lười biếng"
 db_engine: sqlalchemy.engine.Engine = None
+publisher_client: pubsub_v1.PublisherClient = None
+run_client: run_v2.JobsClient = None
+
 
 # Thống nhất cấu hình CORS cho tất cả các endpoint
 # Cho phép tất cả các nguồn gốc trong môi trường dev để dễ dàng kiểm thử
@@ -34,7 +43,7 @@ CORS_CONFIG = options.CorsOptions(
 )
 
 # =================================================================================
-#  2. DATABASE INITIALIZATION (Refactored into a single function)
+#  2. CLIENT INITIALIZATION (Refactored into helper functions)
 # =================================================================================
 
 def get_db_engine() -> sqlalchemy.engine.Engine:
@@ -56,6 +65,23 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
     logger.info("Database engine initialized.")
     return db_engine
 
+def get_publisher_client() -> pubsub_v1.PublisherClient:
+    """Initializes and returns a global Pub/Sub client."""
+    global publisher_client
+    if publisher_client is None:
+        publisher_client = pubsub_v1.PublisherClient()
+        logger.info("Pub/Sub publisher client initialized.")
+    return publisher_client
+
+def get_run_client() -> run_v2.JobsClient:
+    """Initializes and returns a global Cloud Run Jobs client."""
+    global run_client
+    if run_client is None:
+        run_client = run_v2.JobsClient()
+        logger.info("Cloud Run Jobs client initialized.")
+    return run_client
+
+
 # =================================================================================
 #  3. UTILITY FUNCTIONS
 # =================================================================================
@@ -64,11 +90,7 @@ def default_json_serializer(obj):
     """Custom JSON serializer for objects not serializable by default."""
     if isinstance(obj, (datetime, uuid.UUID)):
         return str(obj)
-    # *** THÊM LOGIC XỬ LÝ DECIMAL VÀO ĐÂY ***
     if isinstance(obj, Decimal):
-        # Chuyển đổi Decimal thành float hoặc string. Float là lựa chọn phổ biến
-        # cho JSON, nhưng string an toàn hơn nếu cần độ chính xác tuyệt đối.
-        # Ở đây, float là đủ tốt cho diện tích.
         return float(obj)
     raise TypeError(f"Type {type(obj)} not serializable")
 
@@ -276,4 +298,137 @@ def get_all_attributes(req: https_fn.Request) -> https_fn.Response:
 
     except Exception as e:
         logger.error(f"Error in get_all_attributes: {e}")
+        return https_fn.Response("An internal server error occurred.", status=500)
+
+# =================================================================================
+#  5. ORCHESTRATION & BACKGROUND FUNCTIONS
+# =================================================================================
+@pubsub_fn.on_message_published(topic="scrape-requests")
+def execute_scrape_job(event: pubsub_fn.CloudEvent) -> None:
+    """
+    Triggered by a message on 'scrape-requests' topic.
+    Executes the Cloud Run 'scrape-job' with the URL from the message.
+    """
+    try:
+        # 1. Decode the message payload
+        encoded_data = event.data.get("message", {}).get("data")
+        if not encoded_data:
+            logger.error("Received Pub/Sub message with no data.")
+            return
+
+        decoded_data = base64.b64decode(encoded_data).decode("utf-8")
+        message_payload = json.loads(decoded_data)
+        url = message_payload.get("url")
+
+        if not url:
+            logger.error(f"No 'url' found in message payload: {message_payload}")
+            return
+
+        logger.info(f"Received request to execute scrape job for URL: {url}")
+
+        # 2. Get the Cloud Run client
+        client = get_run_client()
+        job_name = f"projects/{GCP_PROJECT}/locations/{GCP_REGION}/jobs/scrape-job"
+
+        # 3. Prepare and run the job
+        request = run_v2.RunJobRequest(
+            name=job_name,
+            overrides=run_v2.types.RunJobRequest.Overrides(
+                container_overrides=[
+                    run_v2.types.RunJobRequest.Overrides.ContainerOverride(
+                        args=[url]
+                    )
+                ]
+            ),
+        )
+
+        operation = client.run_job(request=request)
+        logger.info(f"Successfully triggered job for URL: {url}. Operation: {operation.metadata.name}")
+
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to decode JSON from Pub/Sub message: {e}")
+    except Exception as e:
+        logger.error(f"An unexpected error occurred in execute_scrape_job: {e}")
+
+
+@https_fn.on_request(cors=CORS_CONFIG)
+def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
+    """
+    Reads active groups from the DB and publishes scrape jobs to Pub/Sub.
+    Refactored for performance with batch publishing and client reuse.
+    Triggered securely by Cloud Scheduler.
+    """
+    # 1. Security Check
+    auth_header = req.headers.get("Authorization")
+    expected_token = f"Bearer {ORCHESTRATOR_SECRET_KEY}"
+    if not ORCHESTRATOR_SECRET_KEY or auth_header != expected_token:
+        logger.warning("Unauthorized access attempt to orchestrate_scrapes.")
+        return https_fn.Response("Unauthorized", status=401)
+
+    # Get Google Cloud Project ID from environment variables
+    project_id = os.environ.get("GCP_PROJECT")
+    if not project_id:
+        logger.error("GCP_PROJECT environment variable not set.")
+        return https_fn.Response("Server configuration error: GCP_PROJECT not set.", status=500)
+
+    try:
+        # 2. Get lazily-initialized clients
+        publisher = get_publisher_client()
+        engine = get_db_engine()
+
+        topic_name = "scrape-requests"
+        topic_path = publisher.topic_path(project_id, topic_name)
+
+        # 3. Fetch active groups from the database
+        query = sqlalchemy.text("SELECT url FROM groups WHERE is_active = TRUE;")
+        with engine.connect() as conn:
+            results = conn.execute(query).fetchall()
+
+        if not results:
+            logger.info("No active groups found to scrape.")
+            return https_fn.Response(
+                json.dumps({"message": "No active groups found.", "published_jobs": 0}),
+                status=200,
+                headers={"Content-Type": "application/json"}
+            )
+
+        # 4. Batch Publishing
+        publish_futures = []
+        for row in results:
+            url = row[0]
+            payload = {"url": url}
+            encoded_payload = json.dumps(payload).encode("utf-8")
+            
+            # Publish message and append the future to the list without blocking
+            future = publisher.publish(topic_path, encoded_payload)
+            publish_futures.append(future)
+
+        # 5. Wait for all futures to complete
+        published_jobs = 0
+        for future in publish_futures:
+            try:
+                # .result() will block until the message is published and raise an exception on failure
+                future.result()
+                published_jobs += 1
+            except Exception as e:
+                # It's better to log which jobs failed but allow the function to complete.
+                logger.error(f"Failed to publish a scrape job. Error: {e}")
+        
+        total_jobs = len(results)
+        logger.info(f"Successfully published {published_jobs} of {total_jobs} scrape jobs.")
+        return https_fn.Response(
+            json.dumps({
+                "message": f"Orchestration complete. Published {published_jobs}/{total_jobs} jobs.",
+                "published_jobs": published_jobs,
+                "total_targets": total_jobs
+            }),
+            status=200,
+            headers={"Content-Type": "application/json"}
+        )
+
+    except sqlalchemy.exc.SQLAlchemyError as e:
+        logger.error(f"Database error during scrape orchestration: {e}")
+        return https_fn.Response("A database error occurred.", status=500)
+    except Exception as e:
+        logger.error(f"An unexpected error occurred during scrape orchestration: {e}")
         return https_fn.Response("An internal server error occurred.", status=500)
