@@ -16,20 +16,9 @@ import sqlalchemy
 # =================================================================================
 #  1. GLOBAL SETUP & CONFIGURATION
 # =================================================================================
-# Tải cấu hình từ biến môi trường
-INSTANCE_CONNECTION_NAME = os.environ.get("INSTANCE_CONNECTION_NAME")
-DB_USER = os.environ.get("DB_USER")
-DB_PASS = os.environ.get("DB_PASS")
-DB_NAME = os.environ.get("DB_NAME")
-ORCHESTRATOR_SECRET_KEY = os.environ.get("ORCHESTRATOR_SECRET_KEY")
-GCP_PROJECT = os.environ.get("GCP_PROJECT")
-GCP_REGION = "asia-southeast1"
-
-
-IS_EMULATOR = os.environ.get("FUNCTIONS_EMULATOR") == "true"
 
 # Cài đặt toàn cục cho tất cả các function trong region này
-options.set_global_options(region=GCP_REGION, max_instances=5)
+options.set_global_options(region="asia-southeast1", max_instances=5)
 
 # Biến toàn cục cho SQLAlchemy Engine, được khởi tạo một cách "lười biếng"
 db_engine: sqlalchemy.engine.Engine = None
@@ -52,6 +41,13 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
     global db_engine
     if db_engine is not None:
         return db_engine
+
+    # Các biến môi trường này sẽ được cung cấp bởi cấu hình `run_with`
+    INSTANCE_CONNECTION_NAME = os.environ.get("INSTANCE_CONNECTION_NAME")
+    DB_USER = os.environ.get("DB_USER")
+    DB_PASS = os.environ.get("DB_PASS") # Sẽ được lấy từ Secret Manager
+    DB_NAME = os.environ.get("DB_NAME")
+    IS_EMULATOR = os.environ.get("FUNCTIONS_EMULATOR") == "true"
 
     def getconn() -> Any:
         # Sử dụng IS_EMULATOR đã được định nghĩa ở global
@@ -115,7 +111,18 @@ def default_json_serializer(obj):
 #  4. API ENDPOINTS
 # =================================================================================
 
-@https_fn.on_request(cors=CORS_CONFIG)
+@https_fn.on_request(
+    cors=CORS_CONFIG,
+    run_with=options.RunWith(
+        secrets=["DB_PASS"],
+        environment_variables={
+            "GCP_PROJECT": "omega-sorter-467514-q6",
+            "DB_USER": "postgres",
+            "DB_NAME": "postgres",
+            "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
+        }
+    )
+)
 def create_listing(req: https_fn.Request) -> https_fn.Response:
     """
     API Endpoint to create a new listing with dynamic attributes.
@@ -210,7 +217,18 @@ def create_listing(req: https_fn.Request) -> https_fn.Response:
         return https_fn.Response("An internal server error occurred.", status=500)
 
 
-@https_fn.on_request(cors=CORS_CONFIG)
+@https_fn.on_request(
+    cors=CORS_CONFIG,
+    run_with=options.RunWith(
+        secrets=["DB_PASS"],
+        environment_variables={
+            "GCP_PROJECT": "omega-sorter-467514-q6",
+            "DB_USER": "postgres",
+            "DB_NAME": "postgres",
+            "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
+        }
+    )
+)
 def get_listings(req: https_fn.Request) -> https_fn.Response:
     """API Endpoint để lấy tất cả các tin đăng 'available'."""
     if req.method != "GET":
@@ -244,7 +262,18 @@ def get_listings(req: https_fn.Request) -> https_fn.Response:
         return https_fn.Response("An internal server error occurred.", status=500)
 
 
-@https_fn.on_request(cors=CORS_CONFIG)
+@https_fn.on_request(
+    cors=CORS_CONFIG,
+    run_with=options.RunWith(
+        secrets=["DB_PASS"],
+        environment_variables={
+            "GCP_PROJECT": "omega-sorter-467514-q6",
+            "DB_USER": "postgres",
+            "DB_NAME": "postgres",
+            "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
+        }
+    )
+)
 def get_listing_by_id(req: https_fn.Request) -> https_fn.Response:
     """Lấy thông tin một tin đăng cụ thể bằng ID (UUID)."""
     if req.method != "GET":
@@ -290,7 +319,18 @@ def get_listing_by_id(req: https_fn.Request) -> https_fn.Response:
         return https_fn.Response("An internal server error occurred.", status=500)
 
 
-@https_fn.on_request(cors=CORS_CONFIG)
+@https_fn.on_request(
+    cors=CORS_CONFIG,
+    run_with=options.RunWith(
+        secrets=["DB_PASS"],
+        environment_variables={
+            "GCP_PROJECT": "omega-sorter-467514-q6",
+            "DB_USER": "postgres",
+            "DB_NAME": "postgres",
+            "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
+        }
+    )
+)
 def get_all_attributes(req: https_fn.Request) -> https_fn.Response:
     """
     API Endpoint to get all possible attributes for a listing.
@@ -319,7 +359,15 @@ def get_all_attributes(req: https_fn.Request) -> https_fn.Response:
 # =================================================================================
 #  5. ORCHESTRATION & BACKGROUND FUNCTIONS
 # =================================================================================
-@pubsub_fn.on_message_published(topic="scrape-requests")
+@pubsub_fn.on_message_published(
+    topic="scrape-requests",
+    run_with=options.RunWith(
+        environment_variables={
+            "GCP_PROJECT": "omega-sorter-467514-q6",
+            "GCP_REGION": "asia-southeast1"
+        }
+    )
+)
 def execute_scrape_job(event: pubsub_fn.CloudEvent) -> None:
     """
     Triggered by a message on 'scrape-requests' topic.
@@ -344,7 +392,9 @@ def execute_scrape_job(event: pubsub_fn.CloudEvent) -> None:
 
         # 2. Get the Cloud Run client
         client = get_run_client()
-        job_name = f"projects/{GCP_PROJECT}/locations/{GCP_REGION}/jobs/scrape-job"
+        gcp_project = os.environ.get("GCP_PROJECT")
+        gcp_region = os.environ.get("GCP_REGION")
+        job_name = f"projects/{gcp_project}/locations/{gcp_region}/jobs/scrape-job"
 
         # 3. Prepare and run the job
         request = run_v2.RunJobRequest(
@@ -367,7 +417,18 @@ def execute_scrape_job(event: pubsub_fn.CloudEvent) -> None:
         logger.error(f"An unexpected error occurred in execute_scrape_job: {e}")
 
 
-@https_fn.on_request(cors=CORS_CONFIG)
+@https_fn.on_request(
+    cors=CORS_CONFIG,
+    run_with=options.RunWith(
+        secrets=["ORCHESTRATOR_SECRET_KEY", "DB_PASS"],
+        environment_variables={
+            "GCP_PROJECT": "omega-sorter-467514-q6",
+            "DB_USER": "postgres",
+            "DB_NAME": "postgres",
+            "INSTANCE_CONNECTION_NAME": "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod"
+        }
+    )
+)
 def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
     """
     Reads active groups from the DB, publishes scrape jobs to Pub/Sub,
@@ -377,8 +438,10 @@ def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
     """
     # 1. Security Check
     auth_header = req.headers.get("Authorization")
-    expected_token = f"Bearer {ORCHESTRATOR_SECRET_KEY}"
-    if not ORCHESTRATOR_SECRET_KEY or auth_header != expected_token:
+    # Secret is loaded into environment by Cloud Functions
+    orchestrator_secret_key = os.environ.get("ORCHESTRATOR_SECRET_KEY")
+    expected_token = f"Bearer {orchestrator_secret_key}"
+    if not orchestrator_secret_key or auth_header != expected_token:
         logger.error("Unauthorized access attempt to orchestrate_scrapes.")
         return https_fn.Response("Unauthorized", status=401)
 
