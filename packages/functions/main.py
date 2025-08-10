@@ -385,15 +385,6 @@ def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
     Refactored for resilience, workload management, and performance.
     Triggered securely by Cloud Scheduler.
     """
-    # 1. Security Check
-    auth_header = req.headers.get("Authorization")
-    # Secret is loaded into environment by Cloud Functions
-    orchestrator_secret_key = os.environ.get("ORCHESTRATOR_SECRET_KEY")
-    expected_token = f"Bearer {orchestrator_secret_key}"
-    if not orchestrator_secret_key or auth_header != expected_token:
-        logger.error("Unauthorized access attempt to orchestrate_scrapes.")
-        return https_fn.Response("Unauthorized", status=401)
-
     project_id = os.environ.get("GCP_PROJECT")
     if not project_id:
         logger.error("GCP_PROJECT environment variable not set.")
