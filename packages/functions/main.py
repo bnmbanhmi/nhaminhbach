@@ -64,25 +64,13 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
     return db_engine
 
 def get_publisher_client() -> pubsub_v1.PublisherClient:
-    """Initializes and returns a global Pub/Sub client with a timeout."""
+    """Initializes and returns a global Pub/Sub client."""
     global publisher_client
     if publisher_client is None:
-        # Configure transport with custom channel options for timeout
-        transport = pubsub_v1.services.publisher.transports.PublisherGrpcTransport(
-            channel=pubsub_v1.services.publisher.transports.PublisherGrpcTransport.create_channel(
-                client_options={"api_endpoint": "pubsub.googleapis.com:443"}
-            )
-        )
-        # Configure publisher options with a 60-second timeout
-        publisher_options = pubsub_v1.types.PublisherOptions(
-            enable_message_ordering=False,
-            timeout=60.0,  # 60 second timeout for publish requests
-        )
-        # Initialize the client with the custom transport and options
-        publisher_client = pubsub_v1.PublisherClient(
-            transport=transport, publisher_options=publisher_options
-        )
-        logger.info("Pub/Sub publisher client initialized with custom timeout.")
+        # Initialize the client with default settings.
+        # Timeouts can be handled on the publish() call itself if needed.
+        publisher_client = pubsub_v1.PublisherClient()
+        logger.info("Pub/Sub publisher client initialized.")
     return publisher_client
 
 def get_run_client() -> run_v2.JobsClient:
