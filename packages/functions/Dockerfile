@@ -1,5 +1,5 @@
 # 1. Base Image
-FROM gcr.io/google-appengine/python-image:python312
+FROM us-docker.pkg.dev/google-appengine-images/python/python312
 
 # 2. Set APP_HOME
 ENV APP_HOME /srv
