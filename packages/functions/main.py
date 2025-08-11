@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import uuid
 import base64
 import concurrent.futures
@@ -426,6 +427,8 @@ def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
                         # Associate future with its URL for error reporting
                         publish_futures.append((future, url))
 
+                        # Add a small delay to avoid hitting Pub/Sub publish rate limits.
+                        time.sleep(0.05)
                     # 5. Wait for publish operations to complete and collect results
                     for future, url in publish_futures:
                         try:
