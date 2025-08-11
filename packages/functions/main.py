@@ -56,7 +56,7 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
         conn = Connector().connect(
             INSTANCE_CONNECTION_NAME, "pg8000", user=DB_USER, password=DB_PASS,
             db=DB_NAME, ip_type=IPTypes.PUBLIC,
-            enable_iam_auth=enable_iam_auth
+            enable_iam_auth=False
         )
         return conn
 
