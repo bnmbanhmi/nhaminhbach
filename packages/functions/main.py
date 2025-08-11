@@ -313,16 +313,17 @@ def get_all_attributes(req: https_fn.Request) -> https_fn.Response:
 #  5. ORCHESTRATION & BACKGROUND FUNCTIONS
 # =================================================================================
 @pubsub_fn.on_message_published(
-    topic="scrape-requests"
+    topic="scrape-requests",
+    region="asia-southeast1" # Explicitly define the region
 )
-def execute_scrape_job(event: pubsub_fn.CloudEvent) -> None:
+def execute_scrape_job(event: pubsub_fn.CloudEvent[pubsub_fn.Message]) -> None:
     """
     Triggered by a message on 'scrape-requests' topic.
     Executes the Cloud Run 'scrape-job' with the URL from the message.
     """
     try:
         # 1. Decode the message payload
-        encoded_data = event.data.get("message", {}).get("data")
+        encoded_data = event.data.message.data
         if not encoded_data:
             logger.error("Received Pub/Sub message with no data.")
             return
