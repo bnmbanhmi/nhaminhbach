@@ -54,7 +54,7 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
         enable_iam_auth = not IS_EMULATOR
         conn = Connector().connect(
             INSTANCE_CONNECTION_NAME, "pg8000", user=DB_USER, password=DB_PASS,
-            db=DB_NAME, ip_type=IPTypes.PUBLIC if IS_EMULATOR else IPTypes.PRIVATE,
+            db=DB_NAME, ip_type=IPTypes.PUBLIC,
             enable_iam_auth=enable_iam_auth
         )
         return conn
