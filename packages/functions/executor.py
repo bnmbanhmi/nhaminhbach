@@ -35,6 +35,7 @@ def execute_scrape_job_handler():
         return "Bad Request", 400
 
     try:
+        logger.info("EXECUTOR_V4_CANARY_LOG: Handler invoked. Command override is active.")
         message = envelope["message"]
         encoded_data = message.get("data")
         if not encoded_data:
