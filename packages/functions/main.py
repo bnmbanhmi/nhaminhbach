@@ -316,7 +316,7 @@ def get_all_attributes(req: https_fn.Request) -> https_fn.Response:
     topic="scrape-requests",
     region="asia-southeast1" # Explicitly define the region
 )
-def execute_scrape_job(event: pubsub_fn.CloudEvent[pubsub_fn.Message]) -> None:
+def execute_scrape_job(event: pubsub_fn.CloudEvent[pubsub_fn.Message], *args, **kwargs) -> None:
     """
     Triggered by a message on 'scrape-requests' topic.
     Executes the Cloud Run 'scrape-job' with the URL from the message.
