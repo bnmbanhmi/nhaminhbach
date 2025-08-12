@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import time
+import uuid
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse, urlunparse  # added for permalink cleaning
 from dataclasses import dataclass, asdict  # dataclass for structured posts
