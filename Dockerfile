@@ -15,9 +15,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN playwright install --with-deps chromium
 
 # Copy the rest of the application code
-# Assumes the scraper code is in packages/scraper
+# Assumes the scraper code is in packages/scraper and main.py is at the root
 COPY packages/scraper/ .
 
 # Set the command to run the scraper
 # Assumes the main script is main.py
-CMD ["python", "main.py"]
