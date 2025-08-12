@@ -61,12 +61,7 @@ def execute_scrape_job_handler():
         run_job_request = run_v2.RunJobRequest(
             name=job_name,
             overrides=run_v2.types.RunJobRequest.Overrides(
-                container_overrides=[
-                    run_v2.types.RunJobRequest.Overrides.ContainerOverride(
-                        command=["python"],
-                        args=["main.py", url]
-                    )
-                ]
+                container_overrides=[run_v2.types.RunJobRequest.Overrides.ContainerOverride(args=["python", "main.py", url])]
             ),
         )
 
