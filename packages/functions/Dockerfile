@@ -1,32 +1,30 @@
-# 1. Base Image: Use a standard, slim Python image.
-# python:3.11-slim is a good choice for Cloud Functions.
+# 1. Base Image
 FROM python:3.11-slim
 
-# 2. Set Environment Variables
-# APP_HOME is the conventional directory for applications.
-# PYTHONUNBUFFERED ensures that print statements are sent straight to the terminal without being buffered first.
-ENV APP_HOME /app
-ENV PYTHONUNBUFFERED True
+# 2. Set APP_HOME
+ENV APP_HOME /srv
 WORKDIR $APP_HOME
 
-# 3. Install System-level Dependencies
-# - libpq-dev: Contains header files needed to build PostgreSQL client libraries like pg8000 or asyncpg.
-# - gcc: The GNU Compiler Collection, needed to compile C extensions that some Python packages rely on.
+# Cài đặt các dependency hệ thống cần thiết
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# 4. Copy and Install Python Requirements
-# Copying requirements.txt first allows Docker to cache this layer.
-# The layer will only be rebuilt if requirements.txt changes.
+# 3. Copy Requirements
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Copy the rest of the application code
-# This includes main.py and any other modules.
-COPY . .
+# 4. Install Dependencies
+# Thêm gunicorn vào requirements.txt hoặc cài đặt trực tiếp ở đây
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
-# No ENTRYPOINT or CMD is needed.
-# Google Cloud Functions provides the entrypoint that runs your function
-# using the Functions Framework based on the function signature in your code.
+# 5. Copy Application Code
+# Chỉ copy file executor.py, vì chúng ta không cần main.py nữa
+COPY executor.py .
+
+# 6. Expose Port
+EXPOSE 8080
+
+# 7. Start the server
+# Dùng gunicorn để chạy ứng dụng Flask trong file executor.py
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 executor:app
