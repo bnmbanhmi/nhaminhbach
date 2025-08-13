@@ -63,13 +63,13 @@
 
 ### AI Coding agent trong Github Copilot trong VSC
 
-* Có file .github/[copilot-instructions.md](http://copilot-instructions.md) mặc định của extenstion, là instruction prompt chung, đang chứa toàn bộ nội dung tài liệu thiết kế hệ thống như đã nhắc ở trên  
+* Có file .github/copilot-instructions.md mặc định của extenstion, là instruction prompt chung, đang chứa toàn bộ nội dung tài liệu thiết kế hệ thống như đã nhắc ở trên  
 * Hoạt động bên trong giao diện chat của extension Github Copilot trong VSC  
 * Đang chủ yếu dùng cho frontend, nhưng vấn đề hiện tại là phải deploy trên firebase studio (idx) terminal mới chạy được, nên sửa code xong phải commit lên github rồi mới test và sửa được trên firebase studio (idx)
 
 ### AI Coding agent trong Firebase Studio (trước đây là idx)
 
-* Sử dụng lại file .github/[copilot-instructions.md](http://copilot-instructions.md) tuy không phải là mặc định  
+* Sử dụng lại file .github/copilot-instructions.md tuy không phải là mặc định  
 * Hoạt động bên trong giao diện chat của Gemini trong Firebase Studio  
 * Đang chủ yếu dùng cho backend, vì thực hiện các lệnh liên quan đến Firebase hay Google Cloud dễ dàng hơn  
 * Hiện chưa được mạnh bằng, chưa được tích hợp tốt bằng Github Copilot
@@ -110,39 +110,39 @@ Hệ thống tri thức và instruction prompt, hay xa hơn là agent blueprint,
 
 ## Quy trình thực hiện
 
-1. ### Xây dựng hệ thống tri thức 3 tầng, vận hành bởi Github Copilot
+### Xây dựng hệ thống tri thức 3 tầng, vận hành bởi Github Copilot
 
-   1. Tầng đầu tiên  
+1. Tầng đầu tiên  
 * Luôn đi cùng với tất cả các câu trả lời của Github Copilot  
 * Gồm  
   * File copilot-instructions.md mặc định của Github Copilot. Nhưng giờ, trong file này, thay vì có các thông tin kĩ thuật, sẽ có các thông tin chỉ dẫn cho Github Copilot cách sử dụng hệ thống hiện tại, khi nào thì dùng gì  
     * Có thể tích hợp luôn khả năng thay đổi role liên tục trong 1 đoạn hội thoại, chứ không chỉ giới hạn đoạn hội thoại ở 1 agent  
   * Các tài liệu cốt lõi định hình tổ chức  
   * Có thể thêm cả tài liệu thiết kế hệ thống với các đoạn hội thoại liên quan đến kỹ thuật  
-  * Tương lai sẽ là các quy trình làm việc, các workflow có sự tham gia của nhiều agent  
+  * Tương lai sẽ là các quy trình làm việc, các workflow có sự tham gia của nhiều agent    
       
-      
-  2. Tầng thứ hai  
+2. Tầng thứ hai  
 * Luôn đi cùng với các AI cụ thể  
 * Gồm  
-  * File md instruction prompt riêng cho từng AI Agent: Coach Martin, CTO Alex, AI Coding Agent, tương lai có thể là các AI liên quan đến chiến lược tài chính, chiến lược marketing  
+  * File md lưu trữ trong .github/instructions, dành riêng cho từng AI Agent: Coach Martin, CTO Alex, AI Coding Agent, tương lai có thể là các AI liên quan đến chiến lược tài chính, chiến lược marketing  
   * Các workflow liên quan của riêng từng AI Agent hoặc cái tài liệu gắn liền với Agent đó  
-  * Khung outline tóm tắt lịch sử cuộc trò chuyện của riêng agent đó theo thời gian  
-  3. Tầng thứ ba  
+  * Khung outline tóm tắt lịch sử cuộc trò chuyện của riêng agent đó theo thời gian
+
+3. Tầng thứ ba  
 * Gắn liền với từng task/sprint/đoạn hội thoại cụ thể  
 * Gồm  
   * Với đoạn chat hiện tại với user (bên trong Github Copilot): chưa cần lưu lại toàn bộ lịch sử chat, chỉ cần liên tục cập nhật biên bản cuộc trò chuyện, giữ nguyên nội dung nhưng được hệ thống thành các ý rõ ràng  
   * Sau khi kết thúc từng task/sprint/đoạn hội thoại, sẽ xuất nội dung chat ra file json để lưu lại, lưu trữ cùng biên bản cuộc trò chuyện trong file markdown  
   * Các AI Agent có thể sử dụng khung outline tóm tắt lịch sử cuộc trò chuyện để tìm kiếm ra đoạn chat hoặc biên bản cuộc trò chuyện đã được lưu trữ, thay vì nhận lại toàn bộ tất cả lịch sử chat
 
-2. ### Xử lý data hiện tại
+### Xử lý data hiện tại
 
 * Lịch sử chat của các AI trên Google AI Studio hiện tại đang ở trong 1 format khó theo dõi, cần  
   * Viết code python xử lý lại để thành format dễ nhìn phân chia prompt của user và response của AI, luân phiên nhau  
   * Chưng cất lại thành các nội dung, tài liệu liên quan như khung outline lịch sử, workflow, các tài liệu kỹ thuật  
     * Cần có quy trình cụ thể để dùng AI chưng cất, với đầu vào là nội dung đoạn chat và các tài liệu liên quan ban đầu (user tự đọc lại và lựa chọn các tài liệu liên quan), đầu ra sẽ là tài liệu được cập nhật. Quy trình này sẽ là tiền để để sau này sử dụng AI chưng cất, cập nhật liên tục các tài liệu, tri thức
 
-3. ### Xây dựng quy trình xử lý data
+### Xây dựng quy trình xử lý data
 
 * Viết code python xử lý lại file json lịch sử chat xuất từ Github Copilot  
 * Đưa quy trình đã xây dựng cho việc chưng cất vào bên trong copilot-instructions.md

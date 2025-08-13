@@ -1,0 +1,137 @@
+{
+  "requesterUsername": "bnmbanhmi",
+  "requesterAvatarIconUri": {
+    "$mid": 1,
+    "path": "/u/75887543",
+    "scheme": "https",
+    "authority": "avatars.githubusercontent.com",
+    "query": "v=4"
+  },
+  "responderUsername": "GitHub Copilot",
+  "responderAvatarIconUri": {
+    "id": "copilot"
+  },
+  "initialLocation": "panel",
+  "requests": [
+    {
+      "requestId": "request_8ad432f2-9162-496c-8c11-1123e11d48a7",
+      "message": {
+        "parts": [
+          {
+            "range": {
+              "start": 0,
+              "endExclusive": 53
+            },
+            "editorRange": {
+              "startLineNumber": 1,
+              "startColumn": 1,
+              "endLineNumber": 1,
+              "endColumn": 54
+            },
+            "text": "this is a test message. response with a test message.",
+            "kind": "text"
+          }
+        ],
+        "text": "this is a test message. response with a test message."
+      },
+      "variableData": {
+        "variables": []
+      },
+      "response": [
+        {
+          "value": "This is a test response. Let me know how I can assist you further!",
+          "supportThemeIcons": false,
+          "supportHtml": false,
+          "baseUri": {
+            "$mid": 1,
+            "path": "/Users/mac/nhaminhbach.com/nhaminhbach/",
+            "scheme": "file"
+          }
+        }
+      ],
+      "responseId": "response_047aeca6-75e5-4931-9136-bcaf4fe98350",
+      "result": {
+        "timings": {
+          "firstProgress": 3161,
+          "totalElapsed": 3458
+        },
+        "metadata": {
+          "codeBlocks": [],
+          "renderedUserMessage": [
+            {
+              "type": 1,
+              "text": "<context>\nThe current date is August 13, 2025.\nTasks: No tasks found.Terminals:\nTerminal: zsh\nLast Command: clear\nCwd: /Users/mac/nhaminhbach.com/nhaminhbach\nExit Code: 0\nOutput: {Use get_terminal_output for terminal with ID: 52577.}\nTerminal: zsh\nOutput: {Use get_terminal_output for terminal with ID: 54709.}\nTerminal: Code\nLast Command: python main.py --headful \"https://www.facebook.com/groups/phongtrometrimydinhcaugiay\"\nCwd: /Users/mac/nhaminhbach.com/nhaminhbach/packages/scraper\nExit Code: 0\nOutput: {Use get_terminal_output for terminal with ID: 55960.}\n\n</context>\n<editorContext>\nThe user's current file is /Users/mac/nhaminhbach.com/nhaminhbach/agent_team/great_migration.md. \n</editorContext>\n<repoContext>\nBelow is the information about the current repository. You can use this information when you need to calculate diffs or compare changes with the default branch.\nRepository name: nhaminhbach\nOwner: bnmbanhmi\nCurrent branch: main\nDefault branch: main\n\n</repoContext>\n<reminderInstructions>\nWhen using the insert_edit_into_file tool, avoid repeating existing code, instead use a line comment with \\`...existing code...\\` to represent regions of unchanged code.\n\n</reminderInstructions>\n<userRequest>\nthis is a test message. response with a test message.\n</userRequest>\n"
+            },
+            {
+              "type": 3,
+              "cacheType": "ephemeral"
+            }
+          ],
+          "renderedGlobalContext": [
+            {
+              "type": 1,
+              "text": "<environment_info>\nThe user's current OS is: macOS\nThe user's default shell is: \"zsh\". When you generate terminal commands, please generate them correctly for this shell.\n</environment_info>\n<workspace_info>\nI am working in a workspace with the following folders:\n- /Users/mac/nhaminhbach.com/nhaminhbach \nI am working in a workspace that has the following structure:\n```\ncloudbuild.yaml\nDockerfile\nfirebase.json\npackage.json\nREADME.md\nagent_team/\n\tgreat_migration.md\n\tchat_history/\n\t\tCoach_Martin.py\n\t\tCTO_Alex.py\ndocs/\n\tCTOAlexwords.md\npackages/\n\tfunctions/\n\t\tDockerfile\n\t\texecutor.py\n\t\tmain.py\n\t\trequirements.txt\n\tscraper/\n\t\tmain.py\n\t\trequirements.txt\n\t\tserverless_blueprint.md\n\tweb/\n\t\teslint.config.js\n\t\tindex.html\n\t\tpackage.json\n\t\tpostcss.config.js\n\t\tREADME.md\n\t\ttailwind.config.js\n\t\ttsconfig.app.json\n\t\ttsconfig.json\n\t\ttsconfig.node.json\n\t\tvite.config.ts\n\t\tpublic/\n\t\t\tvite.svg\n\t\tsrc/\n\t\t\tApp.css\n\t\t\tApp.tsx\n\t\t\tconfig.ts\n\t\t\tindex.css\n\t\t\tmain.tsx\n\t\t\tvite-env.d.ts\n\t\t\tassets/\n\t\t\t\treact.svg\n\t\t\tcomponents/\n\t\t\t\tadmin/\n\t\t\t\t\tListingForm.tsx\n\t\t\t\tlayout/\n\t\t\t\t\tMainLayout.tsx\n\t\t\t\t\tNavbar.tsx\n\t\t\t\tlistings/\n\t\t\t\t\tListingCard.tsx\n\t\t\thooks/\n\t\t\t\tuseListingForm.ts\n\t\t\tpages/\n\t\t\t\tHomePage.tsx\n\t\t\t\tListingDetailPage.tsx\n\t\t\t\tQcCreatePage.tsx\n\t\t\ttypes/\n\t\t\t\tindex.ts\n\t\t\tutils/\n\t\t\t\tformatters.ts\nscraper/\n```\nThis is the state of the context at this point in the conversation. The view of the workspace structure may be truncated. You can use tools to collect more context if needed.\n</workspace_info>\n"
+            },
+            {
+              "type": 3,
+              "cacheType": "ephemeral"
+            }
+          ],
+          "toolCallRounds": [
+            {
+              "response": "This is a test response. Let me know how I can assist you further!",
+              "toolCalls": [],
+              "toolInputRetry": 0,
+              "id": "6e7f51b1-0e43-4ffc-bb90-8820c080e5ce"
+            }
+          ],
+          "modelMessageId": "763897cb-3900-407a-b079-f4b8b7910ba5",
+          "responseId": "1c5c6a24-3a2c-43ab-8fb0-7718e4ba2b1f",
+          "sessionId": "3093afa2-969d-457e-a3cb-5461112bedd4",
+          "agentId": "github.copilot.editsAgent"
+        },
+        "details": "GPT-4o • 0x"
+      },
+      "followups": [],
+      "isCanceled": false,
+      "agent": {
+        "extensionId": {
+          "value": "GitHub.copilot-chat",
+          "_lower": "github.copilot-chat"
+        },
+        "publisherDisplayName": "GitHub",
+        "extensionPublisherId": "GitHub",
+        "extensionDisplayName": "GitHub Copilot Chat",
+        "id": "github.copilot.editsAgent",
+        "description": "Edit files in your workspace in agent mode",
+        "when": "config.chat.agent.enabled",
+        "metadata": {
+          "themeIcon": {
+            "id": "tools"
+          },
+          "hasFollowups": false,
+          "supportIssueReporting": false
+        },
+        "name": "agent",
+        "fullName": "GitHub Copilot",
+        "isDefault": true,
+        "locations": [
+          "panel"
+        ],
+        "modes": [
+          "agent"
+        ],
+        "slashCommands": [
+          {
+            "name": "list"
+          }
+        ],
+        "disambiguation": []
+      },
+      "contentReferences": [],
+      "codeCitations": [],
+      "timestamp": 1755078499635,
+      "modelId": "copilot/gpt-4o"
+    }
+  ]
+}
