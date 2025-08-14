@@ -1,0 +1,15 @@
+id,date,decision,status
+,20250814,"Adopt Google Cloud Platform (GCP) and Firebase as the core ecosystem, leveraging a serverless architecture with Cloud Functions and Cloud Run.",Implemented
+,20250814,"Use a relational database (PostgreSQL on Cloud SQL) over NoSQL to handle the structured and relational nature of rental data.",Implemented
+,20250814,"Design the database schema using a flexible Entity-Attribute-Value (EAV) model (the 'attributes' system) instead of a rigid, wide-table structure.",Implemented
+,20250814,"Structure the entire project as a monorepo to maintain a single source of truth for shared types and easier dependency management.",Implemented
+,20250814,"Architect the automated data pipeline as a decoupled, event-driven system: Cloud Scheduler -> Orchestrator Function -> Pub/Sub -> Executor Function -> Cloud Run Job.",Implemented
+,20250814,"Develop the frontend as a responsive web app first using React/Vite/TypeScript/TailwindCSS, delaying any consideration of native mobile apps.",Implemented
+,20250814,"Implement a 'no-login, high-frequency, shallow-scrape' strategy for the scraper to maximize data freshness while minimizing the risk of being blocked.",Implemented
+,20250814,"Formalize collaboration with AI agents by creating and maintaining a 'copilot-instructions.md' file as the project's 'constitution'.",Implemented
+,20250814,"Refactor the Pub/Sub-triggered function (Executor) into a standalone Flask/Gunicorn web service to comply with the Cloud Run Gen 2 requirement of listening on a port.",Implemented
+,20250814,"Standardize the deployment process to a strict 'Build then Deploy' model (gcloud builds submit -> gcloud run deploy), eliminating the ambiguous '--source' flag to ensure consistency.",Implemented
+,20250814,"Establish a formal Design System (The Her/Google/Airbnb Synthesis) and a 'Logic First, Aesthetics Second' workflow for building UI components.",Implemented
+,20250814,"Strategically pivot to a 'local-first' scraper development model to accelerate debugging, improve reliability, and reduce initial operational costs.",Active
+,20250814,"Re-structure project management from a granular sprint-per-task model to a more strategic, Epic-based model for better clarity.",Implemented
+,20250814,"Build a secure data ingestion API endpoint ('ingest_scraped_data') to act as the bridge between the local scraper and the cloud backend.",Pending

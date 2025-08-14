@@ -196,7 +196,7 @@ Your primary function is to act as a smart interface to our knowledge-driven org
 *   **Đây chính là quy trình tạo ra "Biên Niên Sử Quyết Định" mà chúng ta đã nói.**
 *   **Quy trình (được thực thi bởi "Librarian Agent"):**
     1.  Bạn kết thúc một task (ví dụ: "Hoàn thành tính năng Social Login").
-    2.  Bạn mở một file mới, ví dụ: `/knowledge/sprints/SPR-003_Social_Login.md`.
+    2.  Bạn mở một file mới, ví dụ: `/knowledge/sprints/20250814_social_login.md`.
     3.  **Bạn ra lệnh cho "Librarian Agent":**
         > "Activate: Librarian AI. Hãy đọc toàn bộ cuộc trò chuyện về Task Social Login [bạn có thể dán toàn bộ cuộn chat, hoặc các đoạn tóm tắt từ Cấp Độ 1 vào đây]. Dựa vào đó, hãy tạo ra một bản Biên Niên Sử Quyết Định theo mẫu trong `[[Process - Sprint Retrospective]]`."
     4.  Agent sẽ tự động điền vào các mục: Trigger, Key Insights, Outcome, My Initial Mental Model, The Flaw, The "Aha!" Moment, The Core Principle.
