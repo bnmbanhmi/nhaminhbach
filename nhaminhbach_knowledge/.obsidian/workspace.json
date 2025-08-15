@@ -163,6 +163,10 @@
   },
   "active": "119b29c489f0f358",
   "lastOpenFiles": [
+    "index.md",
+    "blueprint_updated.md",
+    "blueprint.md",
+    "blueprint_legacy.md",
     "processes/ui_component_development_cycle.md",
     "processes/development_cycle.md",
     "processes/code_review_cycle.md",
