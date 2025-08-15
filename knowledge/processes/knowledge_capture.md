@@ -1,4 +1,5 @@
-# Process: Knowledge Capture & Distillation
+# Knowledge Capture & Distillation
+#processes 
 
 ## Philosophy
 Our goal is to transform messy, real-time conversations into structured, timeless wisdom. We do not archive noise; we distill signals.
@@ -11,7 +12,7 @@ Our goal is to transform messy, real-time conversations into structured, timeles
 ## Level 2: End-of-Task Synthesis
 - **Trigger:** A Task is moved to `status: done`.
 - **Action:** User activates `Librarian AI` with the `/capture` command, providing the conversation transcript (or summaries from Level 1).
-- **Output:** A structured "Decision Chronicle" is generated inside the relevant Task file, following the `[[Template - Task Retrospective]]`.
+- **Output:** A structured "Decision Chronicle" is generated inside the relevant Task file, following the [[sprint]].
 
 ## Level 3: DNA Update
 - **Trigger:** Immediately after a Decision Chronicle is generated.

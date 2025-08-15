@@ -1,3 +1,6 @@
+# Database Schema and Model
+#systems
+
 **This is the single source of truth for our data structure. All code must conform to this model.**
 
 ### Table: `listings` (Core listing information)

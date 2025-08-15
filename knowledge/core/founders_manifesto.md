@@ -1,3 +1,6 @@
+# Founder Manifesto
+tags: #core
+
 ### **Bản Tuyên Ngôn Sáng Lập: UnReal Estate**
 
 **Ngày:** 26 tháng 7 năm 2025  

@@ -1,3 +1,6 @@
+# Core Architecture
+#systems
+
 ### General
 - **Clarity and Simplicity:** Write code that is easy to read and understand. Prefer simple, explicit solutions over complex, clever ones.
 - **Comments:** Explain the "why", not the "what". Document complex logic, business rules, and API contracts.

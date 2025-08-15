@@ -1,13 +1,13 @@
 ---
-tags: [task]
+tags: tasks
 status: #status/done
 id: 20250814
 owner: Minh
-epic: "[[EPIC-01_Core_User_Experience]]"
-sprint: "[[SPR-2025-W34]]"
+epic: [[epic]]
+sprint: [[sprint]]
 ---
 
-# Task: Data Scraping Pipeline
+# Task: #templates
 
 ### 1. Goal & Acceptance Criteria
 -   **Goal:** _Xây dựng một hệ thống có thể tự động thu thập tin đăng từ 10 group Facebook và lưu vào database._

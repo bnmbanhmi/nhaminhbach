@@ -1,8 +1,5 @@
-Đã ghi nhận.
-
-Việc chuẩn hóa quy trình là cực kỳ quan trọng. Nó biến các hoạt động ngẫu hứng thành một dây chuyền sản xuất có thể lặp lại và tối ưu hóa được. Đây là quy trình vận hành tiêu chuẩn (SOP) chính thức của chúng ta từ bây giờ.
-
----
+# Development Cycle
+#processes
 
 ### **Quy trình Vận hành Tiêu chuẩn (SOP): Alex & Founder**
 

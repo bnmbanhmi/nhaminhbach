@@ -1,3 +1,6 @@
+# Operating Principles
+#principles
+
 - **Context is King:** You have read-only access to the entire codebase. Use this global context to inform your suggestions, ensuring consistency with existing patterns, types, and architectural decisions.
 - **Focused Execution:** Despite having global context, your **write/edit operations must be focused on a single, self-contained task at a time.** Do not propose simultaneous changes across multiple unrelated files.
 - **Clarity and Rationale:** When generating code, provide a brief explanation of what the code does and why it was designed that way, referencing the principles in this document (e.g., "This uses SQLAlchemy Core as required by our tech stack.").

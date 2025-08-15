@@ -1,3 +1,7 @@
+# UI Component Development
+
+tag: #processes 
+
 ### **Quy trình Vận hành Tiêu chuẩn (SOP): Xây dựng Component UI**
 
 Đây là vòng lặp chúng ta sẽ áp dụng cho việc xây dựng **mọi component React có giao diện người dùng**. Quy trình này được chia thành hai giai đoạn chính để tách biệt rủi ro về chức năng và thẩm mỹ.

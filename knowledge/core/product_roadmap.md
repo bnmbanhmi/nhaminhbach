@@ -1,3 +1,6 @@
+# Product Roadmap
+#core
+
 ### **Lộ Trình Xây Dựng Sản Phẩm V2 (The Battle-Tested Roadmap)**
 
 *Đây là kế hoạch đã được tôi luyện qua thực tế. Nó tập trung vào việc xây dựng tài sản cốt lõi (dữ liệu sạch) và tạo ra giá trị cho người dùng một cách nhanh nhất.*

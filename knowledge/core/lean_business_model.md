@@ -1,3 +1,6 @@
+# Lean Business Model
+#core
+
 ### **Mô Hình Kinh Doanh Tinh Gọn (The Lean Business Model)**
 
 *Đây là phần "Bộ não". Là một bức tranh tổng thể về cách cỗ máy của bạn sẽ hoạt động. Hãy trả lời ngắn gọn từng mục dựa trên những gì chúng ta đã thảo luận.*

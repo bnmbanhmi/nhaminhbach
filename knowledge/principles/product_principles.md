@@ -1,3 +1,6 @@
+# Product Principles
+#principles
+
 - **Core Problem:** The market is flooded with messy, unstructured, and untrustworthy data from social media.
 - **Unique Value Proposition:** Our platform is the **CLEANEST and MOST TRUSTWORTHY** source of rental listings. We achieve this through a robust data pipeline and a manual QC (Quality Control) process.
 - **Initial Target Audience:** Students and young professionals (18-25) in Hanoi.

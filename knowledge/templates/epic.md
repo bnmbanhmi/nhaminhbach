@@ -1,10 +1,10 @@
 ---
-tags: [epic]
+tags: epic
 status: #status/in-progress
-id: E01
+id: E0
 ---
 
-# Epic: Core User Experience
+# Epic: #templates
 
 ## 🎯 Goal
 _Mục tiêu kinh doanh cấp cao. Ví dụ: "Giúp người dùng mới tìm và kết nối thành công với 1 chủ nhà trong vòng 7 ngày."_
@@ -14,6 +14,6 @@ _Mục tiêu kinh doanh cấp cao. Ví dụ: "Giúp người dùng mới tìm v�
 -   _Metric 2: Thời gian trung bình từ lúc đăng ký đến lúc kết nối thành công < 7 ngày._
 
 ## 📝 Key Tasks
--   [[task_templates]]
--   [[task_templates]]
--   [[task_templates]]
+-   [[task]]
+-   [[task]]
+-   [[task]]

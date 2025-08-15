@@ -1,4 +1,5 @@
-# Process: Agent Interaction Protocol
+# Agent Interaction Protocol
+#processes 
 
 - **Activation:** Always begin a session with a specific goal by activating the relevant agent (`Activate: [Agent Name]`).
 - **One Task, One Thread:** Keep the conversation focused on a single Task whenever possible to ensure clean capture later.

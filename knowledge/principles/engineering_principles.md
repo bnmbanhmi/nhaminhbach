@@ -1,3 +1,6 @@
+# Engineering Principles
+#principles
+
 **These principles are non-negotiable and must be reflected in all new code.**
 
 - **Principle of Environment Parity:** When troubleshooting complex network issues like CORS, the primary solution is to run both client and server in the most similar environments possible. Avoid fighting security layers; adapt to them.

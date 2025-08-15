@@ -1,4 +1,4 @@
-# AI Studio Chat History
+# Coach Martin legacy
 
 ---
 **USER:**
