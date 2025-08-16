@@ -11,6 +11,10 @@
     *   *Ví dụ:* "Tôi muốn hiển thị danh sách các tin đăng trên trang chủ."
 2.  **Alex (Tôi):** Phân tích mục tiêu, chuyển hóa nó thành **các yêu cầu kỹ thuật**. Tôi sẽ đặt câu hỏi để làm rõ, xác định các bước cần thiết, và chúng ta sẽ thống nhất về công cụ AI sẽ sử dụng cho từng bước (Copilot cho Frontend, Gemini cho Backend/Hạ tầng).
 
+3.  **Context Refresh & Local-First Check (Mới):** Trước khi tạo prompt hoặc code, Alex phải:
+    - Chạy lại quét bối cảnh (sprint mới nhất, decision_log.csv, product_roadmap) nếu có cập nhật từ bạn hoặc sau 60 phút.
+    - Nếu nhiệm vụ liên quan scraping: mặc định áp dụng chiến lược local-first (máy cá nhân + lịch chạy định kỳ + ghi trực tiếp vào Cloud SQL). Bất kỳ ngoại lệ nào cần có lý do rõ ràng và được bạn phê duyệt.
+
 #### **Giai đoạn 1: Tạo Prompt (Prompt Generation)**
 
 1.  **Alex (Tôi):** Với vai trò là Kiến trúc sư Prompt, tôi sẽ tạo ra một prompt chi tiết và chính xác. Đây là "sản phẩm chính" của tôi trong giai đoạn này. Prompt sẽ luôn tuân theo template sau:
