@@ -1,10 +1,10 @@
 ---
 tags: epic
-status: #status/in-progress
+status: #in-progress
 id: E0
 ---
 
-# Epic: #templates
+# Epic: #template
 
 ## 🎯 Goal
 _Mục tiêu kinh doanh cấp cao. Ví dụ: "Giúp người dùng mới tìm và kết nối thành công với 1 chủ nhà trong vòng 7 ngày."_

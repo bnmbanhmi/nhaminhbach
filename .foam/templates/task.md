@@ -1,13 +1,13 @@
 ---
-tags: tasks
-status: #status/done
+tags: task
+status: #done
 id: 20250814
 owner: Minh
 epic: [[epic]]
 sprint: [[sprint]]
 ---
 
-# Task: #templates
+# Task: #template
 
 ### 1. Goal & Acceptance Criteria
 -   **Goal:** _Xây dựng một hệ thống có thể tự động thu thập tin đăng từ 10 group Facebook và lưu vào database._

@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "dcc195fb76503e16",
+        "id": "4a3512b069711967",
         "type": "tabs",
         "children": [
           {
-            "id": "119b29c489f0f358",
+            "id": "1734b9dd7abc6c85",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -164,11 +164,27 @@
       "smart-connections:Smart Connections: Open random connection": true
     }
   },
-  "active": "0760c89e4f96aa0b",
+  "active": "1734b9dd7abc6c85",
   "lastOpenFiles": [
+    "strategy/sprint/S0.md",
+    "strategy/sprint/S6.md",
+    "strategy/sprint/S6,md",
+    "strategy/sprint/S5.md",
+    "strategy/sprint/S4.md",
+    "strategy/sprint/S3.md",
+    "strategy/sprint/S2.md",
+    "strategy/sprint/S1.md",
+    "template/task.md",
+    "template/sprint.md",
+    "template/epic.md",
+    "template",
+    "task",
+    "system/database_schema_and_model.md",
+    "system/tech_stack.md",
+    "system/core_architecture.md",
+    "system",
     "agent/coding_agent.instructions.md",
     "strategy/task",
-    "strategy/sprint/S0.md",
     "strategy/sprint",
     "process/ui_component_development_cycle.md",
     "process/task_life_cycle.md",
@@ -184,19 +200,7 @@
     "principle",
     "agent/librarian.instructions.md",
     "agent/cto_alex.instructions.md",
-    "agent/coach_martin.instructions.md",
     "agent",
-    "strategy/epic/E4.md",
-    "strategy/epic/E3.md",
-    "strategy/epic/E2.md",
-    "strategy/epic/E1.md",
-    "strategy/epic",
-    "index.md",
-    "blueprint_updated.md",
-    "blueprint.md",
-    "blueprint_legacy.md",
-    "processes/ui_component_development_cycle.md",
-    "processes/development_cycle.md",
-    "processes/code_review_cycle.md"
+    "strategy/epic"
   ]
 }

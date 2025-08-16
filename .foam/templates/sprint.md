@@ -1,11 +1,11 @@
 ---
-tags: sprints
-status: #status/done
+tags: sprint
+status: #done
 id: 250814
 timeframe: 2025-08-19 to 2025-08-25
 ---
 
-# Sprint: #templates
+# Sprint: #template
 
 ## 🎯 Goal
 -   ...
