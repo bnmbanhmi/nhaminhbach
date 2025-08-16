@@ -4,17 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "4a3512b069711967",
+        "id": "01450edca1065e48",
         "type": "tabs",
         "children": [
           {
-            "id": "1734b9dd7abc6c85",
+            "id": "505681f017b13a92",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "archive/CTO_Alex_legacy.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CTO_Alex_legacy"
             }
           }
         ]
@@ -49,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "tag:#principle",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -70,7 +74,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -90,6 +95,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "archive/CTO_Alex_legacy.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -99,7 +105,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks"
+              "title": "Backlinks for CTO_Alex_legacy"
             }
           },
           {
@@ -136,12 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "archive/CTO_Alex_legacy.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of CTO_Alex_legacy"
             }
           }
         ],
@@ -164,18 +171,18 @@
       "smart-connections:Smart Connections: Open random connection": true
     }
   },
-  "active": "1734b9dd7abc6c85",
+  "active": "505681f017b13a92",
   "lastOpenFiles": [
-    "strategy/sprint/S0.md",
+    "strategy/sprint/S2.md",
     "strategy/sprint/S6.md",
+    "template/sprint.md",
+    "strategy/sprint/S0.md",
     "strategy/sprint/S6,md",
     "strategy/sprint/S5.md",
     "strategy/sprint/S4.md",
     "strategy/sprint/S3.md",
-    "strategy/sprint/S2.md",
     "strategy/sprint/S1.md",
     "template/task.md",
-    "template/sprint.md",
     "template/epic.md",
     "template",
     "task",
