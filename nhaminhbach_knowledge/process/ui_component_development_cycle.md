@@ -1,6 +1,6 @@
 # UI Component Development
 
-tag: #processes 
+tag: #process 
 
 ### **Quy trình Vận hành Tiêu chuẩn (SOP): Xây dựng Component UI**
 

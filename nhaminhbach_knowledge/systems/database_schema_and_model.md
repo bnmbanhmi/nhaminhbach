@@ -1,5 +1,5 @@
 # Database Schema and Model
-#systems
+#system
 
 **This is the single source of truth for our data structure. All code must conform to this model.**
 

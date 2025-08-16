@@ -1,5 +1,5 @@
 # Core Architecture
-#systems
+#system
 
 ### General
 - **Clarity and Simplicity:** Write code that is easy to read and understand. Prefer simple, explicit solutions over complex, clever ones.

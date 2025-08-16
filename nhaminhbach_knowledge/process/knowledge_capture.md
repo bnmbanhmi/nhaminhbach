@@ -1,5 +1,5 @@
 # Knowledge Capture & Distillation
-#processes 
+#process 
 
 ## Philosophy
 Our goal is to transform messy, real-time conversations into structured, timeless wisdom. We do not archive noise; we distill signals.

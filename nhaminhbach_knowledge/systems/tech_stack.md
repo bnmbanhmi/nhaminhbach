@@ -1,5 +1,5 @@
 # Tech Stack
-#systems
+#system
 
 **Always adhere to this tech stack. Do not suggest alternatives unless explicitly asked.**
 

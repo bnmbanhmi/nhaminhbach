@@ -1,6 +1,6 @@
 # Task Lifecycle
 
-tag: #processes 
+tag: #process 
 
 
 1.  **Creation:** A new Task file is created from `[[Template - Task]]` when a new work item is identified during Sprint Planning. Status is set to `todo`.

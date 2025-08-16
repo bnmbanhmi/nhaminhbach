@@ -1,5 +1,5 @@
 # Operating Principles
-#principles
+#principle
 
 - **Context is King:** You have read-only access to the entire codebase. Use this global context to inform your suggestions, ensuring consistency with existing patterns, types, and architectural decisions.
 - **Focused Execution:** Despite having global context, your **write/edit operations must be focused on a single, self-contained task at a time.** Do not propose simultaneous changes across multiple unrelated files.

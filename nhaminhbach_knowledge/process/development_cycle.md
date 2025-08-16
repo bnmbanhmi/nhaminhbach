@@ -1,5 +1,5 @@
 # Development Cycle
-#processes
+#process
 
 ### **Quy trình Vận hành Tiêu chuẩn (SOP): Alex & Founder**
 

@@ -1,5 +1,5 @@
 # Engineering Principles
-#principles
+#principle
 
 **These principles are non-negotiable and must be reflected in all new code.**
 
