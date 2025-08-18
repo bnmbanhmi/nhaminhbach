@@ -4,6 +4,8 @@ import logging
 import os
 import re
 import sys
+import requests
+from utils import get_secret
 import time
 import uuid
 from typing import Any, Dict, List, Optional
@@ -347,6 +349,23 @@ async def scrape_group(browser: Browser, group_url: str, media_enabled: bool) ->
             pass
 
 
+def post_to_ingestion_api(posts: list, api_url: str, api_key: str) -> dict:
+    """
+    Send scraped posts to backend ingestion API.
+    Returns parsed response dict or error info.
+    """
+    try:
+        headers = {
+            "Content-Type": "application/json",
+            "X-API-Key": api_key,
+        }
+        payload = {"posts": posts}
+        resp = requests.post(api_url, headers=headers, data=json.dumps(payload), timeout=15)
+        resp.raise_for_status()
+        return resp.json()
+    except Exception as e:
+        return {"error": str(e)}
+
 async def main_async(group_url: str, headless: bool, media_enabled: bool) -> int:
     """Entry point for async scraping job. Returns exit code."""
     launch_args = {
@@ -380,6 +399,22 @@ async def main_async(group_url: str, headless: bool, media_enabled: bool) -> int
     # Convert dataclasses to dicts for JSON serialization
     posts_json = [asdict(p) for p in posts]
     print(json.dumps(posts_json, ensure_ascii=False))
+
+    # Submit to ingestion API if configured
+    api_url = os.environ.get("INGEST_API_URL")
+    gcp_project = os.environ.get("GCP_PROJECT")
+    
+    if api_url and gcp_project:
+        try:
+            api_key = get_secret(gcp_project, "ingest-api-key")
+            logger.info(f"Submitting {len(posts_json)} posts to ingestion API: {api_url}")
+            result = post_to_ingestion_api(posts_json, api_url, api_key)
+            logger.info(f"Ingestion API response: {result}")
+        except Exception as e:
+            logger.error(f"Failed to get API key from Secret Manager: {e}")
+    else:
+        logger.info("INGEST_API_URL or GCP_PROJECT not set; skipping ingestion API submission.")
+
     # Return success even if empty; the pipeline can decide how to handle it
     return 0
 

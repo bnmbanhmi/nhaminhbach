@@ -70,8 +70,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -159,14 +158,14 @@
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
-      "command-palette:Open command palette": false,
-      "smart-connections:Open: Smart Chat": false,
-      "smart-connections:Smart Connections: Open connections view": false,
-      "smart-connections:Smart Connections: Open random connection": true
+      "command-palette:Open command palette": false
     }
   },
-  "active": "505681f017b13a92",
+  "active": "ba7f76086c39e42a",
   "lastOpenFiles": [
+    "00. Inbox/Khi hậu hiện đại ngưng nổi loạn.md",
+    "00. Inbox",
+    "system/serverless_blueprint.md",
     "archive/CTO_Alex_legacy.md",
     "strategy/sprint/S2.md",
     "strategy/sprint/S6.md",
@@ -198,10 +197,7 @@
     "process",
     "principle/product_principles.md",
     "principle/operating_principles.md",
-    "principle/engineering_principles.md",
     "principle",
-    "agent/librarian.instructions.md",
-    "agent",
-    "strategy/epic"
+    "agent"
   ]
 }

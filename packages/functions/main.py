@@ -13,6 +13,8 @@ from google.cloud.sql.connector import Connector, IPTypes
 from google.cloud import pubsub_v1, run_v2
 from google.api_core import gapic_v1
 import sqlalchemy
+from sqlalchemy import text
+from utils import get_secret
 
 # =================================================================================
 #  1. GLOBAL SETUP & CONFIGURATION
@@ -46,9 +48,14 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
     # Các biến môi trường này sẽ được cung cấp bởi cấu hình `run_with`
     INSTANCE_CONNECTION_NAME = os.environ.get("INSTANCE_CONNECTION_NAME")
     DB_USER = os.environ.get("DB_USER")
-    DB_PASS = os.environ.get("DB_PASS") # Sẽ được lấy từ Secret Manager
     DB_NAME = os.environ.get("DB_NAME")
     IS_EMULATOR = os.environ.get("FUNCTIONS_EMULATOR") == "true"
+    
+    # Get database password from Secret Manager
+    GCP_PROJECT = os.environ.get("GCP_PROJECT")
+    if not GCP_PROJECT:
+        raise RuntimeError("GCP_PROJECT environment variable must be set")
+    DB_PASS = get_secret(GCP_PROJECT, "db-password")
 
     def getconn() -> Any:
         # Sử dụng IS_EMULATOR đã được định nghĩa ở global
@@ -94,6 +101,13 @@ def default_json_serializer(obj):
     if isinstance(obj, Decimal):
         return float(obj)
     raise TypeError(f"Type {type(obj)} not serializable")
+
+
+def _get_ingest_api_key() -> str:
+    GCP_PROJECT = os.environ.get("GCP_PROJECT")
+    if not GCP_PROJECT:
+        raise RuntimeError("GCP_PROJECT environment variable must be set")
+    return get_secret(GCP_PROJECT, "ingest-api-key")
 
 
 # =================================================================================
@@ -307,6 +321,125 @@ def get_all_attributes(req: https_fn.Request) -> https_fn.Response:
 
     except Exception as e:
         logger.error(f"Error in get_all_attributes: {e}")
+        return https_fn.Response("An internal server error occurred.", status=500)
+
+
+@https_fn.on_request(
+    cors=CORS_CONFIG
+)
+def ingest_scraped_data(req: https_fn.Request) -> https_fn.Response:
+    """
+    Secure endpoint for local scraper to submit scraped posts into the listings table.
+    - Auth: X-API-Key header must match INGEST_API_KEY env var.
+    - Dedup: Check listings by source_url (permalink). Skip existing.
+    - Insert: New rows into listings with status='pending_review' and placeholder values.
+    Payloads supported:
+      - { "posts": [ {content, image_urls[], permalink}, ... ] }
+      - [ {content, image_urls[], permalink}, ... ]
+      - {content, image_urls[], permalink} (single)
+    """
+    if req.method != "POST":
+        return https_fn.Response(f"Method {req.method} not allowed.", status=405)
+
+    # API Key check
+    api_key_header = req.headers.get("X-API-Key") or req.headers.get("x-api-key")
+    if not api_key_header or api_key_header != _get_ingest_api_key():
+        return https_fn.Response("Unauthorized", status=401)
+
+    try:
+        payload = req.get_json(silent=True)
+        if payload is None:
+            return https_fn.Response("Invalid JSON payload.", status=400)
+
+        # Normalize posts array from supported payload shapes
+        posts = []
+        if isinstance(payload, dict) and isinstance(payload.get("posts"), list):
+            posts = payload.get("posts", [])
+        elif isinstance(payload, list):
+            posts = payload
+        elif isinstance(payload, dict) and ("permalink" in payload or "content" in payload):
+            posts = [payload]
+        else:
+            return https_fn.Response("Unsupported payload shape. Provide {posts: [...]}, an array, or a single post object.", status=400)
+
+        new_count = 0
+        dup_count = 0
+
+        engine = get_db_engine()
+        with engine.connect() as conn:
+            with conn.begin() as tx:
+                try:
+                    # Prepare statements
+                    dup_check_sql = text("SELECT 1 FROM listings WHERE source_url = :source_url LIMIT 1")
+                    insert_sql = text(
+                        """
+                        INSERT INTO listings (
+                            status, title, description, price_monthly_vnd, area_m2,
+                            address_ward, address_district, source_url, image_urls
+                        )
+                        VALUES (
+                            :status, :title, :description, :price, :area,
+                            :ward, :district, :source_url, :image_urls
+                        )
+                        """
+                    )
+
+                    for p in posts:
+                        try:
+                            permalink = (p.get("permalink") if isinstance(p, dict) else None) or ""
+                            if not isinstance(permalink, str) or not permalink:
+                                # If no permalink, skip as we cannot dedup/anchor this post
+                                dup_count += 1
+                                continue
+
+                            # Duplicate check
+                            if conn.execute(dup_check_sql, {"source_url": permalink}).fetchone():
+                                dup_count += 1
+                                continue
+
+                            content = p.get("content") if isinstance(p, dict) else None
+                            image_urls = p.get("image_urls") if isinstance(p, dict) else None
+                            if not isinstance(image_urls, list):
+                                image_urls = []
+
+                            # Insert with placeholders for NOT NULL fields
+                            conn.execute(
+                                insert_sql,
+                                {
+                                    "status": "pending_review",
+                                    "title": "Pending QC",
+                                    "description": content or "Pending QC",
+                                    "price": 0,
+                                    "area": 0.0,
+                                    "ward": "Unknown",
+                                    "district": "Unknown",
+                                    "source_url": permalink,
+                                    "image_urls": image_urls,
+                                },
+                            )
+                            new_count += 1
+                        except Exception as inner_e:
+                            # Log and continue with next post, but keep transaction consistent
+                            logger.error(f"Failed to ingest a post: {inner_e}")
+
+                    tx.commit()
+                except Exception as e:
+                    logger.error(f"Batch ingest failed, rolling back. Error: {e}")
+                    tx.rollback()
+                    raise
+
+        return https_fn.Response(
+            json.dumps({
+                "message": "Ingestion complete",
+                "new_listings_created": new_count,
+                "skipped_duplicates": dup_count
+            }),
+            status=200,
+            headers={"Content-Type": "application/json"},
+        )
+
+    except Exception as e:
+        logger.error(f"Error in ingest_scraped_data: {e}")
         return https_fn.Response("An internal server error occurred.", status=500)
 
 # =================================================================================

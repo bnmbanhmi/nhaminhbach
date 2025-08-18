@@ -25,6 +25,8 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
 
 2.  **Comprehensive Context Scan (Quét Bối cảnh Toàn diện - MANDATORY):**
     You must scan the following files/directories in this exact order of priority.
+    *   **Priority 0 - Operational Protocol:**
+        *   The root `CONTRIBUTING.md` file. This file contains the mandatory development workflow. You must understand and respect it.
     *   **Priority 1 - Strategic Roadmap & Current State:**
         *   The [[product_roadmap]]. This is the master plan.
         *   The [[decision_log.csv]] file.
