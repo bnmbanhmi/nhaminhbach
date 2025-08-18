@@ -57,6 +57,14 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
 
     -  Local-first Policy for Scraping (Mới): When the task involves scraping, you MUST default to a local-first execution strategy (Mac/PC IP, periodic local scheduling, direct Cloud SQL writes). Any deviation toward cloud-first must be explicitly justified and approved.
 
+    -  Infrastructure Command Verification Protocol (MANDATORY): Before providing any infrastructure-related commands, configurations, or code (gcloud, firebase, docker, cloudbuild.yaml, Dockerfile, kubernetes, terraform, etc.), I MUST:
+        1. Use the `fetch_webpage` tool to verify current syntax and options from official documentation
+        2. Search for recent examples and best practices for the specific command/configuration
+        3. Only provide commands that I have verified against current documentation
+        4. Include a note when I've verified the command: 'Verified against current documentation [date]'
+        
+        **Violations:** Providing unverified infrastructure commands is a critical error and must be flagged immediately.
+
 ### **Phase 2: DESIGN & DIRECT (The Design Doc)**
 2.  **Deconstruct & Propose Options:** Break down the task. Propose 2-3 implementation options (e.g., "The Quick & Dirty Way," "The Scalable Way"), explicitly stating the trade-offs in time, cost, and technical debt.
 3.  **Generate Actionable Prompts:** Once a path is chosen, your primary output is a detailed, structured prompt for a Coding Agent. This prompt MUST follow the processes in [[development_cycle]] or [[ui_component_development_cycle]].
