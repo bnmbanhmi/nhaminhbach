@@ -1,34 +1,71 @@
 ---
-tags: task
-status: #done
-id: 20250814
+tags: #task
+status: #todo
+id: YYMMDD_HH_task_name
 owner: Minh
 epic: [[epic]]
 sprint: [[sprint]]
 ---
 
-# Task: #template
+# Task: [Task Title]
 
-### 1. Goal & Acceptance Criteria
--   **Goal:** _Xây dựng một hệ thống có thể tự động thu thập tin đăng từ 10 group Facebook và lưu vào database._
--   **AC 1:** _Script chạy thành công không lỗi._
--   **AC 2:** _Dữ liệu được lưu vào Cloud SQL đúng schema._
+**Owner:** [Owner Name]
+**Date Started:** YYYY-MM-DD
 
-### 2. Decision Chronicle & Work Log
-_Đây là nơi toàn bộ quá trình diễn ra: các cuộc trò chuyện, tóm tắt, quyết định..._
+## Objective
+[Brief description of what this task aims to accomplish]
 
-#### **2.1. Initial Brainstorming (with CTO Alex)**
-> **USER:** Activate: CTO Alex. Let's design the scraping pipeline.
-> **MODEL (CTO Alex):** Acknowledged. CTO Alex is now active... I see two main options: 1. A complex, scalable system with Cloud Run, or 2. A simple, local script...
+## Steps & Progress
 
-#### **2.2. Key Decision**
-_Sau khi thảo luận, chúng tôi quyết định theo hướng #2 để tối ưu hóa tốc độ theo nguyên tắc [[PR-04_YAGNI_Principle]]._
+- [ ] [Step 1: Description of first step]
+- [ ] [Step 2: Description of second step]
+- [ ] [Step 3: Description of third step]
+- [ ] [Add more steps as needed]
 
-#### **2.3. Implementation Log**
-...
+## Issues Encountered & Resolved
+- [Track issues here with status indicators]
+- ✅ [Resolved issue] - RESOLVED
+- 🔄 [In progress issue] - IN PROGRESS
+- ❌ [Blocked issue] - BLOCKED
 
-### 3. Final Retrospective (Chưng cất tri thức)
--   **Trigger:** Cần xây dựng pipeline scraping.
--   **Final Outcome:** Hoàn thành script chạy local.
--   **The "Aha!" Moment:** Nhận ra việc xây hệ thống scale-up ngay từ đầu là một cái bẫy.
--   **Core Principle Learned:** Củng cố thêm niềm tin vào [[PR-04_YAGNI_Principle]].
+## Current Status
+- **Phase:** [Current phase of work]
+- **Progress:** [Brief status update]
+- **Blockers:** [Any current blockers]
+
+## Next Actions
+- [List immediate next steps]
+- [What needs to happen to move forward]
+- [Dependencies or waiting items]
+
+## Links
+- [Relevant documentation links]
+- [Build logs, monitoring dashboards, etc.]
+- [Related tasks or epics]
+
+## Decision Chronicle & Work Log
+_Document key conversations, decisions, and turning points_
+
+### **Initial Analysis**
+> **Context:** [What prompted this task]
+> **Approach:** [Initial approach or options considered]
+
+### **Key Decisions**
+- **Decision:** [Important decision made]
+- **Rationale:** [Why this decision was made]
+- **Reference:** [Link to principle or epic that influenced this]
+
+### **Implementation Log**
+[Chronological log of work done, challenges faced, solutions found]
+
+## Final Retrospective
+_Complete when task is done - distill key learnings_
+
+- **Trigger:** [What originally caused this need]
+- **Final Outcome:** [What was actually delivered]
+- **The "Aha!" Moment:** [Key insight or realization]
+- **Core Principle Learned:** [Link to principle reinforced or discovered]
+- **Knowledge Captured:** [What documentation was updated]
+
+---
+**Status:** [Todo/In Progress/Done/Blocked]

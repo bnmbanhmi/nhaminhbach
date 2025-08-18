@@ -1,3 +1,12 @@
+---
+tags: #task
+status: #done
+id: 250818_13_deploy_ingest_api
+owner: mac@bnms-Laptop
+epic: [[E1]]
+sprint: [[S6]]
+---
+
 # Task: Deploy Ingestion API (ingest_scraped_data)
 
 **Owner:** mac@bnms-Laptop
@@ -7,12 +16,11 @@
 Deploy the `ingest_scraped_data` Cloud Function to GCP (asia-southeast1) and ensure it is accessible for local-to-cloud ingestion.
 
 ## Steps & Progress
-
 - [x] Refactor requirements.txt to resolve dependency conflicts
-- [x] Add missing packages: firebase-functions, google-cloud-pubsub, google-cloud-run, google-cloud-secret-manager, google-cloud-sql-connector, SQLAlchemy, Flask
+- [x] Add missing packages: firebase-functions, google-cloud-pubsub, google-cloud-run, google-cloud-secret-manager, cloud-sql-python-connector[pg8000], SQLAlchemy, Flask
 - [x] Set region and project variables (`asia-southeast1`, `omega-sorter-467514-q6`)
 - [x] Run `gcloud functions deploy` from correct directory (packages/functions)
-- [x] Infrastructure Command Verification Protocol implemented 
+- [x] Infrastructure Command Verification Protocol implemented
 - [x] Verified deployment command syntax against current Google Cloud documentation
 - [x] Cloud Function deployment completed successfully (ACTIVE status confirmed)
 - [x] Test endpoint with local scraper POST
@@ -21,7 +29,7 @@ Deploy the `ingest_scraped_data` Cloud Function to GCP (asia-southeast1) and ens
 
 ## Issues Encountered & Resolved
 - ✅ Dependency conflicts with protobuf and Google Cloud packages - RESOLVED
-- ✅ Missing modules: firebase_functions, pubsub_v1, run_v2 - RESOLVED  
+- ✅ Missing modules: firebase_functions, pubsub_v1, run_v2 - RESOLVED
 - ✅ Container healthcheck failures due to import errors - RESOLVED
 - ✅ Directory navigation issues for deployment - RESOLVED (use packages/functions)
 - ✅ Infrastructure Command Verification Protocol gaps - RESOLVED
@@ -30,6 +38,33 @@ Deploy the `ingest_scraped_data` Cloud Function to GCP (asia-southeast1) and ens
 - **Phase:** Complete
 - **Progress:** Cloud Function successfully deployed and ACTIVE
 - **Blockers:** None - deployment successful
+
+## Next Actions
+- Monitor build/deploy logs for errors
+- Confirm endpoint is live and accepting requests
+- Update documentation with final deployment steps and lessons learned
+
+## Links
+- [Cloud Build Logs](https://console.cloud.google.com/cloud-build/builds;region=asia-southeast1)
+- [Cloud Run Logs](https://console.cloud.google.com/logs/viewer?project=omega-sorter-467514-q6)
+- [Function Endpoint](https://asia-southeast1-omega-sorter-467514-q6.cloudfunctions.net/ingest_scraped_data)
+
+## Decision Chronicle & Work Log
+_Document key conversations, decisions, and turning points_
+
+### **Initial Analysis**
+> **Context:** Need to deploy ingest_scraped_data Cloud Function to enable local-to-cloud data bridge
+> **Approach:** Refactor requirements, verify commands, resolve dependency issues, deploy via gcloud
+
+### **Key Decisions**
+- **Decision:** Use cloud-sql-python-connector[pg8000] for compatibility
+- **Rationale:** Official documentation and deployment logs confirmed this as the correct package
+- **Reference:** Infrastructure Command Verification Protocol
+
+### **Implementation Log**
+- Multiple dependency conflicts resolved
+- Verified all infrastructure commands against official docs
+- Deployment succeeded after protocol enforcement
 
 ## Final Retrospective
 _Complete when task is done - distill key learnings_
