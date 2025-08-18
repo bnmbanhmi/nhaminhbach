@@ -351,6 +351,8 @@ def ingest_scraped_data(req: https_fn.Request) -> https_fn.Response:
         if payload is None:
             return https_fn.Response("Invalid JSON payload.", status=400)
 
+        logger.info(f"Received payload: {json.dumps(payload, default=str)}")
+
         # Normalize posts array from supported payload shapes
         posts = []
         if isinstance(payload, dict) and isinstance(payload.get("posts"), list):
@@ -362,14 +364,20 @@ def ingest_scraped_data(req: https_fn.Request) -> https_fn.Response:
         else:
             return https_fn.Response("Unsupported payload shape. Provide {posts: [...]}, an array, or a single post object.", status=400)
 
+        logger.info(f"Processing {len(posts)} posts")
+
         new_count = 0
         dup_count = 0
 
         engine = get_db_engine()
+        logger.info("About to connect to database")
         with engine.connect() as conn:
+            logger.info("Database connection established")
             with conn.begin() as tx:
+                logger.info("Transaction started")
                 try:
                     # Prepare statements
+                    logger.info("Preparing SQL statements")
                     dup_check_sql = text("SELECT 1 FROM listings WHERE source_url = :source_url LIMIT 1")
                     insert_sql = text(
                         """
@@ -383,25 +391,41 @@ def ingest_scraped_data(req: https_fn.Request) -> https_fn.Response:
                         )
                         """
                     )
+                    logger.info("SQL statements prepared")
 
-                    for p in posts:
+                    logger.info(f"Starting loop over {len(posts)} posts")
+                    for i, p in enumerate(posts):
+                        logger.info(f"=== Processing post {i} ===")
                         try:
+                            logger.info(f"Post data: {json.dumps(p, default=str)}")
+                            
+                            logger.info("Getting permalink")
                             permalink = (p.get("permalink") if isinstance(p, dict) else None) or ""
+                            logger.info(f"Permalink: {permalink}")
                             if not isinstance(permalink, str) or not permalink:
                                 # If no permalink, skip as we cannot dedup/anchor this post
+                                logger.info(f"Skipping post {i}: no valid permalink")
                                 dup_count += 1
                                 continue
 
+                            logger.info("Checking for duplicates")
                             # Duplicate check
                             if conn.execute(dup_check_sql, {"source_url": permalink}).fetchone():
+                                logger.info(f"Skipping post {i}: duplicate permalink {permalink}")
                                 dup_count += 1
                                 continue
 
+                            logger.info("Getting content and image_urls")
                             content = p.get("content") if isinstance(p, dict) else None
+                            logger.info(f"Content: {content}")
                             image_urls = p.get("image_urls") if isinstance(p, dict) else None
+                            logger.info(f"Image URLs (before processing): {image_urls}")
                             if not isinstance(image_urls, list):
                                 image_urls = []
+                            logger.info(f"Image URLs (after processing): {image_urls}")
 
+                            logger.info(f"About to insert post {i} with permalink: {permalink}")
+                            
                             # Insert with placeholders for NOT NULL fields
                             conn.execute(
                                 insert_sql,
@@ -410,7 +434,7 @@ def ingest_scraped_data(req: https_fn.Request) -> https_fn.Response:
                                     "title": "Pending QC",
                                     "description": content or "Pending QC",
                                     "price": 0,
-                                    "area": 0.0,
+                                    "area": 1.0,  # Use 1.0 instead of 0.0 to satisfy constraint
                                     "ward": "Unknown",
                                     "district": "Unknown",
                                     "source_url": permalink,
@@ -418,13 +442,22 @@ def ingest_scraped_data(req: https_fn.Request) -> https_fn.Response:
                                 },
                             )
                             new_count += 1
+                            logger.info(f"Successfully inserted post {i}")
                         except Exception as inner_e:
                             # Log and continue with next post, but keep transaction consistent
-                            logger.error(f"Failed to ingest a post: {inner_e}")
+                            logger.error(f"Failed to ingest post {i}: {inner_e}")
+                            logger.error(f"Exception type: {type(inner_e)}")
+                            import traceback
+                            logger.error(f"Full traceback: {traceback.format_exc()}")
 
+                    logger.info("Loop completed, about to commit")
                     tx.commit()
+                    logger.info(f"Transaction committed: {new_count} new, {dup_count} duplicates")
                 except Exception as e:
                     logger.error(f"Batch ingest failed, rolling back. Error: {e}")
+                    logger.error(f"Exception type: {type(e)}")
+                    import traceback
+                    logger.error(f"Full traceback: {traceback.format_exc()}")
                     tx.rollback()
                     raise
 

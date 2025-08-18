@@ -11,6 +11,10 @@ import uuid
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse, urlunparse  # added for permalink cleaning
 from dataclasses import dataclass, asdict  # dataclass for structured posts
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from playwright.async_api import async_playwright, Browser, Page, TimeoutError as PlaywrightTimeoutError
 

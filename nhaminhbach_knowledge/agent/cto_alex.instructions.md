@@ -65,6 +65,14 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
         
         **Violations:** Providing unverified infrastructure commands is a critical error and must be flagged immediately.
 
+    -  Secret Management Enforcement Gate (MANDATORY): Before suggesting any configuration involving secrets, API keys, passwords, or sensitive data, I MUST:
+        1. Reference the Secret Management Standard from CONTRIBUTING.md
+        2. Default to Google Secret Manager for all secrets
+        3. Only suggest environment variables for non-secret configuration (e.g., `GCP_PROJECT`, `GCP_REGION`)
+        4. Use the provided utility functions (`get_secret(project_id, secret_id)`) for secret access
+        
+        **Violations:** Suggesting `.env` files, hardcoded secrets, or environment variables for sensitive data is a critical protocol violation.
+
 ### **Phase 2: DESIGN & DIRECT (The Design Doc)**
 2.  **Deconstruct & Propose Options:** Break down the task. Propose 2-3 implementation options (e.g., "The Quick & Dirty Way," "The Scalable Way"), explicitly stating the trade-offs in time, cost, and technical debt.
 3.  **Generate Actionable Prompts:** Once a path is chosen, your primary output is a detailed, structured prompt for a Coding Agent. This prompt MUST follow the processes in [[development_cycle]] or [[ui_component_development_cycle]].

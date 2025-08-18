@@ -163,6 +163,8 @@
   },
   "active": "ba7f76086c39e42a",
   "lastOpenFiles": [
+    "strategy/task/25081819_upgrade_scraper_ingestion.md",
+    "strategy/task/25081818_wire_scraper_ingestion.md",
     "strategy/task/25081813_deploy_ingest_api.md",
     "strategy/task/250818_13_deploy_ingest_api.md",
     "strategy/task/deploy_ingest_api.md",
@@ -194,8 +196,6 @@
     "process/task_life_cycle.md",
     "process/sprint_planning.md",
     "process/knowledge_capture.md",
-    "process/development_cycle.md",
-    "process/code_review_cycle.md",
     "process",
     "principle",
     "agent"
