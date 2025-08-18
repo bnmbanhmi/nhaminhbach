@@ -163,6 +163,7 @@
   },
   "active": "ba7f76086c39e42a",
   "lastOpenFiles": [
+    "strategy/sprint/S7.md",
     "system/infrastructure_constants.md",
     "process/infrastructure_config_management.md",
     "strategy/task/25081819_upgrade_scraper_ingestion.md",
@@ -195,7 +196,6 @@
     "strategy/task",
     "strategy/sprint",
     "process/ui_component_development_cycle.md",
-    "process/task_life_cycle.md",
     "process",
     "principle",
     "agent"
