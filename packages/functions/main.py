@@ -347,7 +347,16 @@ def ingest_scraped_data(req: https_fn.Request) -> https_fn.Response:
         return https_fn.Response("Unauthorized", status=401)
 
     try:
-        payload = req.get_json(silent=True)
+        logger.info("Starting ingest_scraped_data processing")
+        
+        # Add detailed logging for payload parsing
+        try:
+            logger.info("Attempting to parse JSON payload")
+            payload = req.get_json(silent=True)
+            logger.info("JSON parsing successful")
+        except Exception as json_error:
+            logger.error(f"JSON parsing failed: {json_error}")
+            raise json_error
         if payload is None:
             return https_fn.Response("Invalid JSON payload.", status=400)
 
@@ -433,7 +442,7 @@ def ingest_scraped_data(req: https_fn.Request) -> https_fn.Response:
                                     "status": "pending_review",
                                     "title": "Pending QC",
                                     "description": content or "Pending QC",
-                                    "price": 0,
+                                    "price": 1000000,  # Use 1M VND as minimum valid price
                                     "area": 1.0,  # Use 1.0 instead of 0.0 to satisfy constraint
                                     "ward": "Unknown",
                                     "district": "Unknown",

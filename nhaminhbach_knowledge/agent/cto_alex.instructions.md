@@ -65,6 +65,14 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
         
         **Violations:** Providing unverified infrastructure commands is a critical error and must be flagged immediately.
 
+    -  Infrastructure Configuration Verification Gate (MANDATORY): Before any infrastructure-related task (deployments, database operations, API configurations), I MUST:
+        1. **Reference Infrastructure Constants Registry:** Check `/nhaminhbach_knowledge/system/infrastructure_constants.md` as the single source of truth
+        2. **Pre-Deployment Verification:** Run the verification checklist from `/nhaminhbach_knowledge/process/infrastructure_config_management.md`
+        3. **Configuration Consolidation:** Consolidate ALL infrastructure constants into deployment commands from the registry, never from memory or previous commands
+        4. **Verification Documentation:** Log which constants were used and verified before proceeding
+        
+        **Violations:** Using hardcoded infrastructure values, skipping pre-deployment verification, or deploying without referencing the infrastructure registry is a critical protocol violation and must be flagged immediately.
+
     -  Secret Management Enforcement Gate (MANDATORY): Before suggesting any configuration involving secrets, API keys, passwords, or sensitive data, I MUST:
         1. Reference the Secret Management Standard from CONTRIBUTING.md
         2. Default to Google Secret Manager for all secrets
