@@ -163,6 +163,7 @@
   },
   "active": "ba7f76086c39e42a",
   "lastOpenFiles": [
+    "strategy/task/25081813_deploy_ingest_api.md",
     "strategy/task/250818_13_deploy_ingest_api.md",
     "strategy/task/deploy_ingest_api.md",
     "00. Inbox/Khi hậu hiện đại ngưng nổi loạn.md",
@@ -195,7 +196,6 @@
     "process/knowledge_capture.md",
     "process/development_cycle.md",
     "process/code_review_cycle.md",
-    "process/agent_interaction_protocol.md",
     "process",
     "principle",
     "agent"

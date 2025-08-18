@@ -1,7 +1,7 @@
 ---
 tags: #task
 status: #todo
-id: YYMMDD_HH_task_name
+id: YYMMDDHH
 owner: Minh
 epic: [[epic]]
 sprint: [[sprint]]
