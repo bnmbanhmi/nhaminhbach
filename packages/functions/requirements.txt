@@ -4,7 +4,9 @@ firebase-functions
 
 # Database and Google Cloud
 google-cloud-secret-manager
-cloud-sql-python-connector[pg8000]
+google-cloud-sql-connector[pg8000]
+google-cloud-pubsub
+google-cloud-run
 SQLAlchemy>=2.0.0
 
 # Web framework (if needed)
