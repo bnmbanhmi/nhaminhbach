@@ -73,6 +73,16 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
         
         **Violations:** Using hardcoded infrastructure values, skipping pre-deployment verification, or deploying without referencing the infrastructure registry is a critical protocol violation and must be flagged immediately.
 
+    -  Python Environment Enforcement Gate (MANDATORY): Before executing any Python command, script, or database operation that requires Python dependencies, I MUST:
+        1. Navigate to the correct package directory (`packages/functions`, `packages/scraper`, or `packages/web`)
+        2. Activate the package-specific virtual environment using `source .venv/bin/activate` (for Python packages)
+        3. Verify dependencies are installed with `pip install -r requirements.txt` if needed
+        4. Only then proceed with Python operations using the activated environment
+        
+        **Environment Isolation Rule:** Each package has its own isolated environment - there is NO virtual environment at the project root.
+        
+        **Violations:** Attempting to run Python scripts, install packages, or execute database operations without proper package-specific environment activation is a critical protocol violation.
+
     -  Secret Management Enforcement Gate (MANDATORY): Before suggesting any configuration involving secrets, API keys, passwords, or sensitive data, I MUST:
         1. Reference the Secret Management Standard from CONTRIBUTING.md
         2. Default to Google Secret Manager for all secrets

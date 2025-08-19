@@ -163,6 +163,8 @@
   },
   "active": "ba7f76086c39e42a",
   "lastOpenFiles": [
+    "strategy/task/25081919_define_pydantic_data_contracts.md",
+    "strategy/sprint/S8.md",
     "strategy/sprint/S7.md",
     "system/infrastructure_constants.md",
     "process/infrastructure_config_management.md",
@@ -192,10 +194,8 @@
     "system/tech_stack.md",
     "system/core_architecture.md",
     "system",
-    "agent/coding_agent.instructions.md",
     "strategy/task",
     "strategy/sprint",
-    "process/ui_component_development_cycle.md",
     "process",
     "principle",
     "agent"
