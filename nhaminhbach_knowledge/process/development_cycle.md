@@ -53,7 +53,11 @@
 
 1.  **Founder (Bạn):** Sử dụng "Prompt Refactor" để AI Agent cải thiện code.
 2.  **Founder (Bạn):** Lặp lại Giai đoạn 2 và 3 nếu cần thiết.
-3.  **Founder (Bạn):** Tự mình kiểm thử sâu để xác nhận tính năng hoạt động chính xác từ đầu đến cuối trong môi trường phát triển.
+3.  **Infrastructure Permission Verification (MANDATORY for Cloud Functions):**
+    - **Pre-Deployment:** Alex verifies all required IAM permissions using [[infrastructure_permissions_management]]
+    - **Post-Deployment:** Alex tests all secret access and database connections end-to-end
+    - **Documentation:** All permissions granted must be documented in infrastructure constants
+4.  **Founder (Bạn):** Tự mình kiểm thử sâu để xác nhận tính năng hoạt động chính xác từ đầu đến cuối trong môi trường phát triển.
 
 #### **Giai đoạn 5: Chưng cất & Dọn dẹp (Distill & Clean)**
 

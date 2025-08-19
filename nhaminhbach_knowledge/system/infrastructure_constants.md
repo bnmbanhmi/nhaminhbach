@@ -29,9 +29,13 @@ status: active
 - **Ingestion API Function:** `ingest_scraped_data`
 - **API Key Secret:** `ingest-api-key` (Google Secret Manager)
 - **Function URL:** `https://asia-southeast1-omega-sorter-467514-q6.cloudfunctions.net/ingest_scraped_data`
+- **Transformation Function:** `transform_property_post`
+- **Transformation URL:** `https://transform-property-post-kbmvflixza-as.a.run.app`
+- **Transformation Trigger:** `trigger_transformation_batch`
+- **Trigger URL:** `https://trigger-transformation-batch-kbmvflixza-as.a.run.app`
 - **Runtime:** `python311`
-- **Memory:** `512MB`
-- **Timeout:** `540s`
+- **Memory:** `512MB` (ingestion), `1024MB` (transformation), `512MB` (trigger)
+- **Timeout:** `540s` (ingestion), `300s` (transformation), `300s` (trigger)
 - **Region:** `asia-southeast1`
 
 ## Google Secret Manager Secrets
@@ -40,6 +44,7 @@ status: active
 | `db-password` | PostgreSQL database password | `projects/omega-sorter-467514-q6/secrets/db-password/versions/latest` |
 | `ingest-api-key` | Cloud Function API authentication | `projects/omega-sorter-467514-q6/secrets/ingest-api-key/versions/latest` |
 | `orchestrator-secret-key` | System orchestration key | `projects/omega-sorter-467514-q6/secrets/orchestrator-secret-key/versions/latest` |
+| `gemini-api-key` | Gemini LLM API authentication | `projects/omega-sorter-467514-q6/secrets/gemini-api-key/versions/latest` |
 
 ## Environment Variables for Cloud Functions
 Standard environment variables for function deployment:

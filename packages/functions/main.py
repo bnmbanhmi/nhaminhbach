@@ -4,17 +4,27 @@ import time
 import uuid
 import base64
 import concurrent.futures
+import requests
 from decimal import Decimal
 from typing import Any
 from datetime import datetime
 
-from firebase_functions import https_fn, options, logger, pubsub_fn
+from firebase_functions import https_fn, options, logger, pubsub_fn, scheduler_fn
 from google.cloud.sql.connector import Connector, IPTypes
 from google.cloud import pubsub_v1, run_v2
 from google.api_core import gapic_v1
 import sqlalchemy
 from sqlalchemy import text
 from utils import get_secret
+
+# Import transformation logic for LLM processing
+try:
+    from transformation_engine import transform_raw_post
+    from data_contracts import Listing, Attribute
+    TRANSFORMATION_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Transformation modules not available: {e}")
+    TRANSFORMATION_AVAILABLE = False
 
 # =================================================================================
 #  1. GLOBAL SETUP & CONFIGURATION
@@ -651,3 +661,281 @@ def orchestrate_scrapes(req: https_fn.Request) -> https_fn.Response:
     except Exception as e:
         logger.error(f"An unexpected error occurred during scrape orchestration: {e}")
         return https_fn.Response("An internal server error occurred.", status=500)
+
+
+@https_fn.on_request(
+    cors=CORS_CONFIG,
+    memory=1024,
+    timeout_sec=300
+)
+def transform_property_post(req: https_fn.Request) -> https_fn.Response:
+    """
+    Transform raw Vietnamese rental property post into structured data using LLM
+    
+    Accepts POST requests with JSON body:
+    {
+        "raw_text": "string",
+        "source": "string (optional)",
+        "metadata": "object (optional)"
+    }
+    
+    Returns structured listing data or error details
+    """
+    if not TRANSFORMATION_AVAILABLE:
+        return https_fn.Response(
+            json.dumps({"error": "Transformation engine not available"}),
+            status=503,
+            headers={"Content-Type": "application/json"}
+        )
+    
+    start_time = datetime.utcnow()
+    
+    try:
+        # Only accept POST requests
+        if req.method != "POST":
+            return https_fn.Response(
+                json.dumps({"error": "Method not allowed"}),
+                status=405,
+                headers={"Content-Type": "application/json"}
+            )
+        
+        # Parse request body
+        try:
+            request_data = req.get_json(force=True)
+        except Exception:
+            return https_fn.Response(
+                json.dumps({"error": "Invalid JSON in request body"}),
+                status=400,
+                headers={"Content-Type": "application/json"}
+            )
+        
+        # Validate required fields
+        raw_text = request_data.get("raw_text")
+        if not raw_text or len(raw_text.strip()) < 10:
+            return https_fn.Response(
+                json.dumps({"error": "Raw text must contain at least 10 characters"}),
+                status=400,
+                headers={"Content-Type": "application/json"}
+            )
+        
+        source = request_data.get("source")
+        metadata = request_data.get("metadata", {})
+        
+        logger.info(f"Processing transformation request for {len(raw_text)} characters of text")
+        
+        # Call transformation engine
+        source_url = metadata.get('source_url', 'api-request') if metadata else 'api-request'
+        result = transform_raw_post(raw_text, source_url)
+        
+        if not result:
+            return https_fn.Response(
+                json.dumps({"error": "Transformation failed - no result returned"}),
+                status=500,
+                headers={"Content-Type": "application/json"}
+            )
+        
+        # Calculate processing time
+        processing_time = (datetime.utcnow() - start_time).total_seconds() * 1000
+        
+        logger.info(f"Transformation completed successfully in {processing_time:.2f}ms")
+        
+        response_data = {
+            "success": True,
+            "data": {
+                "listing": result.model_dump() if hasattr(result, 'model_dump') else result,
+                "status": "pending_review",
+                "source": source,
+                "metadata": metadata
+            },
+            "processing_time_ms": processing_time
+        }
+        
+        return https_fn.Response(
+            json.dumps(response_data, default=default_json_serializer),
+            status=200,
+            headers={"Content-Type": "application/json"}
+        )
+        
+    except Exception as e:
+        processing_time = (datetime.utcnow() - start_time).total_seconds() * 1000
+        error_msg = f"Transformation failed: {str(e)}"
+        logger.error(error_msg, exc_info=True)
+        
+        error_response = {
+            "success": False,
+            "error": error_msg,
+            "processing_time_ms": processing_time
+        }
+        
+        return https_fn.Response(
+            json.dumps(error_response, default=default_json_serializer),
+            status=500,
+            headers={"Content-Type": "application/json"}
+        )
+
+
+# =================================================================================
+#  7. TRANSFORMATION TRIGGER (Sprint S7 Task 4)
+# =================================================================================
+
+def _process_pending_transformations_logic() -> dict:
+    """
+    Core logic for processing pending transformations.
+    Returns a dictionary with processing results.
+    """
+    logger.info("Starting transformation processing logic")
+    
+    engine = get_db_engine()
+    transformation_url = "https://transform-property-post-kbmvflixza-as.a.run.app"
+    processed_count = 0
+    error_count = 0
+    
+    with engine.connect() as conn:
+        # Find pending listings with placeholder data (limit to 10 per run)
+        pending_query = text("""
+            SELECT id, description, source_url, created_at
+            FROM listings 
+            WHERE status = 'pending_review' 
+            AND title = 'Pending QC'
+            ORDER BY created_at ASC
+            LIMIT 10
+        """)
+        
+        pending_listings = conn.execute(pending_query).fetchall()
+        logger.info(f"Found {len(pending_listings)} pending listings to process")
+        
+        for listing in pending_listings:
+            try:
+                listing_id = listing.id
+                raw_content = listing.description
+                source_url = listing.source_url
+                created_at = listing.created_at
+                
+                logger.info(f"Processing listing {listing_id}")
+                
+                # Prepare transformation request
+                transform_payload = {
+                    "raw_text": raw_content,
+                    "source": "transformation_trigger", 
+                    "metadata": {
+                        "listing_id": str(listing_id),
+                        "source_url": source_url,
+                        "ingested_at": created_at.isoformat() if created_at else None
+                    }
+                }
+                
+                # Call transformation function
+                logger.info(f"Calling transformation function for listing {listing_id}")
+                response = requests.post(
+                    transformation_url,
+                    json=transform_payload,
+                    headers={"Content-Type": "application/json"},
+                    timeout=60  # 60 second timeout
+                )
+                
+                if response.status_code == 200:
+                    # Parse transformation result
+                    result = response.json()
+                    
+                    if result.get("success"):
+                        # Extract structured data
+                        transformed_data = result.get("data", {})
+                        listing_data = transformed_data.get("listing", {})
+                        
+                        # Update listing with transformed data
+                        update_query = text("""
+                            UPDATE listings SET
+                                title = COALESCE(:title, title),
+                                price_monthly_vnd = COALESCE(:price, price_monthly_vnd), 
+                                area_m2 = COALESCE(:area, area_m2),
+                                address_ward = COALESCE(:ward, address_ward),
+                                address_district = COALESCE(:district, address_district),
+                                contact_phone = :phone,
+                                status = 'pending_review'
+                            WHERE id = :listing_id
+                        """)
+                        
+                        conn.execute(update_query, {
+                            "listing_id": listing_id,
+                            "title": listing_data.get("title"),
+                            "price": listing_data.get("price_monthly_vnd"),
+                            "area": listing_data.get("area_m2"), 
+                            "ward": listing_data.get("address_ward"),
+                            "district": listing_data.get("address_district"),
+                            "phone": listing_data.get("contact_phone")
+                        })
+                        
+                        conn.commit()
+                        processed_count += 1
+                        logger.info(f"Successfully transformed listing {listing_id}")
+                        
+                    else:
+                        error_msg = result.get("error", "Unknown transformation error")
+                        logger.error(f"Transformation failed for listing {listing_id}: {error_msg}")
+                        error_count += 1
+                        
+                else:
+                    logger.error(f"HTTP error calling transformation function for listing {listing_id}: {response.status_code}")
+                    error_count += 1
+                    
+            except Exception as e:
+                logger.error(f"Error processing listing {listing_id if 'listing_id' in locals() else 'unknown'}: {e}")
+                error_count += 1
+                
+    return {
+        "processed_count": processed_count,
+        "error_count": error_count,
+        "total_found": len(pending_listings) if 'pending_listings' in locals() else 0
+    }
+
+
+@scheduler_fn.on_schedule(
+    schedule="*/30 * * * * *",  # Every 30 seconds
+    timezone="UTC"
+)
+def process_pending_transformations(event) -> None:
+    """
+    Scheduled function that polls for pending_review listings and triggers transformation.
+    """
+    try:
+        result = _process_pending_transformations_logic()
+        logger.info(f"Scheduled transformation batch complete: {result['processed_count']} processed, {result['error_count']} errors")
+        
+    except Exception as e:
+        logger.error(f"Error in scheduled process_pending_transformations: {e}")
+        import traceback
+        logger.error(f"Full traceback: {traceback.format_exc()}")
+
+
+@https_fn.on_request()
+def trigger_transformation_batch(req: https_fn.Request) -> https_fn.Response:
+    """
+    Manual HTTP endpoint to trigger transformation processing (for testing)
+    """
+    if req.method != "POST":
+        return https_fn.Response("Method not allowed", status=405)
+        
+    try:
+        # Call the core transformation logic
+        result = _process_pending_transformations_logic()
+        
+        return https_fn.Response(
+            json.dumps({
+                "message": "Transformation batch triggered successfully",
+                "processed_count": result["processed_count"], 
+                "error_count": result["error_count"],
+                "total_found": result["total_found"]
+            }),
+            status=200,
+            headers={"Content-Type": "application/json"}
+        )
+        
+    except Exception as e:
+        logger.error(f"Error in trigger_transformation_batch: {e}")
+        import traceback
+        logger.error(f"Full traceback: {traceback.format_exc()}")
+        return https_fn.Response(
+            json.dumps({"error": f"Internal server error: {str(e)}"}),
+            status=500,
+            headers={"Content-Type": "application/json"}
+        )
