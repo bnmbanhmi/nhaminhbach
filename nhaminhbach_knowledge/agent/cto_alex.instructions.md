@@ -47,7 +47,7 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
     > **Current State Analysis:**
     > - **Mission:** _(A one-sentence summary from [[lean_business_model]])_
     > - **Current Epic:** [[E2]]
-    > - **Current Sprint:** [[S6]]
+    > - **Current Sprint:** [[250816_local_to_cloud_bridge]]
     > - **My Understanding of Your Request:** "You are asking me to..."
     > - **Alignment Check:** "This request appears to align with our current sprint goal of building the local-to-cloud bridge. Is my understanding correct?"
 
@@ -109,7 +109,7 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
 
 ### **Phase 2: DESIGN & DIRECT (The Design Doc)**
 2.  **Deconstruct & Propose Options:** Break down the task. Propose 2-3 implementation options (e.g., "The Quick & Dirty Way," "The Scalable Way"), explicitly stating the trade-offs in time, cost, and technical debt.
-3.  **Generate Actionable Prompts:** Once a path is chosen, your primary output is a detailed, structured prompt for a Coding Agent. This prompt MUST follow the processes in [[development_cycle]] or [[ui_component_development_cycle]].
+3.  **Generate Actionable Prompts:** Once a path is chosen, your primary output is a detailed, structured prompt for a Coding Agent. This prompt MUST follow the AI-optimized templates in [[ai_agent_briefing_guide]] and the processes in [[development_cycle]] or [[ui_component_development_cycle]].
 4.  **Enforce Principles:** You are the guardian of [[engineering_principles]]. You must critically review the chosen solution against these principles and flag any violations with clear reasoning.
 5.  **Functional Validation Gate (MANDATORY):** Before suggesting any task or sprint completion, I MUST:
     - Verify all original success criteria are functionally achieved with real test results
@@ -132,7 +132,7 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
        - YYMMDD = Current date (e.g., 250818 for August 18, 2025)
        - HH = Current hour in 24-hour format
        - task_name = descriptive snake_case name
-    4. Use the template from `/nhaminhbach_knowledge/template/task.md`
+    4. Use the AI-optimized template from `/nhaminhbach_knowledge/template/task.md` following [[ai_agent_briefing_guide]]
     5. Save the file to `/nhaminhbach_knowledge/strategy/task/`
     6. Fill in the Objective, initial Steps & Progress, and link to relevant epic/sprint
     7. Reference the task file in all subsequent work communications

@@ -1,127 +1,111 @@
 ---
-tags: #sprint
-status: #in-progress
-id: YYMMDDHH
-timeframe: YYYY-MM-DD to YYYY-MM-DD
+tags: #sprint-ai
+status: #planning
+timeframe: YYYY-MM-DD HH:MM to YYYY-MM-DD HH:MM
 epic: [[epic]]
-owner: Minh
-sprint_type: [Feature/Infrastructure/Bug Fix/Polish]
+owner: [Human]
+estimated_duration: [2-6 hours]
 ---
 
-# Sprint: [Sprint Title]
+# AI Sprint: [Sprint Name]
 
-**Owner:** [Owner Name]
-**Sprint Duration:** [Start Date] to [End Date]
-**Epic:** [[related_epic]]
-**Sprint Type:** [Feature Development/Infrastructure/Bug Fixes/Polish/etc.]
+**Duration:** [Start Time] to [End Time] ([X] hours)  
+**Epic:** [[epic]]  
+**Sprint Type:** [Feature/Infrastructure/Bug Fix/Polish]
 
-## 🎯 Sprint Goal
-[Clear, focused objective for this sprint. What will be accomplished by the end?]
+## 🎯 Sprint Objective (AI Context)
+**Goal:** [Single, focused outcome this sprint delivers]  
+**User Value:** [How this sprint benefits end users]  
+**Technical Value:** [How this sprint improves system/architecture]
 
-**Definition of Done for Sprint:**
-- [ ] [Specific deliverable 1]
-- [ ] [Specific deliverable 2]
-- [ ] [Specific deliverable 3]
-- [ ] [All tasks completed and deployed]
+## 🤖 AI Agent Coordination
+**Primary Agent Type:** [CTO Alex/Coding Agent/etc.]  
+**Context Handoff Strategy:** [How AI agents will coordinate]  
+**Shared Reference:** [Key files all agents should know]
 
-## 📋 Sprint Backlog & Task Progress
+## 📋 Sprint Backlog (Task Queue)
 
-### 🚀 Primary Tasks
-- [ ] [[task_1]]: [Task description and current status]
-- [ ] [[task_2]]: [Task description and current status]
-- [ ] [[task_3]]: [Task description and current status]
+### **Ready Tasks** (Ordered by Priority)
+1. [[task_1]] - [30min] - [Brief description] - **Status:** [Ready/Blocked]
+2. [[task_2]] - [1hr] - [Brief description] - **Status:** [Ready/Blocked]  
+3. [[task_3]] - [1hr] - [Brief description] - **Status:** [Ready/Blocked]
 
-### 🔧 Secondary Tasks (If Time Permits)
-- [ ] [[optional_task_1]]: [Description]
-- [ ] [[optional_task_2]]: [Description]
+**Total Estimated:** [X hours]
 
-## 📊 Sprint Metrics & Health
-- **Planned Story Points:** [X points]
-- **Completed Story Points:** [Y points]
-- **Velocity:** [Points per day]
-- **Burn Rate:** [On track/Behind/Ahead]
+### **Stretch Tasks** (If Sprint Completes Early)
+- [[optional_task_1]] - [30min] - [Brief description]
+- [[optional_task_2]] - [1hr] - [Brief description]
 
-## 🚫 Sprint Scope & Boundaries
-**In Scope:**
-- [Clearly defined work items]
-- [Specific features or capabilities]
+## 🧭 AI Agent Preparation Package
+**Essential Context Files:**
+- [[core_architecture]] - System design principles
+- [[current_epic]] - Business context and goals
+- [[database_schema]] - Data model reference
+- [[coding_standards]] - Implementation guidelines
 
-**Out of Scope:**
-- [Work explicitly excluded from this sprint]
-- [Future sprint items]
+**Current System State:**
+- **Environment:** [Dev/Staging/Production status]  
+- **Last Deploy:** [When and what was deployed]
+- **Active Branches:** [Git branch status]
+- **Dependencies:** [External service status]
 
-## 🚨 Issues & Risk Management
-### Active Issues
-- 🔄 **[Issue Title]** - IN PROGRESS: [Description and current actions]
-- ❌ **[Blocked Issue]** - BLOCKED: [Description and what's needed to unblock]
+**Integration Points:**
+- **APIs:** [Which APIs this sprint touches]
+- **Database:** [Tables/schemas affected]  
+- **Frontend:** [UI components involved]
+- **Infrastructure:** [Services or deployments needed]
 
-### Resolved Issues
-- ✅ **[Resolved Issue]** - RESOLVED: [How it was solved]
+## � Sprint Progress Dashboard
 
-## 🔗 Dependencies & External Factors
-- **Upstream Dependencies:** [What this sprint depends on]
-- **Downstream Impact:** [What depends on this sprint]
-- **External Blockers:** [Outside factors that could impact sprint]
+| Task | Duration | Status | AI Agent | Completion Time |
+|------|----------|--------|----------|-----------------|
+| [[task_1]] | [30min] | [Status] | [Agent] | [Timestamp] |
+| [[task_2]] | [1hr] | [Status] | [Agent] | [Timestamp] |
+| [[task_3]] | [1hr] | [Status] | [Agent] | [Timestamp] |
 
-## 📈 Current Sprint Status
-- **Phase:** [Planning/Development/Testing/Review/Complete]
-- **Overall Progress:** [X% complete with summary]
-- **Risk Level:** [Green/Yellow/Red]
-- **Confidence Level:** [High/Medium/Low] in meeting sprint goal
+**Sprint Velocity:** [Completed/Planned hours] = [X%]
 
-## 💡 Daily Progress Log
-_Track daily decisions, breakthroughs, and challenges_
+## � Real-Time Status Tracking
+**Current Focus:** [Which task is active now]  
+**Active AI Agent:** [Which agent is working]  
+**Blockers:** [Any impediments requiring human intervention]  
+**Next Up:** [What task is queued next]
 
-### **Day 1 (YYYY-MM-DD)**
-- **Focus:** [Main work focus]
-- **Progress:** [What was accomplished]
-- **Issues:** [Any problems encountered]
-- **Decisions:** [Key decisions made]
+## 🚨 AI Agent Issues & Escalation
+**Active Issues:**
+- **Issue:** [Description] | **AI Agent:** [Which agent] | **Action:** [Resolution approach]
 
-### **Day 2 (YYYY-MM-DD)**
-- **Focus:** [Main work focus]
-- **Progress:** [What was accomplished]
-- **Issues:** [Any problems encountered]
-- **Decisions:** [Key decisions made]
+**Resolved Issues:**
+- **Issue:** [Description] | **Resolution:** [How it was solved] | **Learning:** [For future]
 
-[Continue for each day of sprint]
+## 🎯 Sprint Completion Checklist
+- [ ] All ready tasks completed successfully
+- [ ] Code deployed and tested in target environment  
+- [ ] Documentation updated for next sprint
+- [ ] AI agent context prepared for handoff
+- [ ] User-facing functionality validated
 
-## ⏪ Sprint Retrospective
-_Complete at sprint end - comprehensive reflection_
+## ⚡ Sprint Retrospective (AI Learning)
+_Complete when sprint finishes - optimize for next AI sprints_
 
-### ✅ What Went Exceptionally Well
-- [Specific success that should be repeated]
-- [Process or technique that worked well]
-- [Tool or approach that accelerated work]
+### 📊 Sprint Results
+**Planned Duration:** [X hours] | **Actual Duration:** [Y hours]  
+**Tasks Completed:** [X/Y] | **Velocity Achievement:** [X%]
 
-### ❌ What Went Wrong or Could Improve
-- [Specific problem that slowed progress]
-- [Process gap or inefficiency discovered]
-- [Technical debt or shortcuts taken]
+### 🤖 AI Agent Performance
+**Most Effective:** [Which AI interaction pattern worked best]  
+**Challenging Areas:** [Where AI agents struggled or needed guidance]  
+**Context Loading:** [How well AI agents understood requirements]
 
-### 🎓 Key Learnings & Insights
-- **Engineering Insight:** [Technical learning with lasting impact]
-- **Product Insight:** [User/business learning]
-- **Process Insight:** [Workflow or methodology improvement]
+### 🔄 Process Improvements
+**AI Instructions:** [How to improve AI agent briefings]  
+**Context Management:** [Better ways to maintain state across sessions]  
+**Task Breakdown:** [How to better structure work for AI agents]
 
-### 📈 Metrics & Quantified Outcomes
-- **Velocity Achieved:** [Actual vs planned story points]
-- **Quality Metrics:** [Bug count, test coverage, etc.]
-- **Performance Impact:** [Speed improvements, optimizations]
-
-### 🔗 Knowledge & Process Evolution
-- **Key Principle Learned:** [[principle_file]] - [Specific principle reinforced or discovered]
-- **Key Processes Created/Updated:** [[process_file]] - [Process improvement made]
-- **Key Documents Created/Updated:** [[document_file]] - [Documentation evolved]
-
-### 🎯 Strategic Recommendations
-- **For Next Sprint:** [Immediate actionable improvements]
-- **For Epic:** [Higher-level strategic adjustments needed]
-- **For Process:** [Systemic improvements to consider]
-
-### 📊 Sprint Achievement Score
-**Overall Sprint Success:** [1-10 score] / 10
-**Rationale:** [Brief explanation of score]
+### 📚 Knowledge Captured
+**Technical Patterns:** [Reusable solutions discovered]  
+**Integration Insights:** [System interaction learnings]  
+**AI Collaboration:** [Better human-AI workflow techniques]
 
 ---
-**Final Status:** [Complete/Incomplete - X% achieved]
+**Final Status:** [Complete/Incomplete] | **Next Sprint Preparation:** [What's ready for next sprint]

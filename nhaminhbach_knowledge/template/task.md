@@ -1,71 +1,89 @@
 ---
-tags: #task
-status: #todo
-id: YYMMDDHH
-owner: Minh
+tags: #task-ai
+status: #ready
+owner: [Human]
+ai_agent: [Agent Name/Type]
 epic: [[epic]]
 sprint: [[sprint]]
+estimated_duration: [30min/1hr/2hr]
+complexity: [Simple/Medium/Complex]
 ---
 
-# Task: [Task Title]
+# AI Task: [Clear, Actionable Title]
 
-**Owner:** [Owner Name]
-**Date Started:** YYYY-MM-DD
+**Duration:** [Estimated time]  
+**Complexity:** [Simple/Medium/Complex]  
+**AI Agent:** [Which agent will handle this]
 
-## Objective
-[Brief description of what this task aims to accomplish]
+## 🎯 Objective (AI Context)
+**What:** [Exactly what needs to be built/fixed/implemented]  
+**Why:** [Business/technical reason - helps AI understand priority]  
+**Success:** [Clear definition of "done" for AI to verify]
 
-## Steps & Progress
+## 🤖 AI Agent Instructions
+**Context Files to Read:**
+- [[file1]] - [Why this file is relevant]
+- [[file2]] - [Why this file is relevant]
 
-- [ ] [Step 1: Description of first step]
-- [ ] [Step 2: Description of second step]
-- [ ] [Step 3: Description of third step]
-- [ ] [Add more steps as needed]
+**Technical Requirements:**
+- [Specific technology/framework to use]
+- [Architecture pattern to follow]  
+- [Code style/standards to maintain]
 
-## Issues Encountered & Resolved
-- [Track issues here with status indicators]
-- ✅ [Resolved issue] - RESOLVED
-- 🔄 [In progress issue] - IN PROGRESS
-- ❌ [Blocked issue] - BLOCKED
+**Integration Points:**
+- [What this connects to]
+- [APIs or services to interact with]
+- [Database changes needed]
 
-## Current Status
-- **Phase:** [Current phase of work]
-- **Progress:** [Brief status update]
-- **Blockers:** [Any current blockers]
+## ✅ Acceptance Criteria (AI Verification)
+- [ ] **Given** [context], **when** [action], **then** [result]
+- [ ] **Given** [context], **when** [action], **then** [result]
+- [ ] [Any other specific validation requirements]
 
-## Next Actions
-- [List immediate next steps]
-- [What needs to happen to move forward]
-- [Dependencies or waiting items]
+## 🧭 AI Agent Preparation Checklist
+**Before Starting:**
+- [ ] Read context files listed above
+- [ ] Understand current system state
+- [ ] Verify development environment ready
+- [ ] Confirm integration points exist
 
-## Links
-- [Relevant documentation links]
-- [Build logs, monitoring dashboards, etc.]
-- [Related tasks or epics]
+**Implementation Approach:**
+- [ ] [Step 1 - what to do first]
+- [ ] [Step 2 - next logical step]  
+- [ ] [Step 3 - testing/validation]
 
-## Decision Chronicle & Work Log
-_Document key conversations, decisions, and turning points_
+## 📋 Progress Tracking
+**Status:** [Ready/In Progress/Testing/Complete/Blocked]  
+**Current Step:** [Which step AI is working on]  
+**Next Action:** [What happens next]
 
-### **Initial Analysis**
-> **Context:** [What prompted this task]
-> **Approach:** [Initial approach or options considered]
+## 🔗 Context & Dependencies
+**Depends On:** [Previous tasks that must be complete]  
+**Enables:** [What this unlocks for next tasks]  
+**Reference:** [Key documentation or examples to follow]
 
-### **Key Decisions**
-- **Decision:** [Important decision made]
-- **Rationale:** [Why this decision was made]
-- **Reference:** [Link to principle or epic that influenced this]
+## 📝 AI Session Log
+_Track decisions and discoveries across AI handoffs_
 
-### **Implementation Log**
-[Chronological log of work done, challenges faced, solutions found]
+### **Session 1** ([Timestamp])
+**AI Agent:** [Agent name]  
+**Progress:** [What was accomplished]  
+**Decisions:** [Key technical/design decisions made]  
+**Issues:** [Problems encountered]  
+**Handoff:** [State for next AI agent]
 
-## Final Retrospective
-_Complete when task is done - distill key learnings_
+### **Session 2** ([Timestamp])  
+**AI Agent:** [Agent name]
+**Progress:** [What was accomplished]
+**Decisions:** [Key technical/design decisions made]
+**Issues:** [Problems encountered]  
+**Handoff:** [State for next AI agent]
 
-- **Trigger:** [What originally caused this need]
-- **Final Outcome:** [What was actually delivered]
-- **The "Aha!" Moment:** [Key insight or realization]
-- **Core Principle Learned:** [Link to principle reinforced or discovered]
-- **Knowledge Captured:** [What documentation was updated]
+## 🎉 Completion Summary
+**Delivered:** [What was actually built]  
+**Variance:** [Any scope changes during implementation]  
+**AI Learning:** [Technical insights for future similar tasks]  
+**Next Recommended:** [What should happen next]
 
 ---
-**Status:** [Todo/In Progress/Done/Blocked]
+**Final Status:** [Complete/Partial] | **Quality:** [Production Ready/Needs Review/Prototype]

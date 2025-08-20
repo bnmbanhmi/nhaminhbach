@@ -13302,7 +13302,7 @@ Công cụ đã được rèn giũa và sẵn sàng. Bây giờ là lúc để n
 
 ---
 **USER:**
-(.venv) mac@bnms-Laptop scraper % python main.py --headful "https://www.facebook.com/groups/phongtrometrimydinhcaugiay"
+(.venv) bnmbanhmi scraper % python main.py --headful "https://www.facebook.com/groups/phongtrometrimydinhcaugiay"
 2025-08-13 15:05:37,312 INFO Running in headful (non-headless) mode for debugging
 2025-08-13 15:05:41,742 INFO Navigating to https://www.facebook.com/groups/phongtrometrimydinhcaugiay?sorting_setting=CHRONOLOGICAL
 2025-08-13 15:05:54,506 INFO Final article count after scroll/poll: 10

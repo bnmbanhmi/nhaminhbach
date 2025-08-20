@@ -1,93 +1,147 @@
 ---
-tags: #epic
-status: #in-progress
-id: E[X]
-owner: Minh
+tags: #epic-ai
+status: #planning
+owner: [Product Owner/Human]
 timeframe: YYYY-MM-DD to YYYY-MM-DD
-product_area: [Product Area]
-business_impact: #high
+estimated_duration: [2-5 days]
+business_impact: [High/Medium/Low]
+technical_complexity: [High/Medium/Low]
 ---
 
-# Epic: [Epic Title]
+# AI Epic: [Epic Title]
 
-**Owner:** [Owner Name]
-**Date Started:** YYYY-MM-DD
-**Product Area:** [Core Product/Infrastructure/Growth/etc.]
+**Duration:** [Start Date] to [End Date] ([X] days)  
+**Business Impact:** [High/Medium/Low]  
+**Technical Complexity:** [High/Medium/Low]
 
-## 🎯 Business Goal
-[High-level business objective this epic serves. Example: "Enable new users to find and successfully connect with a landlord within 7 days to achieve product-market fit."]
+## 🎯 Epic Vision (AI Strategic Context)
+**Business Outcome:** [What business goal this epic achieves]  
+**User Impact:** [How this changes the user experience]  
+**Technical Evolution:** [How this advances the system architecture]
 
-## 🎭 User Story
-**As a** [user type]
-**I want** [capability/feature]
-**So that** [business value/outcome]
+## 🎭 User Story (AI Understanding)
+**As a** [user type]  
+**I want** [capability]  
+**So that** [value/outcome]  
 
-## 📈 Success Metrics & KPIs
-- **Primary KPI:** [Main business metric - e.g., "User activation rate > 50%"]
-- **Secondary KPI:** [Supporting metric - e.g., "Time to first connection < 7 days"]
-- **Technical KPI:** [Engineering metric - e.g., "API response time < 500ms"]
+**User Journey:** [Key steps user will take to achieve value]
 
-## 🎯 Epic Scope & Definition of Done
-- [ ] [Major capability 1 is delivered and working]
-- [ ] [Major capability 2 is delivered and working]
-- [ ] [Success metrics are being measured and targets met]
-- [ ] [User acceptance criteria validated]
+## 📈 Success Criteria (AI Validation)
+**Business Metrics:**
+- [Primary KPI with target - e.g., "User conversion > 25%"]
+- [Secondary KPI - e.g., "Time to value < 5 minutes"]
 
-## 🗺️ Sprint Breakdown
-- **[[Sprint 1]]:** [Sprint goal and key deliverables]
-- **[[Sprint 2]]:** [Sprint goal and key deliverables]
-- **[[Sprint 3]]:** [Sprint goal and key deliverables]
+**Technical Metrics:**
+- [Performance target - e.g., "Page load < 2 seconds"]  
+- [Quality target - e.g., "Zero critical bugs in production"]
 
-## � Key Tasks & Dependencies
-### Sprint 1 Tasks
-- [[task_1]]: [Task description]
-- [[task_2]]: [Task description]
+**AI Implementation Quality:**
+- [Code quality standard - e.g., "All functions have tests"]
+- [Documentation standard - e.g., "All APIs documented"]
 
-### Sprint 2 Tasks
-- [[task_3]]: [Task description]
-- [[task_4]]: [Task description]
+## 🗺️ Sprint Strategy (AI Execution Plan)
 
-## 🚫 Out of Scope
-- [Feature/capability explicitly excluded]
-- [Technical debt items deferred]
-- [Nice-to-have features saved for later]
+### **Phase 1: Foundation** ([Timeline])
+**Objective:** [Core infrastructure/base functionality]  
+- **[[Sprint 1]]:** [Sprint goal] - [Estimated hours]
+- **[[Sprint 2]]:** [Sprint goal] - [Estimated hours]
 
-## 📊 Current Status
-- **Phase:** [Planning/In Progress/Testing/Complete]
-- **Progress:** [Overall epic progress summary]
-- **Risk Level:** [Low/Medium/High]
-- **Blockers:** [Any current blockers]
+### **Phase 2: Core Features** ([Timeline])  
+**Objective:** [Main user-facing functionality]
+- **[[Sprint 3]]:** [Sprint goal] - [Estimated hours]
+- **[[Sprint 4]]:** [Sprint goal] - [Estimated hours]
 
-## 🔗 Strategic Context
-- **Product Roadmap:** Links to [[product_roadmap]]
-- **Business Model:** Connects to [[lean_business_model]]
-- **Architecture:** Impacts [[core_architecture]]
+### **Phase 3: Integration & Polish** ([Timeline])
+**Objective:** [System integration and user experience refinement]  
+- **[[Sprint 5]]:** [Sprint goal] - [Estimated hours]
 
-## 📋 Epic Chronicle & Key Decisions
-_Document major decisions and turning points throughout the epic_
+**Total Estimated:** [X hours across Y days]
 
-### **Epic Genesis**
-> **Business Trigger:** [What market need or business requirement sparked this epic]
-> **Strategic Context:** [How this fits into broader product strategy]
+## 🤖 AI Agent Strategy & Context
+**Primary AI Agents Needed:**
+- **CTO Alex:** [For architecture and strategic decisions]
+- **Coding Agent:** [For implementation and testing]  
+- **Specialist Agent:** [For domain-specific work if needed]
 
-### **Key Architectural Decisions**
-- **Decision:** [Major technical or product decision]
-- **Rationale:** [Why this approach was chosen]
-- **Trade-offs:** [What was sacrificed for this decision]
-- **Reference:** [Link to principle or document that guided this]
+**Shared Context Package:**
+- [[core_architecture]] - System design foundation
+- [[business_model]] - Product strategy and user needs
+- [[tech_stack]] - Technology choices and constraints
+- [[current_database_schema]] - Data model and relationships
 
-### **Sprint Learning Log**
-[Track key learnings and pivots as sprints complete]
+**AI Decision Framework:**
+- **Escalate to Human:** [Types of decisions requiring human input]
+- **AI Autonomous:** [Types of decisions AI can make independently]  
+- **Documentation Standard:** [How AI should document decisions]
 
-## 🎯 Final Epic Retrospective
-_Complete when epic is done - capture strategic learnings_
+## 🧭 Epic Prerequisites (AI Agent Preparation)
+**Technical Prerequisites:**
+- [ ] [Infrastructure requirement 1]
+- [ ] [Infrastructure requirement 2]  
+- [ ] [Development environment requirement]
 
-- **Original Vision vs. Reality:** [How final outcome compared to initial goal]
-- **Business Impact Achieved:** [Quantified results against success metrics]
-- **Core Product Learning:** [Key insight about user behavior or market]
-- **Engineering Learning:** [Key technical insight or architectural lesson]
-- **Process Evolution:** [How this epic improved our ways of working]
-- **Strategic Implications:** [How this changes future product direction]
+**Knowledge Prerequisites:**  
+- [ ] [Domain knowledge AI agents need]
+- [ ] [Technical standards to understand]
+- [ ] [Integration patterns to follow]
+
+**Context Prerequisites:**
+- [ ] [Previous epic completion status]
+- [ ] [Dependency system availability]
+- [ ] [External service readiness]
+
+## � Epic Progress Tracking
+
+| Sprint | Objective | Estimated | Actual | Status | Key Deliverable |
+|--------|-----------|-----------|--------|--------|-----------------|
+| [[Sprint 1]] | [Goal] | [Xh] | [Yh] | [Status] | [Main outcome] |
+| [[Sprint 2]] | [Goal] | [Xh] | [Yh] | [Status] | [Main outcome] |
+| [[Sprint 3]] | [Goal] | [Xh] | [Yh] | [Status] | [Main outcome] |
+
+**Epic Velocity:** [Completed/Planned hours] = [X%]
+
+## 🚫 Epic Scope Management
+**In Scope:**
+- [Core capability 1 that must be delivered]
+- [Core capability 2 that must be delivered]
+- [Quality standard that must be met]
+
+**Out of Scope (For Future Epics):**
+- [Advanced feature saved for later]  
+- [Optimization not critical for MVP]
+- [Integration not needed for initial version]
+
+## 🔄 Epic Risk Management
+**Technical Risks:**
+- **Risk:** [Technical challenge] | **Mitigation:** [AI agent approach to handle]
+- **Risk:** [Integration complexity] | **Mitigation:** [Breakdown strategy]
+
+**AI Collaboration Risks:**  
+- **Risk:** [Context loss between sessions] | **Mitigation:** [Documentation strategy]
+- **Risk:** [Decision consistency] | **Mitigation:** [Decision framework]
+
+## 🎯 Epic Retrospective (AI Evolution)
+_Complete when epic finishes - capture strategic AI insights_
+
+### 📊 Epic Achievement
+**Business Goal:** [How well we achieved the business outcome]  
+**User Impact:** [Measured user behavior change]  
+**Technical Quality:** [System performance and maintainability achieved]
+
+### 🤖 AI Collaboration Insights
+**Most Effective AI Patterns:** [Which AI collaboration approaches worked best]  
+**Context Management:** [How well information was preserved across sessions]  
+**Decision Quality:** [Assessment of AI-made vs human-made decisions]
+
+### 🧠 Strategic Learning
+**Product Insight:** [Key learning about users or market]  
+**Technical Architecture:** [System design insights for future epics]  
+**AI Workflow:** [Process improvements for human-AI collaboration]
+
+### 🚀 Impact on Future Epics
+**Architecture Evolution:** [How this epic changed our technical foundation]  
+**Process Refinement:** [Workflow improvements for next epic]  
+**AI Agent Enhancement:** [Better ways to structure AI agent work]
 
 ---
-**Status:** [Planning/In Progress/Complete/On Hold]
+**Final Status:** [Complete/Partial] | **Business Value Delivered:** [Quantified impact]

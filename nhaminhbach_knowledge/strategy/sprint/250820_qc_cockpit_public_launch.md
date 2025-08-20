@@ -1,8 +1,7 @@
 ---
 tags: #sprint-ai
 status: #in-progress
-id: S8
-timeframe: 2025-08-19 12:00 to 2025-08-19 18:00
+timeframe: 2025-08-20 12:00 to date
 epic: [[E2]]
 owner: Minh
 estimated_duration: 6 hours
@@ -10,7 +9,7 @@ estimated_duration: 6 hours
 
 # AI Sprint: S8: The QC Cockpit & Public Launch
 
-**Duration:** 2025-08-19 12:00 to 2025-08-19 18:00 (6 hours over 1 day)  
+**Duration:** 2025-10-09 09:00 to 2025-10-23 18:00 (80 hours over 2 weeks)  
 **Epic:** [[E2]]  
 **Sprint Type:** Feature
 
