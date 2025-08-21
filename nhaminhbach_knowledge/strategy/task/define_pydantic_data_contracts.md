@@ -35,7 +35,7 @@ business_impact: High
 
 **Integration Points:**
 - PostgreSQL database `listings`, `attributes`, `listing_attributes` tables
-- Google Gemma LLM API for structured output generation
+- Google Vertex AI with Gemini 2.5 Flash Lite for structured output generation
 - Transformation pipeline for data processing
 
 ## ✅ Acceptance Criteria (AI Verification)

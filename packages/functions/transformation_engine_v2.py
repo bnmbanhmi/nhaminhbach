@@ -41,8 +41,8 @@ logger = logging.getLogger(__name__)
 # CONFIGURATION & CONSTANTS
 # =============================================================================
 
-# Gemma model configuration - using exact model specified
-GEMMA_MODEL = "gemma-3n-e4b-it"
+# Vertex AI Gemini model configuration - Updated to recommended Google Gen AI SDK
+GEMINI_MODEL = "gemini-2.5-flash-lite"
 
 # =============================================================================
 # DYNAMIC ATTRIBUTE SYSTEM
@@ -214,14 +214,17 @@ Hãy trích xuất tất cả thông tin có thể từ bài đăng này theo đ
 # CORE TRANSFORMATION FUNCTIONS
 # =============================================================================
 
-def initialize_gemma_client() -> genai.Client:
+def initialize_gemini_client() -> genai.Client:
     """
-    Initialize and configure the Gemma client.
+    Initialize and configure the Gemini client using Google Gen AI SDK.
     
     Returns:
-        genai.Client: Configured client for Gemma API calls
+        genai.Client: Configured client for Gemini API calls
+        
+    Note: 
+        Migrated from deprecated Vertex AI SDK to Google Gen AI SDK
+        as per Google's deprecation notice (June 24, 2026).
     """
-    # Get API key from Secret Manager
     try:
         from utils import get_secret
         project_id = os.getenv("GCP_PROJECT", "omega-sorter-467514-q6")
@@ -330,12 +333,12 @@ def transform_raw_post(
     engine=None
 ) -> TransformationOutput:
     """
-    Transform a raw scraped post into structured listing data using LLM.
+    Transform a raw scraped post into structured listing data using Google Gen AI SDK.
     
     Args:
         raw_text: Raw text content from scraped post
         source_url: Source URL of the post
-        client: Optional pre-initialized Gemma client
+        client: Optional pre-initialized Gemini client
         engine: Optional SQLAlchemy engine for attribute lookup
         
     Returns:
@@ -343,13 +346,17 @@ def transform_raw_post(
         
     Raises:
         ValueError: If transformation fails or validation errors occur
+        
+    Note:
+        Updated to use Google Gen AI SDK with gemini-2.5-flash-lite model
+        for optimal cost-efficiency and Vietnamese language support.
     """
     start_time = datetime.now()
     
     try:
         # Initialize client if not provided
         if client is None:
-            client = initialize_gemma_client()
+            client = initialize_gemini_client()
         
         # Get available attributes from database
         available_attributes = get_available_attributes(engine)
@@ -367,7 +374,7 @@ def transform_raw_post(
         logger.debug(f"Available attributes: {len(available_attributes)}")
         logger.debug(f"Prompt length: {len(prompt)} characters")
         
-        # Call LLM
+        # Call Gemini using Google Gen AI SDK
         contents = [
             types.Content(
                 role="user",
@@ -379,10 +386,10 @@ def transform_raw_post(
         
         generate_content_config = types.GenerateContentConfig()
         
-        # Get response from Gemma
+        # Get response from Gemini
         response_text = ""
         for chunk in client.models.generate_content_stream(
-            model=GEMMA_MODEL,
+            model=GEMINI_MODEL,
             contents=contents,
             config=generate_content_config,
         ):
@@ -429,7 +436,7 @@ def transform_raw_post(
             attributes=valid_attributes,
             extraction_metadata={
                 "processing_time_ms": int((datetime.now() - start_time).total_seconds() * 1000),
-                "model_version": GEMMA_MODEL,
+                "model_version": GEMINI_MODEL,
                 "extraction_timestamp": datetime.now().isoformat(),
                 "prompt_length": len(prompt),
                 "input_text_length": len(raw_text),
@@ -553,7 +560,7 @@ __all__ = [
     'transform_raw_post',
     'resolve_attribute_slugs_to_ids',
     'prepare_database_insertion_payload',
-    'initialize_gemma_client',
+    'initialize_gemini_client',
     'get_available_attributes',
     'get_fallback_attributes',
     'build_dynamic_prompt'

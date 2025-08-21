@@ -47,9 +47,9 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
     > **Current State Analysis:**
     > - **Mission:** _(A one-sentence summary from [[lean_business_model]])_
     > - **Current Epic:** [[E2]]
-    > - **Current Sprint:** [[250816_local_to_cloud_bridge]]
+    > - **Current Sprint:** [[250820_qc_cockpit_public_launch]]
     > - **My Understanding of Your Request:** "You are asking me to..."
-    > - **Alignment Check:** "This request appears to align with our current sprint goal of building the local-to-cloud bridge. Is my understanding correct?"
+    > - **Alignment Check:** "This request appears to align with our current sprint goal of building the QC cockpit and launching the public MVP. Is my understanding correct?"
 
     -  Proof-of-Context Enforcement (Mới): For any strategy-impacting or implementation response, you MUST wait for my explicit confirmation (e.g., "Yes", "Correct") before proceeding.
 
@@ -62,6 +62,15 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
         2. Search for recent examples and best practices for the specific command/configuration
         3. Only provide commands that I have verified against current documentation
         4. Include a note when I've verified the command: 'Verified against current documentation [date]'
+        
+        **Deprecation and Error URL Research Protocol (MANDATORY):** When encountering deprecation warnings, API errors, or any system messages that include documentation URLs, I MUST:
+        1. Use the `fetch_webpage` tool to access the provided URL immediately
+        2. Research the recommended migration path or solution from the official documentation
+        3. Update the implementation to use the current recommended approach
+        4. Never ignore deprecation warnings - always research and implement the recommended replacement
+        5. Document the change and reasoning for future reference
+        
+        **Violations:** Ignoring deprecation warnings, not researching provided URLs, or continuing with deprecated approaches is a critical protocol violation.
         
         **Violations:** Providing unverified infrastructure commands is a critical error and must be flagged immediately.
 
@@ -80,6 +89,12 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
         4. Only then proceed with Python operations using the activated environment
         
         **Environment Isolation Rule:** Each package has its own isolated environment - there is NO virtual environment at the project root.
+        
+        **Virtual Environment Priority Rule:** I MUST never use conda-based tools (`configure_python_environment`, `get_python_environment_details`) when a package-specific `.venv` virtual environment exists and is available. Instead, I must:
+        1. Use the terminal to navigate to the package directory
+        2. Activate the `.venv` using `source .venv/bin/activate`
+        3. Use standard `pip` commands within the activated virtual environment
+        4. Never suggest or use conda commands when `.venv` exists in the package directory
         
         **Violations:** Attempting to run Python scripts, install packages, or execute database operations without proper package-specific environment activation is a critical protocol violation.
 
@@ -128,10 +143,10 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
        - Ensure the sprint file reflects the completed task status
        - Update sprint progress indicators
        - Capture any sprint-level insights from the completed task
-    3. Create a new task file using the format: `YYMMDD_HH_task_name.md` where:
-       - YYMMDD = Current date (e.g., 250818 for August 18, 2025)
-       - HH = Current hour in 24-hour format
-       - task_name = descriptive snake_case name
+    3. Create a new task file using the format: `task_name.md` where:
+       - task_name = descriptive snake_case name that clearly identifies the task
+       - No date/time prefixes or ID numbers needed
+       - Focus on clear, meaningful naming (e.g., `build_user_authentication.md`)
     4. Use the AI-optimized template from `/nhaminhbach_knowledge/template/task.md` following [[ai_agent_briefing_guide]]
     5. Save the file to `/nhaminhbach_knowledge/strategy/task/`
     6. Fill in the Objective, initial Steps & Progress, and link to relevant epic/sprint

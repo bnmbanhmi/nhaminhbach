@@ -12,7 +12,7 @@ SQLAlchemy>=2.0.0
 # LLM and data validation
 pydantic>=2.0.0
 instructor>=1.0.0
-google-genai>=1.0.0
+google-cloud-aiplatform>=1.60.0
 
 # Web framework (Flask - consistent with existing architecture)
 Flask>=3.0.0
