@@ -260,6 +260,95 @@ def get_listings(req: https_fn.Request) -> https_fn.Response:
 @https_fn.on_request(
     cors=CORS_CONFIG
 )
+def get_admin_listings(req: https_fn.Request) -> https_fn.Response:
+    """API Endpoint for admin dashboard to get listings with filtering by status."""
+    if req.method != "GET":
+        return https_fn.Response(f"Method {req.method} not allowed.", status=405)
+
+    # Get query parameters for filtering
+    status = req.args.get("status")  # Can be 'pending_review', 'available', 'rejected', 'rented'
+    district = req.args.get("district")
+    limit = req.args.get("limit", "50")  # Default to 50 listings
+    offset = req.args.get("offset", "0")  # For pagination
+
+    try:
+        limit = int(limit)
+        offset = int(offset)
+    except ValueError:
+        return https_fn.Response("Invalid limit or offset parameters.", status=400)
+
+    # Build dynamic WHERE conditions
+    where_conditions = []
+    params = {}
+
+    if status:
+        where_conditions.append("l.status = :status")
+        params["status"] = status
+    
+    if district:
+        where_conditions.append("l.address_district ILIKE :district")
+        params["district"] = f"%{district}%"
+
+    where_clause = " AND ".join(where_conditions) if where_conditions else "1=1"
+
+    sql_query = sqlalchemy.text(f"""
+        SELECT l.*, (
+            SELECT json_agg(json_build_object(
+                'name', a.name,
+                'slug', a.slug,
+                'value', COALESCE(la.value_boolean::text, la.value_integer::text, la.value_string)
+            ))
+            FROM listing_attributes la JOIN attributes a ON la.attribute_id = a.id
+            WHERE la.listing_id = l.id
+        ) as attributes
+        FROM listings l 
+        WHERE {where_clause}
+        ORDER BY l.created_at DESC
+        LIMIT :limit OFFSET :offset
+    """)
+
+    params["limit"] = limit
+    params["offset"] = offset
+
+    try:
+        engine = get_db_engine()
+        with engine.connect() as conn:
+            result = conn.execute(sql_query, params).fetchall()
+        
+        listings_data = [dict(row._mapping) for row in result]
+        
+        # Also get total count for pagination
+        count_query = sqlalchemy.text(f"""
+            SELECT COUNT(*) as total
+            FROM listings l 
+            WHERE {where_clause}
+        """)
+        
+        with engine.connect() as conn:
+            count_result = conn.execute(count_query, {k: v for k, v in params.items() if k not in ['limit', 'offset']}).fetchone()
+            total_count = count_result.total
+
+        response_data = {
+            "listings": listings_data,
+            "pagination": {
+                "total": total_count,
+                "limit": limit,
+                "offset": offset,
+                "has_more": offset + limit < total_count
+            }
+        }
+
+        json_response = json.dumps(response_data, default=default_json_serializer)
+        return https_fn.Response(json_response, status=200, headers={"Content-Type": "application/json"})
+
+    except Exception as e:
+        logger.error(f"Error in get_admin_listings: {e}")
+        return https_fn.Response("An internal server error occurred.", status=500)
+
+
+@https_fn.on_request(
+    cors=CORS_CONFIG
+)
 def get_listing_by_id(req: https_fn.Request) -> https_fn.Response:
     """Lấy thông tin một tin đăng cụ thể bằng ID (UUID)."""
     if req.method != "GET":

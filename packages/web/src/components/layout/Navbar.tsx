@@ -19,7 +19,8 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <div className="hidden md:flex gap-x-6">
           <Link to="/" className="hover:text-gray-300 transition-colors">Home</Link>
-          <Link to="/internal/qc/new" className="hover:text-gray-300 transition-colors">QC Dashboard</Link>
+          <Link to="/internal/qc/dashboard" className="hover:text-gray-300 transition-colors">QC Dashboard</Link>
+          <Link to="/internal/qc/new" className="hover:text-gray-300 transition-colors">QC Create</Link>
         </div>
         
         {/* Mobile Hamburger Button */}
@@ -45,11 +46,18 @@ const Navbar = () => {
             Home
           </Link>
           <Link 
-            to="/internal/qc/new" 
+            to="/internal/qc/dashboard" 
             className="block py-2 hover:text-gray-300 transition-colors"
             onClick={() => setIsMenuOpen(false)}
           >
             QC Dashboard
+          </Link>
+          <Link 
+            to="/internal/qc/new" 
+            className="block py-2 hover:text-gray-300 transition-colors"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            QC Create
           </Link>
         </div>
       </div>

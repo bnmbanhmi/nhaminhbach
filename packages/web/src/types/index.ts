@@ -50,14 +50,43 @@ export interface ListingAttribute {
  */
 export interface Listing {
   id: string;
+  status: 'available' | 'rented' | 'pending_review' | 'rejected';
+  source_url: string;
   title: string;
   description: string;
   price_monthly_vnd: number;
   area_m2: number;
+  address_street?: string;
   address_ward: string;
   address_district: string;
+  latitude?: number;
+  longitude?: number;
+  contact_phone?: string;
   attributes: ListingAttribute[];
   image_urls: string[];
   created_at: string;
   updated_at: string;
+}
+
+/**
+ * Response structure for admin listings endpoint with pagination
+ */
+export interface AdminListingsResponse {
+  listings: Listing[];
+  pagination: {
+    total: number;
+    limit: number;
+    offset: number;
+    has_more: boolean;
+  };
+}
+
+/**
+ * Filter parameters for admin listings
+ */
+export interface AdminListingFilters {
+  status?: 'pending_review' | 'available' | 'rejected' | 'rented';
+  district?: string;
+  limit?: number;
+  offset?: number;
 }

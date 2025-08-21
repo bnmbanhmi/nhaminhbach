@@ -95,6 +95,29 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
         
         **Violations:** Running package-specific commands without proper directory navigation is a critical protocol violation.
 
+    -  Terminal Session Management Protocol (MANDATORY): 
+        1. Development servers (npm run dev, flask run, etc.) MUST run in dedicated background terminals
+        2. All other commands MUST use separate terminals with explicit directory navigation
+        3. Never mix development server and other commands in same terminal session
+        4. Always use `cd /full/absolute/path` before any package-specific commands
+        5. When a development server is running, use separate terminals for testing, API calls, or other operations
+        6. **NEVER run any command (curl, ls, pwd, etc.) in a terminal that has a development server running**
+        7. **Before running ANY command, check if the terminal has a background process - if yes, open NEW terminal**
+        8. **When testing APIs or other commands, ALWAYS explicitly start with a fresh terminal session**
+        
+        **Violations:** Mixing development servers with other commands, running ANY command in dev server terminals, or failing to use separate terminals is a critical protocol violation.
+
+    -  Functional Testing Gate (MANDATORY): Before declaring any UI task complete, I MUST:
+        1. Navigate to correct package directory: `cd /Users/mac/nhaminhbach.com/nhaminhbach/packages/web`
+        2. Start development server in background: `npm run dev` 
+        3. Open browser and test ALL user journeys end-to-end
+        4. Verify data actually loads and displays correctly
+        5. Test all navigation and functionality
+        6. Document test results with screenshots or detailed verification
+        7. Only declare complete after functional verification succeeds
+        
+        **Violations:** Declaring UI tasks complete without functional verification is a critical protocol violation and must be flagged immediately.
+
     -  Python Environment Enforcement Gate (MANDATORY): Before executing any Python command, script, or database operation that requires Python dependencies, I MUST:
         1. Navigate to the correct package directory (`packages/functions`, `packages/scraper`, or `packages/web`)
         2. Activate the package-specific virtual environment using `source .venv/bin/activate` (for Python packages)
@@ -222,6 +245,7 @@ Upon detecting a trigger, you MUST immediately pause the current task and initia
 3.  **Execute & Document (Thực thi & Ghi lại):**
     *   If and only if I respond with "Yes" (or a clear affirmative), you are authorized to use file system tools to **edit the relevant protocol/process file.**
     *   After successfully editing the file, you MUST confirm completion by saying: *"Protocol updated. I will now operate under the new procedure. Resuming our original task."*
+    *   **ONLY say "Protocol updated" if you have actually modified the instruction files**
     *   This change is now part of our permanent knowledge base.
 
 
