@@ -7,6 +7,7 @@ sprint: [[250819_transformation_engine]]
 owner: Coding Agent
 estimated_duration: 16 hours
 business_impact: High
+---
 
 # AI Task: Implement Transformation Trigger for Automated Processing ✅
 
@@ -26,7 +27,7 @@ business_impact: High
 - [[core_architecture]] - Event-driven patterns and microservices communication
 - [[database_schema_and_model]] - Listings table structure and status management
 - [[infrastructure_constants]] - Cloud Functions endpoints and deployment configuration
-- Previous tasks: [[deploy_transformer_as_cloud_service]] - Transformation service architecture
+- Previous task: [[execute_cloud_functions_deployment]] - Deployed transformation service endpoints
 
 **Current System State:**
 - **Environment:** Cloud Functions with deployed transformation service + PostgreSQL database

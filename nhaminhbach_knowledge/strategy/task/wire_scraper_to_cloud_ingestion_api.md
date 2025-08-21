@@ -7,6 +7,7 @@ sprint: [[250816_local_to_cloud_bridge]]
 owner: CTO Alex
 estimated_duration: 4 hours
 business_impact: High
+---
 
 # AI Task: Wire Scraper to Cloud Ingestion API ✅
 

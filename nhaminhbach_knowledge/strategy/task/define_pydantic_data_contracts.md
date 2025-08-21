@@ -7,6 +7,7 @@ sprint: [[250819_transformation_engine]]
 owner: CTO Alex
 estimated_duration: 16 hours
 business_impact: High
+---
 
 # AI Task: Define Pydantic Data Contracts for LLM Transformation
 
@@ -20,9 +21,11 @@ business_impact: High
 **Success:** Models enable reliable LLM-to-database data transformation with zero schema mismatches
 
 ## 🤖 AI Agent Instructions
-**Context Files to Read:**
-- [[database_schema_and_model]] - PostgreSQL table structures and relationships
+**Essential Context Files:**
+- [[database_schema_and_model]] - PostgreSQL tables structure and field definitions
+- [[data_contracts]] - Previous data models and validation patterns (if any)
 - [[engineering_principles]] - Data validation and type safety requirements
+- Previous sprint: [[250816_local_to_cloud_bridge]] - Data ingestion infrastructure now operational
 
 **Technical Requirements:**
 - Use Pydantic v2 with latest field validation patterns

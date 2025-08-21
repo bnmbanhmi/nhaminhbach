@@ -7,6 +7,7 @@ sprint: [[250819_transformation_engine]]
 owner: CTO Alex
 estimated_duration: 12 hours
 business_impact: High
+---
 
 # AI Task: Execute Cloud Functions Deployment for Transformation Service ✅
 

@@ -7,6 +7,7 @@ sprint: [[250819_transformation_engine]]
 owner: Coding Agent
 estimated_duration: 20 hours
 business_impact: High
+---
 
 # AI Task: Build Core LLM Transformation Logic ✅
 
@@ -27,6 +28,7 @@ business_impact: High
 - [[database_schema_and_model]] - Database schema for validation compliance
 - [[core_architecture]] - LLM integration patterns and security requirements
 - [[infrastructure_constants]] - API keys and model configuration
+- Previous task: [[define_pydantic_data_contracts]] - Data contracts and validation models
 
 **Current System State:**
 - **Environment:** Python functions package with LLM integration capability
