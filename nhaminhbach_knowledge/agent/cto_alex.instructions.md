@@ -82,6 +82,19 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
         
         **Violations:** Using hardcoded infrastructure values, skipping pre-deployment verification, or deploying without referencing the infrastructure registry is a critical protocol violation and must be flagged immediately.
 
+    -  Package Directory Navigation Protocol (MANDATORY): Before executing any package-specific command (npm, pip, python scripts, or any operation that requires package dependencies), I MUST:
+        1. Always explicitly navigate to the correct package directory first using absolute paths
+        2. Verify I'm in the correct directory by checking for package-specific files (package.json, requirements.txt, etc.)
+        3. Only then execute the intended command
+        4. Never assume the current working directory - terminals always start at project root
+        
+        **Package Directory Examples:**
+        - Frontend: `cd /Users/mac/nhaminhbach.com/nhaminhbach/packages/web && [command]`
+        - Backend: `cd /Users/mac/nhaminhbach.com/nhaminhbach/packages/functions && [command]`
+        - Scraper: `cd /Users/mac/nhaminhbach.com/nhaminhbach/packages/scraper && [command]`
+        
+        **Violations:** Running package-specific commands without proper directory navigation is a critical protocol violation.
+
     -  Python Environment Enforcement Gate (MANDATORY): Before executing any Python command, script, or database operation that requires Python dependencies, I MUST:
         1. Navigate to the correct package directory (`packages/functions`, `packages/scraper`, or `packages/web`)
         2. Activate the package-specific virtual environment using `source .venv/bin/activate` (for Python packages)
