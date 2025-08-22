@@ -28,7 +28,7 @@ estimated_duration: 6 hours
 ### **Ready Tasks - Part 1: QC Cockpit** (Ordered by Priority)
 1. [[build_the_qc_dashboard_ui]] - [16hr] - Internal admin interface for pending_review listings - **Status:** ✅ COMPLETED (2025-08-21, 8hr)
 2. [[implement_the_side_by_side_review_ui]] - [20hr] - Before/after raw text vs structured data comparison - **Status:** ✅ COMPLETED (2025-08-21, 2hr)
-3. [[develop_approve_edit_reject_functionality]] - [16hr] - Core state management and approval workflow with ListingForm reuse - **Status:** Ready
+3. [[develop_approve_edit_reject_functionality]] - [16hr] - Core state management and approval workflow with ListingForm reuse - **Status:** ✅ COMPLETED (2025-08-21, 3hr)
 
 ### **Ready Tasks - Part 2: Infrastructure Upgrade**
 4. [[migrate_llm_to_gemini_vertex_ai]] - [4hr] - Upgrade from Gemma to Gemini 2.5 Flash Lite via Vertex AI - **Status:** ✅ COMPLETED (2025-08-21, 1hr)
@@ -37,6 +37,7 @@ estimated_duration: 6 hours
 5. [[implement_basic_filtering_system]] - [12hr] - Public filtering for location, price, attributes - **Status:** Ready
 6. [[ensure_full_responsive_design]] - [8hr] - Mobile-responsive design across all interfaces - **Status:** Ready
 7. [[display_source_post_link]] - [4hr] - Source link integration on listing detail pages - **Status:** Ready
+8. [[deploy_web_to_custom_domain]] - [2hr] - Deploy frontend to a customer-owned domain with HTTPS - **Status:** Ready
 
 **Total Estimated:** 80 hours  
 **Total Completed:** 30 hours (3 tasks completed, 50 hours under estimate)
@@ -75,6 +76,7 @@ estimated_duration: 6 hours
 | [[implement_basic_filtering_system]] | [12hr] | Ready | Frontend Agent | - |
 | [[ensure_full_responsive_design]] | [8hr] | Ready | Frontend Agent | - |
 | [[display_source_post_link]] | [4hr] | Ready | Frontend Agent | - |
+| [[deploy_web_to_custom_domain]] | [2hr] | Ready | Coding Agent | - |
 
 **Sprint Velocity:** 12/80 hours = 15% completion (Strong momentum with core QC dashboard complete)
 

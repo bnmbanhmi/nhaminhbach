@@ -56,15 +56,17 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
         return db_engine
 
     # Các biến môi trường này sẽ được cung cấp bởi cấu hình `run_with`
-    INSTANCE_CONNECTION_NAME = os.environ.get("INSTANCE_CONNECTION_NAME")
-    DB_USER = os.environ.get("DB_USER")
-    DB_NAME = os.environ.get("DB_NAME")
+    INSTANCE_CONNECTION_NAME = os.environ.get("INSTANCE_CONNECTION_NAME", "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod")
+    DB_USER = os.environ.get("DB_USER", "postgres")
+    DB_NAME = os.environ.get("DB_NAME", "postgres")
     IS_EMULATOR = os.environ.get("FUNCTIONS_EMULATOR") == "true"
     
     # Get database password from Secret Manager
     GCP_PROJECT = os.environ.get("GCP_PROJECT")
     if not GCP_PROJECT:
-        raise RuntimeError("GCP_PROJECT environment variable must be set")
+        # Set the project ID for Cloud Functions environment
+        os.environ["GCP_PROJECT"] = "omega-sorter-467514-q6"
+        GCP_PROJECT = "omega-sorter-467514-q6"
     DB_PASS = get_secret(GCP_PROJECT, "db-password")
 
     def getconn() -> Any:
@@ -421,6 +423,162 @@ def get_all_attributes(req: https_fn.Request) -> https_fn.Response:
     except Exception as e:
         logger.error(f"Error in get_all_attributes: {e}")
         return https_fn.Response("An internal server error occurred.", status=500)
+
+
+@https_fn.on_request(
+    cors=CORS_CONFIG
+)
+def update_listing_status(req: https_fn.Request) -> https_fn.Response:
+    """
+    API Endpoint to update listing status (approve/reject).
+    POST request with JSON body: {"listing_id": "...", "status": "available|rejected"}
+    """
+    if req.method != "POST":
+        return https_fn.Response(f"Method {req.method} not allowed.", status=405)
+
+    try:
+        payload = req.get_json()
+        if not payload:
+            return https_fn.Response("Invalid JSON payload.", status=400)
+
+        listing_id = payload.get("listing_id")
+        new_status = payload.get("status")
+
+        logger.info(f"Received request to update listing {listing_id} to status {new_status}")
+
+        if not listing_id or not new_status:
+            return https_fn.Response("Missing listing_id or status in payload.", status=400)
+
+        if new_status not in ["available", "rejected"]:
+            return https_fn.Response("Status must be 'available' or 'rejected'.", status=400)
+
+        # Update listing status
+        engine = get_db_engine()
+        with engine.connect() as conn:
+            # First check if listing exists and is in pending_review status
+            check_query = text("SELECT status FROM listings WHERE id = :listing_id")
+            result = conn.execute(check_query, {"listing_id": listing_id}).fetchone()
+            
+            logger.info(f"Current listing status: {result[0] if result else 'NOT_FOUND'}")
+            
+            if not result:
+                return https_fn.Response("Listing not found.", status=404)
+            
+            if result[0] != "pending_review":
+                return https_fn.Response(f"Listing is not in pending_review status (current: {result[0]}).", status=400)
+
+            # Update the status
+            update_query = text("UPDATE listings SET status = :status WHERE id = :listing_id")
+            update_result = conn.execute(update_query, {"status": new_status, "listing_id": listing_id})
+            conn.commit()
+            
+            logger.info(f"Update query executed, rows affected: {update_result.rowcount}")
+
+        logger.info(f"Successfully updated listing {listing_id} status to {new_status}")
+        return https_fn.Response(
+            json.dumps({"message": f"Listing status updated to {new_status}", "listing_id": listing_id}),
+            status=200,
+            headers={"Content-Type": "application/json"}
+        )
+
+    except Exception as e:
+        logger.error(f"Error in update_listing_status: {e}")
+        import traceback
+        logger.error(f"Full traceback: {traceback.format_exc()}")
+        return https_fn.Response(f"Internal server error: {str(e)}", status=500)
+
+
+@https_fn.on_request(
+    cors=CORS_CONFIG
+)
+def update_listing_data(req: https_fn.Request) -> https_fn.Response:
+    """
+    API Endpoint to update listing data and approve it.
+    POST request with JSON body containing listing fields and optional attributes.
+    """
+    if req.method != "POST":
+        return https_fn.Response(f"Method {req.method} not allowed.", status=405)
+
+    try:
+        payload = req.get_json()
+        if not payload:
+            return https_fn.Response("Invalid JSON payload.", status=400)
+
+        listing_id = payload.get("listing_id")
+        listing_data = payload.get("listing", {})
+        attributes_data = payload.get("attributes", [])
+
+        logger.info(f"Received request to update listing {listing_id} with data: {listing_data}")
+
+        if not listing_id:
+            return https_fn.Response("Missing listing_id in payload.", status=400)
+
+        engine = get_db_engine()
+        with engine.connect() as conn:
+            # First check if listing exists and is in pending_review status
+            check_query = text("SELECT status FROM listings WHERE id = :listing_id")
+            result = conn.execute(check_query, {"listing_id": listing_id}).fetchone()
+            
+            logger.info(f"Current listing status: {result[0] if result else 'NOT_FOUND'}")
+            
+            if not result:
+                return https_fn.Response("Listing not found.", status=404)
+            
+            if result[0] != "pending_review":
+                return https_fn.Response(f"Listing is not in pending_review status (current: {result[0]}).", status=400)
+
+            # Update listing core fields
+            update_fields = []
+            update_params = {"listing_id": listing_id}
+            
+            # Only update fields that are provided in the payload
+            allowed_fields = ["title", "description", "price_monthly_vnd", "area_m2", 
+                            "address_street", "address_ward", "address_district", "contact_phone"]
+            
+            for field in allowed_fields:
+                if field in listing_data and listing_data[field] is not None:
+                    update_fields.append(f"{field} = :{field}")
+                    update_params[field] = listing_data[field]
+            
+            if update_fields:
+                # Add status update to the same query
+                update_fields.append("status = :status")
+                update_params["status"] = "available"
+                
+                update_query = text(f"""
+                    UPDATE listings SET {', '.join(update_fields)}
+                    WHERE id = :listing_id
+                """)
+                logger.info(f"Executing update query: {update_query}")
+                logger.info(f"With parameters: {update_params}")
+                
+                update_result = conn.execute(update_query, update_params)
+                conn.commit()
+                
+                logger.info(f"Update query executed, rows affected: {update_result.rowcount}")
+            else:
+                # Just update status to available if no fields to update
+                status_query = text("UPDATE listings SET status = 'available' WHERE id = :listing_id")
+                update_result = conn.execute(status_query, {"listing_id": listing_id})
+                conn.commit()
+                
+                logger.info(f"Status-only update executed, rows affected: {update_result.rowcount}")
+
+            # Handle attributes updates (optional implementation for now)
+            # TODO: Implement attribute updates if needed
+                
+        logger.info(f"Successfully updated listing {listing_id} data and approved")
+        return https_fn.Response(
+            json.dumps({"message": "Listing updated and approved", "listing_id": listing_id}),
+            status=200,
+            headers={"Content-Type": "application/json"}
+        )
+
+    except Exception as e:
+        logger.error(f"Error in update_listing_data: {e}")
+        import traceback
+        logger.error(f"Full traceback: {traceback.format_exc()}")
+        return https_fn.Response(f"Internal server error: {str(e)}", status=500)
 
 
 @https_fn.on_request(

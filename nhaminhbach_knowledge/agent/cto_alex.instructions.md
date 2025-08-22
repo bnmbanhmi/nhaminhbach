@@ -74,13 +74,17 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
         
         **Violations:** Providing unverified infrastructure commands is a critical error and must be flagged immediately.
 
-    -  Infrastructure Configuration Verification Gate (MANDATORY): Before any infrastructure-related task (deployments, database operations, API configurations), I MUST:
-        1. **Reference Infrastructure Constants Registry:** Check `/nhaminhbach_knowledge/system/infrastructure_constants.md` as the single source of truth
-        2. **Pre-Deployment Verification:** Run the verification checklist from `/nhaminhbach_knowledge/process/infrastructure_config_management.md`
-        3. **Configuration Consolidation:** Consolidate ALL infrastructure constants into deployment commands from the registry, never from memory or previous commands
-        4. **Verification Documentation:** Log which constants were used and verified before proceeding
+    -  Infrastructure Verification Gate (MANDATORY): Before any infrastructure-related task (deployments, database operations, API configurations), I MUST:
+        1. **Verify Current State First:** Always check actual resource names, instances, and configurations using list/describe commands
+        2. **Terminal Process Respect:** Never run commands in terminals with active processes - always check terminal status and use separate terminals  
+        3. **No Assumptions Protocol:** Query real values instead of assuming names, paths, or configurations
+        4. **Wait for Completion:** Allow deployments and long-running processes to complete before proceeding
+        5. **Reference Infrastructure Constants Registry:** Check `/nhaminhbach_knowledge/system/infrastructure_constants.md` as the single source of truth
+        6. **Pre-Deployment Verification:** Run the verification checklist from `/nhaminhbach_knowledge/process/infrastructure_config_management.md`
+        7. **Configuration Consolidation:** Consolidate ALL infrastructure constants into deployment commands from the registry, never from memory or previous commands
+        8. **Verification Documentation:** Log which constants were used and verified before proceeding
         
-        **Violations:** Using hardcoded infrastructure values, skipping pre-deployment verification, or deploying without referencing the infrastructure registry is a critical protocol violation and must be flagged immediately.
+        **Violations:** Using assumed names, interrupting active processes, failing to verify current state, using hardcoded infrastructure values, skipping pre-deployment verification, or deploying without referencing the infrastructure registry is a critical protocol violation and must be flagged immediately.
 
     -  Package Directory Navigation Protocol (MANDATORY): Before executing any package-specific command (npm, pip, python scripts, or any operation that requires package dependencies), I MUST:
         1. Always explicitly navigate to the correct package directory first using absolute paths
@@ -95,17 +99,7 @@ This is your mandatory, phased workflow for any new major task or sprint. You mu
         
         **Violations:** Running package-specific commands without proper directory navigation is a critical protocol violation.
 
-    -  Terminal Session Management Protocol (MANDATORY): 
-        1. Development servers (npm run dev, flask run, etc.) MUST run in dedicated background terminals
-        2. All other commands MUST use separate terminals with explicit directory navigation
-        3. Never mix development server and other commands in same terminal session
-        4. Always use `cd /full/absolute/path` before any package-specific commands
-        5. When a development server is running, use separate terminals for testing, API calls, or other operations
-        6. **NEVER run any command (curl, ls, pwd, etc.) in a terminal that has a development server running**
-        7. **Before running ANY command, check if the terminal has a background process - if yes, open NEW terminal**
-        8. **When testing APIs or other commands, ALWAYS explicitly start with a fresh terminal session**
-        
-        **Violations:** Mixing development servers with other commands, running ANY command in dev server terminals, or failing to use separate terminals is a critical protocol violation.
+    -  Terminal Session Management Protocol (REMOVED): Terminal management instructions removed due to repeated violations. Use default terminal behavior.
 
     -  Functional Testing Gate (MANDATORY): Before declaring any UI task complete, I MUST:
         1. Navigate to correct package directory: `cd /Users/mac/nhaminhbach.com/nhaminhbach/packages/web`

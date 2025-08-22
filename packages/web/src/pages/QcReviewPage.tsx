@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { useQcActions } from '../hooks/useQcActions';
+import EditableListingForm from '../components/admin/EditableListingForm';
 import type { Listing } from '../types';
 
 const QcReviewPage: React.FC = () => {
@@ -9,6 +11,20 @@ const QcReviewPage: React.FC = () => {
   const [listing, setListing] = useState<Listing | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState<{
+    show: boolean;
+    action: 'approve' | 'reject' | null;
+    message: string;
+  }>({ show: false, action: null, message: '' });
+
+  const {
+    isLoading: isActionLoading,
+    error: actionError,
+    approveListingAsIs,
+    rejectListing,
+    updateAndApproveListing,
+  } = useQcActions();
 
   useEffect(() => {
     if (!listingId) {
@@ -46,6 +62,63 @@ const QcReviewPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Action handlers
+  const handleApproveAsIs = () => {
+    setShowConfirmDialog({
+      show: true,
+      action: 'approve',
+      message: 'Are you sure you want to approve this listing as-is? It will be published immediately.'
+    });
+  };
+
+  const handleReject = () => {
+    setShowConfirmDialog({
+      show: true,
+      action: 'reject',
+      message: 'Are you sure you want to reject this listing? This action cannot be undone.'
+    });
+  };
+
+  const handleEdit = () => {
+    setIsEditMode(true);
+  };
+
+  const handleConfirmAction = async () => {
+    if (!listing || !showConfirmDialog.action) return;
+
+    let success = false;
+    if (showConfirmDialog.action === 'approve') {
+      success = await approveListingAsIs(listing.id);
+    } else if (showConfirmDialog.action === 'reject') {
+      success = await rejectListing(listing.id);
+    }
+
+    if (success) {
+      // Navigate back to dashboard
+      navigate('/internal/qc/dashboard');
+    }
+
+    setShowConfirmDialog({ show: false, action: null, message: '' });
+  };
+
+  const handleCancelAction = () => {
+    setShowConfirmDialog({ show: false, action: null, message: '' });
+  };
+
+  const handleSaveEdit = async (updatedData: Partial<Listing>) => {
+    if (!listing) return;
+
+    const success = await updateAndApproveListing(listing.id, updatedData);
+    if (success) {
+      // Navigate back to dashboard
+      navigate('/internal/qc/dashboard');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditMode(false);
   };
 
   const formatPrice = (price: number) => {
@@ -124,13 +197,25 @@ const QcReviewPage: React.FC = () => {
               </h1>
             </div>
             <div className="flex space-x-3">
-              <button className="px-4 py-2 border border-red-300 text-red-700 rounded-md hover:bg-red-50">
+              <button 
+                onClick={handleReject}
+                disabled={isActionLoading}
+                className="px-4 py-2 border border-red-300 text-red-700 rounded-md hover:bg-red-50 disabled:opacity-50"
+              >
                 Reject
               </button>
-              <button className="px-4 py-2 border border-yellow-300 text-yellow-700 rounded-md hover:bg-yellow-50">
+              <button 
+                onClick={handleEdit}
+                disabled={isActionLoading}
+                className="px-4 py-2 border border-yellow-300 text-yellow-700 rounded-md hover:bg-yellow-50 disabled:opacity-50"
+              >
                 Edit
               </button>
-              <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+              <button 
+                onClick={handleApproveAsIs}
+                disabled={isActionLoading}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+              >
                 Approve
               </button>
             </div>
@@ -164,177 +249,231 @@ const QcReviewPage: React.FC = () => {
         </div>
 
         {/* Side-by-Side Comparison */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Side: Raw Text */}
-          <div className="bg-white rounded-lg border">
-            <div className="px-6 py-4 bg-red-50 border-b">
-              <h3 className="text-lg font-medium text-red-800">🔍 Raw Scraped Text</h3>
-              <p className="text-sm text-red-600">Original data from source</p>
-            </div>
-            <div className="p-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Raw Description:
-                  </label>
-                  <div className="bg-gray-50 p-4 rounded-md">
-                    <pre className="whitespace-pre-wrap text-sm text-gray-800 font-mono">
-                      {listing.description}
-                    </pre>
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Source URL:
-                  </label>
-                  <div className="bg-gray-50 p-3 rounded-md">
-                    <code className="text-sm text-blue-600 break-all">
-                      {listing.source_url}
-                    </code>
-                  </div>
-                </div>
+        {!isEditMode ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Side: Raw Text */}
+            <div className="bg-white rounded-lg border">
+              <div className="px-6 py-4 bg-red-50 border-b">
+                <h3 className="text-lg font-medium text-red-800">🔍 Raw Scraped Text</h3>
+                <p className="text-sm text-red-600">Original data from source</p>
               </div>
-            </div>
-          </div>
-
-          {/* Right Side: Structured Data */}
-          <div className="bg-white rounded-lg border">
-            <div className="px-6 py-4 bg-green-50 border-b">
-              <h3 className="text-lg font-medium text-green-800">✨ AI-Structured Data</h3>
-              <p className="text-sm text-green-600">Processed and normalized information</p>
-            </div>
-            <div className="p-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Title:
-                  </label>
-                  <div className="bg-green-50 p-3 rounded-md">
-                    <p className="text-sm font-medium text-gray-900">
-                      {listing.title || 'No title extracted'}
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Price:
-                  </label>
-                  <div className="bg-green-50 p-3 rounded-md">
-                    <p className="text-sm font-medium text-gray-900">
-                      {listing.price_monthly_vnd ? formatPrice(listing.price_monthly_vnd) : 'No price extracted'}
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Area:
-                  </label>
-                  <div className="bg-green-50 p-3 rounded-md">
-                    <p className="text-sm font-medium text-gray-900">
-                      {listing.area_m2 ? `${listing.area_m2} m²` : 'No area extracted'}
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Address:
-                  </label>
-                  <div className="bg-green-50 p-3 rounded-md space-y-1">
-                    <p className="text-sm text-gray-900">
-                      <span className="font-medium">Street:</span> {listing.address_street || 'Not extracted'}
-                    </p>
-                    <p className="text-sm text-gray-900">
-                      <span className="font-medium">Ward:</span> {listing.address_ward || 'Not extracted'}
-                    </p>
-                    <p className="text-sm text-gray-900">
-                      <span className="font-medium">District:</span> {listing.address_district || 'Not extracted'}
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Contact:
-                  </label>
-                  <div className="bg-green-50 p-3 rounded-md">
-                    <p className="text-sm font-medium text-gray-900">
-                      {listing.contact_phone || 'No contact extracted'}
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Images:
-                  </label>
-                  <div className="bg-green-50 p-3 rounded-md">
-                    {listing.image_urls && listing.image_urls.length > 0 ? (
-                      <div className="grid grid-cols-2 gap-2">
-                        {listing.image_urls.slice(0, 4).map((url, index) => (
-                          <img
-                            key={index}
-                            src={url}
-                            alt={`Listing image ${index + 1}`}
-                            className="w-full h-20 object-cover rounded border"
-                            onError={(e) => {
-                              e.currentTarget.src = 'https://via.placeholder.com/100x80?text=No+Image';
-                            }}
-                          />
-                        ))}
-                        {listing.image_urls.length > 4 && (
-                          <div className="w-full h-20 bg-gray-200 rounded border flex items-center justify-center">
-                            <span className="text-sm text-gray-500">
-                              +{listing.image_urls.length - 4} more
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-gray-500">No images extracted</p>
-                    )}
-                  </div>
-                </div>
-
-                {listing.attributes && (
+              <div className="p-6">
+                <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Attributes:
+                      Raw Description:
                     </label>
-                    <div className="bg-green-50 p-3 rounded-md">
-                      <div className="flex flex-wrap gap-2">
-                        {Array.isArray(listing.attributes) && listing.attributes.map((attr: any, index: number) => (
-                          <span 
-                            key={index} 
-                            className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
-                          >
-                            {attr.name}: {attr.value}
-                          </span>
-                        ))}
-                      </div>
+                    <div className="bg-gray-50 p-4 rounded-md">
+                      <pre className="whitespace-pre-wrap text-sm text-gray-800 font-mono">
+                        {listing.description}
+                      </pre>
                     </div>
                   </div>
-                )}
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Source URL:
+                    </label>
+                    <div className="bg-gray-50 p-3 rounded-md">
+                      <code className="text-sm text-blue-600 break-all">
+                        {listing.source_url}
+                      </code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side: Structured Data */}
+            <div className="bg-white rounded-lg border">
+              <div className="px-6 py-4 bg-green-50 border-b">
+                <h3 className="text-lg font-medium text-green-800">✨ AI-Structured Data</h3>
+                <p className="text-sm text-green-600">Processed and normalized information</p>
+              </div>
+              <div className="p-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Title:
+                    </label>
+                    <div className="bg-green-50 p-3 rounded-md">
+                      <p className="text-sm font-medium text-gray-900">
+                        {listing.title || 'No title extracted'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Price:
+                    </label>
+                    <div className="bg-green-50 p-3 rounded-md">
+                      <p className="text-sm font-medium text-gray-900">
+                        {listing.price_monthly_vnd ? formatPrice(listing.price_monthly_vnd) : 'No price extracted'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Area:
+                    </label>
+                    <div className="bg-green-50 p-3 rounded-md">
+                      <p className="text-sm font-medium text-gray-900">
+                        {listing.area_m2 ? `${listing.area_m2} m²` : 'No area extracted'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Address:
+                    </label>
+                    <div className="bg-green-50 p-3 rounded-md space-y-1">
+                      <p className="text-sm text-gray-900">
+                        <span className="font-medium">Street:</span> {listing.address_street || 'Not extracted'}
+                      </p>
+                      <p className="text-sm text-gray-900">
+                        <span className="font-medium">Ward:</span> {listing.address_ward || 'Not extracted'}
+                      </p>
+                      <p className="text-sm text-gray-900">
+                        <span className="font-medium">District:</span> {listing.address_district || 'Not extracted'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Contact:
+                    </label>
+                    <div className="bg-green-50 p-3 rounded-md">
+                      <p className="text-sm font-medium text-gray-900">
+                        {listing.contact_phone || 'No contact extracted'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Images:
+                    </label>
+                    <div className="bg-green-50 p-3 rounded-md">
+                      {listing.image_urls && listing.image_urls.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-2">
+                          {listing.image_urls.slice(0, 4).map((url, index) => (
+                            <img
+                              key={index}
+                              src={url}
+                              alt={`Listing image ${index + 1}`}
+                              className="w-full h-20 object-cover rounded border"
+                              onError={(e) => {
+                                e.currentTarget.src = 'https://via.placeholder.com/100x80?text=No+Image';
+                              }}
+                            />
+                          ))}
+                          {listing.image_urls.length > 4 && (
+                            <div className="w-full h-20 bg-gray-200 rounded border flex items-center justify-center">
+                              <span className="text-sm text-gray-500">
+                                +{listing.image_urls.length - 4} more
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-500">No images extracted</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {listing.attributes && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Attributes:
+                      </label>
+                      <div className="bg-green-50 p-3 rounded-md">
+                        <div className="flex flex-wrap gap-2">
+                          {Array.isArray(listing.attributes) && listing.attributes.map((attr: any, index: number) => (
+                            <span 
+                              key={index} 
+                              className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                            >
+                              {attr.name}: {attr.value}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          /* Edit Mode Layout */
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Side: Raw Text (Still Visible for Reference) */}
+            <div className="bg-white rounded-lg border">
+              <div className="px-6 py-4 bg-red-50 border-b">
+                <h3 className="text-lg font-medium text-red-800">🔍 Raw Scraped Text</h3>
+                <p className="text-sm text-red-600">Original data for reference</p>
+              </div>
+              <div className="p-6">
+                <div className="bg-gray-50 p-4 rounded-md max-h-96 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap text-sm text-gray-800 font-mono">
+                    {listing.description}
+                  </pre>
+                </div>
+              </div>
+            </div>
 
-        {/* Action Buttons (Bottom) */}
-        <div className="mt-8 flex justify-center space-x-4">
-          <button className="px-8 py-3 border border-red-300 text-red-700 rounded-md hover:bg-red-50 font-medium">
-            Reject Listing
-          </button>
-          <button className="px-8 py-3 border border-yellow-300 text-yellow-700 rounded-md hover:bg-yellow-50 font-medium">
-            Edit & Approve
-          </button>
-          <button className="px-8 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium">
-            Approve as-is
-          </button>
-        </div>
+            {/* Right Side: Editable Form */}
+            <div>
+              <EditableListingForm
+                listing={listing}
+                onSave={handleSaveEdit}
+                onCancel={handleCancelEdit}
+                isSubmitting={isActionLoading}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Action Error Display */}
+        {actionError && (
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
+            <h3 className="text-sm font-medium text-red-800">Action Failed</h3>
+            <p className="mt-2 text-sm text-red-700">{actionError}</p>
+          </div>
+        )}
+
+        {/* Confirmation Dialog */}
+        {showConfirmDialog.show && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Confirm Action</h3>
+              <p className="text-sm text-gray-700 mb-6">{showConfirmDialog.message}</p>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={handleCancelAction}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmAction}
+                  disabled={isActionLoading}
+                  className={`px-4 py-2 rounded-md font-medium ${
+                    showConfirmDialog.action === 'reject'
+                      ? 'bg-red-600 text-white hover:bg-red-700'
+                      : 'bg-green-600 text-white hover:bg-green-700'
+                  } disabled:opacity-50`}
+                >
+                  {isActionLoading ? 'Processing...' : 'Confirm'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
