@@ -7,9 +7,9 @@
  * Learn more: https://vitejs.dev/guide/env-and-mode.html
  */
 
-// For local development with Firebase Emulators
-const LOCAL_API_BASE_URL = 'http://127.0.0.1:5001/omega-sorter-467514-q6/asia-southeast1';
+// Production Cloud Functions base URL (asia-southeast1)
+const PROD_API_BASE_URL = 'https://asia-southeast1-omega-sorter-467514-q6.cloudfunctions.net';
 
 // The base URL for the API. It uses the VITE_API_BASE_URL from the .env file if it exists,
-// otherwise it falls back to the local emulator URL.
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || LOCAL_API_BASE_URL;
+// otherwise it falls back to the production Cloud Functions URL.
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || PROD_API_BASE_URL;

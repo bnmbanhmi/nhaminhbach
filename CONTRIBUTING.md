@@ -91,6 +91,37 @@ source .venv/bin/activate
 # You are now ready to work on the backend.
 ```
 
+### 3.2.1 CORS & Local Dev Networking (Small but critical)
+
+When running the frontend locally (for example at `http://localhost:5173`) you may encounter CORS errors when calling deployed Cloud Functions (e.g., `get_all_attributes`, `get_listing_by_id`). Common symptoms:
+
+- Browser console shows: "No 'Access-Control-Allow-Origin' header is present on the requested resource." or network responses with 403/404 during development.
+
+Root causes and quick fixes:
+
+- Function not deployed or wrong URL (404): ensure the function exists and is deployed to the same project and region. Use `gcloud functions list` to validate.
+- Function requires authentication/was deployed without `--allow-unauthenticated` (403): redeploy with `--allow-unauthenticated` for public API functions used by the frontend, or configure proper IAM and call the function with an identity token.
+- CORS headers missing: Cloud Functions (Gen2) may set CORS automatically for allowed origins if `ingressSettings` and `CORS` config are correct; otherwise ensure your function adds an `Access-Control-Allow-Origin` header echoing the request's Origin or a safe wildcard during development.
+
+Example deploy that fixes both authentication and common CORS needs:
+
+```bash
+cd packages/functions
+gcloud functions deploy get_all_attributes \
+	--gen2 \
+	--runtime=python312 \
+	--source=. \
+	--entry-point=get_all_attributes \
+	--trigger-http \
+	--region=asia-southeast1 \
+	--allow-unauthenticated \
+	--set-env-vars="INSTANCE_CONNECTION_NAME=omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod,DB_USER=postgres,DB_NAME=postgres,GCP_PROJECT=omega-sorter-467514-q6" \
+	--project=omega-sorter-467514-q6
+```
+
+If you need stricter security, deploy without `--allow-unauthenticated` and instead obtain an ID token and attach it to requests from the frontend.
+
+
 ### 3.3. Setting up the Scraper (`/packages/scraper`)
 
 **To be run once:**

@@ -38,6 +38,20 @@ status: active
 - **Timeout:** `540s` (ingestion), `300s` (transformation), `300s` (trigger)
 - **Region:** `asia-southeast1`
 
+## CORS & Public API Guidelines
+
+APIs consumed by the public frontend must be deployed with explicit CORS and authentication considerations documented here.
+
+- If endpoints are intended to be public (no user authentication), deploy with `--allow-unauthenticated` and ensure the function responds with an `Access-Control-Allow-Origin` header that allows the frontend origin during development (for example, `http://localhost:5173`) or a safe production origin.
+- For stricter security, keep the function private and require callers to obtain an ID token; the frontend can fetch an ID token using Google-signed credentials and include it in requests.
+- Example: to fix the common localhost CORS development issue, redeploy the function with `--allow-unauthenticated` and verify the function returns the CORS header. Example redeploy command is in the CONTRIBUTING.md.
+
+Common symptom and root cause:
+
+- Symptom: Browser console shows "No 'Access-Control-Allow-Origin' header is present" and requests fail with 403 or 404 from Cloud Functions.
+- Root cause: Function either missing, requires authentication (403), or does not include the CORS header. The quickest remediation is a redeploy with `--allow-unauthenticated` for public endpoints and verify CORS header presence.
+
+
 ## Google Secret Manager Secrets
 | Secret Name | Purpose | Full Path |
 |-------------|---------|-----------|

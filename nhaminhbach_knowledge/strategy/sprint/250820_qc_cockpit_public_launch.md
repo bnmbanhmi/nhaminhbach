@@ -32,9 +32,10 @@ estimated_duration: 6 hours
 
 ### **Ready Tasks - Part 2: Infrastructure Upgrade**
 4. [[migrate_llm_to_gemini_vertex_ai]] - [4hr] - Upgrade from Gemma to Gemini 2.5 Flash Lite via Vertex AI - **Status:** ✅ COMPLETED (2025-08-21, 1hr)
+5. [[implement_geocoding_google_maps]] - [4hr] - Server-side geocoding of structured addresses using Google Maps API - **Status:** Ready
 
 ### **Ready Tasks - Part 3: Public Launch** (Ordered by Priority)
-5. [[implement_basic_filtering_system]] - [12hr] - Public filtering for location, price, attributes - **Status:** Ready
+5. [[implement_basic_filtering_system]] - [12hr] - Public filtering for location, price, attributes - **Status:** ✅ COMPLETED (2025-08-23, 3hr)
 6. [[ensure_full_responsive_design]] - [8hr] - Mobile-responsive design across all interfaces - **Status:** Ready
 7. [[display_source_post_link]] - [4hr] - Source link integration on listing detail pages - **Status:** Ready
 8. [[deploy_web_to_custom_domain]] - [2hr] - Deploy frontend to a customer-owned domain with HTTPS - **Status:** Ready
@@ -77,6 +78,7 @@ estimated_duration: 6 hours
 | [[ensure_full_responsive_design]] | [8hr] | Ready | Frontend Agent | - |
 | [[display_source_post_link]] | [4hr] | Ready | Frontend Agent | - |
 | [[deploy_web_to_custom_domain]] | [2hr] | Ready | Coding Agent | - |
+| [[implement_geocoding_google_maps]] | [4hr] | Ready | Backend Agent | - |
 
 **Sprint Velocity:** 12/80 hours = 15% completion (Strong momentum with core QC dashboard complete)
 
@@ -87,6 +89,8 @@ estimated_duration: 6 hours
 **Next Up:** Side-by-side review UI implementation for individual listing approval workflow
 
 **Recent Completion:** ✅ QC Dashboard UI (2025-08-21) - Admin can now view, filter, and navigate pending listings efficiently. Foundation for QC workflow established.
+
+**Public Filtering Completion:** ✅ Implemented basic filtering system (2025-08-23) - Frontend now supports district, price range, area, status, and amenity filters. Backend endpoints `get_all_attributes` and `get_listing_by_id` were redeployed with public access and CORS headers to support local development and the public UI. Verified locally at http://localhost:5173/.
 
 ## 🚨 AI Agent Issues & Escalation
 **Active Issues:**
