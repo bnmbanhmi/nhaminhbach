@@ -133,18 +133,20 @@ const HomePage: React.FC = () => {
   const handleFilterChange = (nextFilters: typeof filters) => setFilters(nextFilters);
 
   return (
-    <div className="w-full px-1 md:px-2 lg:px-3">
-      <h1 className="text-3xl font-bold mb-6">Available Listings</h1>
-      <FilterBar value={filters} onChange={handleFilterChange} amenities={attributes.filter(a => a.type === 'boolean')} isAmenitiesLoading={isAttributesLoading} />
+    <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Available Listings</h1>
+      <div className="mb-4 sm:mb-6">
+        <FilterBar value={filters} onChange={handleFilterChange} amenities={attributes} isAmenitiesLoading={isAttributesLoading} />
+      </div>
       {error && (
-        <div className="mt-2 mb-4 p-2 bg-red-50 text-red-700 rounded">Error loading listings: {error.message}</div>
+        <div className="mt-2 mb-4 p-2 bg-red-50 text-red-700 rounded text-sm sm:text-base">Error loading listings: {error.message}</div>
       )}
       {isLoading ? (
-        <div className="text-center py-6">Loading listings…</div>
+        <div className="text-center py-6 text-base sm:text-lg">Loading listings…</div>
       ) : listings.length === 0 ? (
-        <div className="text-center py-6 text-gray-600">No listings match your filters.</div>
+        <div className="text-center py-6 text-gray-600 text-base sm:text-lg">No listings match your filters.</div>
       ) : (
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4 md:gap-6 justify-items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 justify-items-center w-full">
           {listings.map((listing) => (
             <ListingCard key={listing.id} listing={listing} />
           ))}

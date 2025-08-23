@@ -13,3 +13,7 @@ id,date,decision,status
 ,20250814,"Strategically pivot to a 'local-first' scraper development model to accelerate debugging, improve reliability, and reduce initial operational costs.",Active
 ,20250814,"Re-structure project management from a granular sprint-per-task model to a more strategic, Epic-based model for better clarity.",Implemented
 ,20250814,"Build a secure data ingestion API endpoint ('ingest_scraped_data') to act as the bridge between the local scraper and the cloud backend.",Pending
+,20250821,"Migrate LLM to Gemini Vertex AI (Gemma to Gemini 2.5 Flash Lite via Vertex AI)",Completed
+,20250821,"Build the QC dashboard UI (Internal admin interface for pending_review listings)",Completed
+,20250821,"Develop approve/edit/reject functionality (Core state management and approval workflow with ListingForm reuse)",Completed
+,20250823,"Implement basic filtering system (Public filtering for location, price, attributes)",Completed
