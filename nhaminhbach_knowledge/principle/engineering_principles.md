@@ -23,3 +23,7 @@
 - **Principle of Human-in-the-Loop Quality:** LLM transformations produce 'pending_review' status data that requires human QC validation before public display. AI efficiency combined with human quality control ensures data excellence.
 
 - **Principle of Secret Management Compliance:** All API keys, credentials, and sensitive data must use Google Secret Manager. Environment variables are only for non-secret configuration. This principle is non-negotiable for production security.
+
+- **Principle of Custom Implementation Over External Dependencies:** When external libraries introduce compatibility issues, dependency conflicts, or excessive complexity, prefer custom implementation. Simple, purpose-built solutions often provide better maintainability and fewer integration issues than heavy external dependencies.
+
+- **Principle of Mobile-First UX:** All user interface components must be designed and tested for mobile devices first. Touch targets must be at least 32px, interactions must respond smoothly to touch events, and the interface must remain usable on small screens. Desktop enhancements are secondary to mobile functionality.

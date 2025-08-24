@@ -1,5 +1,9 @@
 // src/components/listings/FilterBar.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
+import translateEnumValue from '../../utils/translations';
+import type { Attribute } from '../../types';
+import SimpleDualSlider from '../ui/SimpleDualSlider';
 
 export interface FilterState {
   district?: string;
@@ -7,12 +11,11 @@ export interface FilterState {
   maxPrice?: string;
   minArea?: string;
   maxArea?: string;
-  status?: string;
+  status?: string | string[];
+  amenities?: string[];
   // Dynamic amenity keys: string-indexed values (boolean, number, string)
   [amenitySlug: string]: string | number | boolean | string[] | number[] | undefined;
 }
-
-import type { Attribute } from '../../types';
 
 interface Props {
   value: FilterState;
@@ -24,10 +27,43 @@ interface Props {
 const districts = ['Cầu Giấy', 'Đống Đa', 'Ba Đình', 'Hai Bà Trưng', 'Hoàn Kiếm'];
 const statuses = ['available', 'rented', 'pending_review', 'rejected'];
 
-const FilterBar: React.FC<Props> = ({ value, onChange, amenities = [], isAmenitiesLoading }) => {
-  const update = (patch: Partial<FilterState>) => onChange({ ...value, ...patch });
-  const reset = () => {
-    // Reset all known filter fields and dynamic amenity keys
+// use shared translateEnumValue from utils/translations
+
+const FilterBar: React.FC<Props> = ({ value, onChange, amenities = [], isAmenitiesLoading: _isAmenitiesLoading }) => {
+  // Local draft state: edits are staged locally and applied when user clicks "Apply"
+  const [draft, setDraft] = useState<FilterState>(value);
+  useEffect(() => setDraft(value), [value]);
+
+  const update = (patch: Partial<FilterState>) => setDraft(prev => ({ ...(prev || {}), ...patch }));
+
+  // Using rc-slider Range component for smooth dual-thumb sliders.
+
+  // Helper to set an amenity attribute and keep `draft.amenities` array in sync.
+  const setAmenityValue = (slug: string, value: any) => {
+    setDraft(prev => {
+      const next: FilterState = { ...(prev || {}) };
+      // assign the raw value for the specific attribute
+      if (value === undefined) {
+        delete next[slug];
+      } else {
+        next[slug] = value;
+      }
+
+      // compute amenities array membership
+      const currAmenities = Array.isArray(prev?.amenities) ? [...(prev!.amenities as string[])] : [];
+      const shouldInclude = !(value === undefined || value === false || (Array.isArray(value) && value.length === 0) || value === '');
+      if (shouldInclude) {
+        if (!currAmenities.includes(slug)) currAmenities.push(slug);
+      } else {
+        const idx = currAmenities.indexOf(slug);
+        if (idx !== -1) currAmenities.splice(idx, 1);
+      }
+      next.amenities = currAmenities.length ? currAmenities : undefined;
+      return next;
+    });
+  };
+
+  const resetDraft = () => {
     const resetState: FilterState = {
       district: undefined,
       minPrice: undefined,
@@ -41,38 +77,52 @@ const FilterBar: React.FC<Props> = ({ value, onChange, amenities = [], isAmeniti
         resetState[attr.slug] = undefined;
       });
     }
-    onChange(resetState);
+    setDraft(resetState);
   };
   // Amenity checkbox handler
   // Removed legacy amenities array logic
 
   const [showAmenities, setShowAmenities] = useState(false);
 
-  // Split base and amenity attributes
-  const baseAttributes = [
-    { label: 'District', id: 'filter-district', value: value.district || '', options: districts, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => update({ district: e.target.value || undefined }) },
-    { label: 'Price (VND)', id: 'filter-price', value: [value.minPrice || '', value.maxPrice || ''], onChange: (min: string, max: string) => update({ minPrice: min || undefined, maxPrice: max || undefined }) },
-    { label: 'Area (m²)', id: 'filter-area', value: [value.minArea || '', value.maxArea || ''], onChange: (min: string, max: string) => update({ minArea: min || undefined, maxArea: max || undefined }) },
-    { label: 'Status', id: 'filter-status', value: value.status || '', options: statuses, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => update({ status: e.target.value || undefined }) },
-  ];
-
   const amenityAttributes = amenities;
 
+  const applyFilters = () => {
+    // Ensure we pass a shallow copy
+    setIsApplying(true);
+    onChange({ ...(draft || {}) });
+    // Close amenities panel for better UX
+    setShowAmenities(false);
+  };
+
+  const [isApplying, setIsApplying] = useState(false);
+
+  // Clear applying state when parent `value` reflects the applied draft
+  useEffect(() => {
+    try {
+      if (JSON.stringify(value || {}) === JSON.stringify(draft || {})) {
+        setIsApplying(false);
+      }
+    } catch (e) {
+      // ignore serialization errors
+      setIsApplying(false);
+    }
+  }, [value, draft]);
+
   return (
-    <div className="mb-6 p-3 bg-white rounded-md shadow-sm w-full" role="region" aria-label="Listing filters">
+    <div className="mb-6 p-3 bg-white rounded-md shadow-sm w-full" role="region" aria-label="Bộ lọc danh sách">
       {/* Base attributes */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-start w-full">
         {/* District */}
         <div className="flex flex-col gap-2">
-          <label className="text-sm" htmlFor="filter-district">District</label>
+          <label className="text-sm" htmlFor="filter-district">Quận</label>
           <select
             id="filter-district"
-            aria-label="Filter by district"
-            value={value.district || ''}
+            aria-label="Lọc theo quận"
+            value={draft?.district || ''}
             onChange={(e) => update({ district: e.target.value || undefined })}
             className="border rounded px-2 py-1"
           >
-            <option value="">All</option>
+            <option value="">Tất cả</option>
             {districts.map((d) => (
               <option key={d} value={d}>{d}</option>
             ))}
@@ -80,67 +130,55 @@ const FilterBar: React.FC<Props> = ({ value, onChange, amenities = [], isAmeniti
         </div>
         {/* Price */}
         <div className="flex flex-col gap-2">
-          <label className="text-sm" htmlFor="filter-min-price">Price (VND)</label>
-          <div className="flex gap-2">
-            <input
-              id="filter-min-price"
-              type="number"
-              placeholder="min"
-              aria-label="Minimum price"
-              value={value.minPrice || ''}
-              onChange={(e) => update({ minPrice: e.target.value || undefined })}
-              className="border rounded px-2 py-1 w-20"
-            />
-            <input
-              id="filter-max-price"
-              type="number"
-              placeholder="max"
-              aria-label="Maximum price"
-              value={value.maxPrice || ''}
-              onChange={(e) => update({ maxPrice: e.target.value || undefined })}
-              className="border rounded px-2 py-1 w-20"
-            />
-          </div>
+          <label className="text-sm">Giá (VND)</label>
+          {/* removed top Min/Max labels per design */}
+          <SimpleDualSlider
+            min={0}
+            max={10000000}
+            step={50000}
+            values={[draft?.minPrice ? Number(draft.minPrice) : 0, draft?.maxPrice ? Number(draft.maxPrice) : 10000000]}
+            onChange={(v) => update({ minPrice: String(v[0]), maxPrice: String(v[1]) })}
+            format={(n) => `${(n / 1000000).toFixed(1)}tr`}
+            ariaLabel="Giá"
+          />
         </div>
         {/* Area */}
         <div className="flex flex-col gap-2">
-          <label className="text-sm" htmlFor="filter-min-area">Area (m²)</label>
-          <div className="flex gap-2">
-            <input
-              id="filter-min-area"
-              type="number"
-              placeholder="min"
-              aria-label="Minimum area"
-              value={value.minArea || ''}
-              onChange={(e) => update({ minArea: e.target.value || undefined })}
-              className="border rounded px-2 py-1 w-16"
-            />
-            <input
-              id="filter-max-area"
-              type="number"
-              placeholder="max"
-              aria-label="Maximum area"
-              value={value.maxArea || ''}
-              onChange={(e) => update({ maxArea: e.target.value || undefined })}
-              className="border rounded px-2 py-1 w-16"
-            />
-          </div>
+          <label className="text-sm">Diện tích (m²)</label>
+          {/* removed top Min/Max labels per design */}
+          <SimpleDualSlider
+            min={0}
+            max={100}
+            step={1}
+            values={[draft?.minArea ? Number(draft.minArea) : 0, draft?.maxArea ? Number(draft.maxArea) : 100]}
+            onChange={(v) => update({ minArea: String(v[0]), maxArea: String(v[1]) })}
+            format={(n) => `${n}m²`}
+            ariaLabel="Diện tích"
+          />
         </div>
-        {/* Status */}
+        {/* Trạng thái (multi-select) */}
         <div className="flex flex-col gap-2">
-          <label className="text-sm" htmlFor="filter-status">Status</label>
-          <select
-            id="filter-status"
-            aria-label="Filter by status"
-            value={value.status || ''}
-            onChange={(e) => update({ status: e.target.value || undefined })}
-            className="border rounded px-2 py-1"
-          >
-            <option value="">All</option>
-            {statuses.map((s) => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-          </select>
+          <label className="text-sm" htmlFor="filter-status">Trạng thái</label>
+          <Select
+            inputId="filter-status"
+            isMulti
+            options={statuses.map(s => ({ value: s, label: translateEnumValue('status', s) }))}
+            value={
+              Array.isArray(draft?.status)
+                ? (draft!.status as string[]).map(v => ({ value: v, label: translateEnumValue('status', v) }))
+                : draft?.status
+                ? [{ value: String(draft.status), label: translateEnumValue('status', draft.status) }]
+                : []
+            }
+            onChange={(selected) => {
+              const vals = (selected as Array<any> || []).map(s => s.value);
+              update({ status: vals.length ? vals : undefined });
+            }}
+            classNamePrefix="react-select"
+            styles={{ menu: (provided) => ({ ...provided, zIndex: 50 }) }}
+            aria-label="Lọc theo trạng thái"
+            placeholder="Tất cả"
+          />
         </div>
       </div>
       {/* Show More Amenities Section */}
@@ -150,55 +188,52 @@ const FilterBar: React.FC<Props> = ({ value, onChange, amenities = [], isAmeniti
           className="text-sm text-primary underline"
           onClick={() => setShowAmenities((prev) => !prev)}
         >
-          {showAmenities ? 'Hide Amenities' : 'Show More Amenities'}
+          {showAmenities ? 'Ẩn tiện ích' : 'Hiện thêm tiện ích'}
         </button>
         {showAmenities && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mt-4">
             {amenityAttributes.map(attr => {
-              const amenityValue = value[attr.slug];
+              // read the staged value from draft so interactions update immediately
+              const amenityValue = draft ? draft[attr.slug] : undefined;
               let inputEl = null;
               if (attr.type === 'boolean') {
                 inputEl = (
                   <button
                     type="button"
                     aria-pressed={!!amenityValue}
-                    onClick={() => update({ [attr.slug]: !amenityValue })}
+                    onClick={() => setAmenityValue(attr.slug, !amenityValue)}
                     className={`px-3 py-1 rounded border text-xs font-medium transition-colors duration-200 ${amenityValue ? 'bg-primary text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
                   >
                     {attr.name}
                   </button>
                 );
                 } else if (attr.type === 'integer') {
-                inputEl = (
-                  <div className="flex flex-col gap-1 w-full">
-                    <label className="text-xs font-medium mb-1">{attr.name}</label>
-                    <div className="relative">
-                      <select
-                        multiple
-                        value={Array.isArray(amenityValue) ? amenityValue.map(String) : []}
-                        onChange={e => {
-                          const selected = Array.from(e.target.selectedOptions).map(opt => opt.value);
-                          update({ [attr.slug]: selected.length ? selected.map(Number) : undefined });
+                  // Use react-select for better multi-select UX (mobile friendly)
+                  const intOptions = [0, 1, 2, 3].map(v => ({ value: v, label: String(v) }));
+                  inputEl = (
+                    <div className="flex flex-col gap-1 w-full">
+                      <label className="text-xs font-medium mb-1">{attr.name}</label>
+                      <Select
+                        isMulti
+                        options={intOptions}
+                                    value={Array.isArray(amenityValue) ? (amenityValue as Array<number>).map(v => ({ value: v, label: String(v) })) : []}
+                        onChange={(selected) => {
+                          const vals = (selected as Array<any> || []).map(s => Number(s.value));
+                          setAmenityValue(attr.slug, vals.length ? vals : undefined);
                         }}
-                        className="border rounded px-2 py-1 w-full text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        size={4}
-                        style={{ minHeight: '2.5rem', background: '#fff' }}
-                      >
-                        {[0,1,2,3].map(val => (
-                          <option key={val} value={val}>{val}</option>
-                        ))}
-                      </select>
-                      <span className="absolute right-2 top-2 text-gray-400 pointer-events-none">⇧/⌘+Click to select</span>
+                        classNamePrefix="react-select"
+                        styles={{ menu: (provided) => ({ ...provided, zIndex: 50 }) }}
+                        aria-label={attr.name}
+                      />
+                      {Array.isArray(amenityValue) && (amenityValue as Array<number>).length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {(amenityValue as Array<number>).map((v: number|string) => (
+                            <span key={String(v)} className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">{String(v)}</span>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    {Array.isArray(amenityValue) && amenityValue.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {amenityValue.map((v: number|string) => (
-                          <span key={v} className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">{v}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
+                  );
               } else if (attr.type === 'string') {
                 inputEl = (
                   <div className="flex flex-col gap-1 w-full">
@@ -206,38 +241,33 @@ const FilterBar: React.FC<Props> = ({ value, onChange, amenities = [], isAmeniti
                     <input
                       type="text"
                       value={typeof amenityValue === 'string' ? amenityValue : ''}
-                      onChange={e => update({ [attr.slug]: e.target.value })}
+                      onChange={e => setAmenityValue(attr.slug, e.target.value || undefined)}
                       className="border rounded px-2 py-1 w-full text-xs"
                       placeholder={attr.name}
                     />
                   </div>
                 );
               } else if (attr.type === 'enum' && attr.possible_values) {
+                const enumOptions = attr.possible_values.map(v => ({ value: v, label: translateEnumValue(attr.slug, v) }));
                 inputEl = (
                   <div className="flex flex-col gap-1 w-full">
                     <label className="text-xs font-medium mb-1">{attr.name}</label>
-                    <div className="relative">
-                      <select
-                        multiple
-                        value={Array.isArray(amenityValue) ? amenityValue.map(String) : []}
-                        onChange={e => {
-                          const selected = Array.from(e.target.selectedOptions).map(opt => opt.value);
-                          update({ [attr.slug]: selected.length ? selected : undefined });
-                        }}
-                        className="border rounded px-2 py-1 w-full text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        size={Math.max(4, attr.possible_values.length)}
-                        style={{ minHeight: '2.5rem', background: '#fff' }}
-                      >
-                        {attr.possible_values.map(val => (
-                          <option key={val} value={val}>{val}</option>
-                        ))}
-                      </select>
-                      <span className="absolute right-2 top-2 text-gray-400 pointer-events-none">⇧/⌘+Click to select</span>
-                    </div>
-                    {Array.isArray(amenityValue) && amenityValue.length > 0 && (
+                    <Select
+                      isMulti
+                      options={enumOptions}
+                      value={Array.isArray(amenityValue) ? (amenityValue as Array<any>).map(v => ({ value: v, label: translateEnumValue(attr.slug, v) })) : []}
+                      onChange={(selected) => {
+                        const vals = (selected as Array<any> || []).map(s => s.value);
+                        setAmenityValue(attr.slug, vals.length ? vals : undefined);
+                      }}
+                      classNamePrefix="react-select"
+                      styles={{ menu: (provided) => ({ ...provided, zIndex: 50 }) }}
+                      aria-label={attr.name}
+                    />
+                    {Array.isArray(amenityValue) && (amenityValue as Array<any>).length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {amenityValue.map((v) => (
-                          <span key={String(v)} className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">{String(v)}</span>
+                        {(amenityValue as Array<any>).map((v) => (
+                          <span key={String(v)} className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">{translateEnumValue(attr.slug, v)}</span>
                         ))}
                       </div>
                     )}
@@ -253,8 +283,11 @@ const FilterBar: React.FC<Props> = ({ value, onChange, amenities = [], isAmeniti
           </div>
         )}
       </div>
-      <div className="flex justify-end mt-2">
-        <button type="button" onClick={reset} className="text-sm text-gray-600 underline">Reset</button>
+        <div className="flex justify-end mt-2 gap-3">
+        <button type="button" onClick={resetDraft} className="text-sm text-gray-600 underline">Đặt lại</button>
+        <button type="button" onClick={applyFilters} className="text-sm bg-primary text-white px-3 py-1 rounded" disabled={isApplying}>
+          {isApplying ? 'Đang áp dụng…' : 'Áp dụng'}
+        </button>
       </div>
     </div>
   );

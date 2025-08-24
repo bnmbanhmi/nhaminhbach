@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import type { Listing } from '../types';
 import { API_BASE_URL } from '../config';
 import { formatPrice, formatArea } from '../utils/formatters';
+import translateEnumValue from '../utils/translations';
 
 const ListingDetailPage: React.FC = () => {
   const { listingId } = useParams<{ listingId: string }>();
@@ -46,7 +47,7 @@ const ListingDetailPage: React.FC = () => {
   }
 
   if (!listing) {
-    return <div className="text-center p-8">Listing not found.</div>;
+    return <div className="text-center p-8">Không tìm thấy tin đăng.</div>;
   }
 
   return (
@@ -70,13 +71,15 @@ const ListingDetailPage: React.FC = () => {
 
           <p className="text-gray-700 whitespace-pre-wrap mb-6">{listing.description}</p>
 
-          <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Amenities</h2>
+          <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Tiện ích</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {listing.attributes?.map(attr => (
               <div key={attr.slug} className="p-2">
                 <span className="font-medium">{attr.name}: </span>
                 <span>
-                  {typeof attr.value === 'boolean' ? (attr.value ? 'Yes' : 'No') : String(attr.value)}
+                  {typeof attr.value === 'boolean'
+                    ? (attr.value ? translateEnumValue(undefined, 'true') : translateEnumValue(undefined, 'false'))
+                    : translateEnumValue(attr.slug, attr.value)}
                 </span>
               </div>
             ))}
