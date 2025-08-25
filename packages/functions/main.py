@@ -1259,9 +1259,9 @@ def _process_pending_transformations_logic() -> dict:
                     if result.get("success"):
                         # Extract structured data
                         transformed_data = result.get("data", {})
-                        listing_data = transformed_data.get("listing", {})
+                        listing_data = transformed_data.get("listing", {}).get("listing", {})
                         
-                        # Update listing with transformed data
+                        # Update listing with transformed data (no explicit transaction needed)
                         update_query = text("""
                             UPDATE listings SET
                                 title = COALESCE(:title, title),
@@ -1270,6 +1270,7 @@ def _process_pending_transformations_logic() -> dict:
                                 address_ward = COALESCE(:ward, address_ward),
                                 address_district = COALESCE(:district, address_district),
                                 contact_phone = :phone,
+                                updated_at = NOW(),
                                 status = 'pending_review'
                             WHERE id = :listing_id
                         """)
@@ -1285,6 +1286,7 @@ def _process_pending_transformations_logic() -> dict:
                         })
                         
                         conn.commit()
+                        
                         processed_count += 1
                         logger.info(f"Successfully transformed listing {listing_id}")
                         
