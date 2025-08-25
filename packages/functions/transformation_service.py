@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 from firebase_functions import https_fn, options
-from transformation_engine import transform_raw_post
+from transformation_engine_v2 import transform_raw_post
 from data_contracts import Listing, Attribute
 
 # Configure logging

@@ -15,7 +15,7 @@ from google.cloud import pubsub_v1, run_v2
 from google.api_core import gapic_v1
 import sqlalchemy
 from sqlalchemy import text
-from utils import get_secret
+from utils import get_secret, geocode_address
 
 # Import transformation logic for LLM processing
 try:
@@ -540,6 +540,39 @@ def update_listing_data(req: https_fn.Request) -> https_fn.Response:
                     update_fields.append(f"{field} = :{field}")
                     update_params[field] = listing_data[field]
             
+            # Check if any address fields were updated and perform geocoding
+            address_fields = ["address_street", "address_ward", "address_district"]
+            if any(field in listing_data for field in address_fields):
+                logger.info("Address fields updated, attempting geocoding...")
+                
+                # Get current address fields from database and merge with updates
+                current_query = text("SELECT address_street, address_ward, address_district FROM listings WHERE id = :listing_id")
+                current_result = conn.execute(current_query, {"listing_id": listing_id}).fetchone()
+                
+                if current_result:
+                    # Merge current values with updates
+                    street = listing_data.get("address_street") or current_result[0] or ""
+                    ward = listing_data.get("address_ward") or current_result[1] or ""
+                    district = listing_data.get("address_district") or current_result[2] or ""
+                    
+                    # Construct full address for geocoding
+                    address_parts = [part for part in [street, ward, district] if part and part.strip()]
+                    if address_parts:
+                        full_address = ", ".join(address_parts) + ", Hà Nội, Vietnam"
+                        logger.info(f"Geocoding address: {full_address}")
+                        
+                        # Get GCP project for secret access
+                        GCP_PROJECT = os.environ.get("GCP_PROJECT", "omega-sorter-467514-q6")
+                        coords = geocode_address(GCP_PROJECT, full_address)
+                        
+                        if coords:
+                            lat, lng = coords
+                            update_fields.extend(["latitude = :latitude", "longitude = :longitude"])
+                            update_params.update({"latitude": lat, "longitude": lng})
+                            logger.info(f"Successfully geocoded address to ({lat}, {lng})")
+                        else:
+                            logger.info(f"Geocoding failed for address: {full_address}")
+            
             if update_fields:
                 # Add status update to the same query
                 update_fields.append("status = :status")
@@ -578,6 +611,145 @@ def update_listing_data(req: https_fn.Request) -> https_fn.Response:
         logger.error(f"Error in update_listing_data: {e}")
         import traceback
         logger.error(f"Full traceback: {traceback.format_exc()}")
+        return https_fn.Response(f"Internal server error: {str(e)}", status=500)
+
+
+@https_fn.on_request(
+    cors=CORS_CONFIG
+)
+def geocode_existing_listings(req: https_fn.Request) -> https_fn.Response:
+    """
+    Geocode existing listings that have address data but missing latitude/longitude.
+    This is useful for backfilling existing data or re-geocoding after address updates.
+    """
+    if req.method != "POST":
+        return https_fn.Response(f"Method {req.method} not allowed.", status=405)
+
+    try:
+        payload = req.get_json() or {}
+        limit = min(int(payload.get("limit", 50)), 100)  # Limit to prevent timeout
+        
+        logger.info(f"Starting geocoding of existing listings (limit: {limit})")
+        
+        engine = get_db_engine()
+        with engine.connect() as conn:
+            # Find listings with address data but no coordinates
+            find_query = text("""
+                SELECT id, address_street, address_ward, address_district
+                FROM listings 
+                WHERE (address_street IS NOT NULL OR address_ward IS NOT NULL OR address_district IS NOT NULL)
+                AND (latitude IS NULL OR longitude IS NULL)
+                ORDER BY id
+                LIMIT :limit
+            """)
+            
+            listings = conn.execute(find_query, {"limit": limit}).fetchall()
+            logger.info(f"Found {len(listings)} listings to geocode")
+            
+            if not listings:
+                return https_fn.Response(
+                    json.dumps({"message": "No listings found that need geocoding", "geocoded": 0}),
+                    status=200,
+                    headers={"Content-Type": "application/json"}
+                )
+            
+            # Get GCP project for secret access
+            GCP_PROJECT = os.environ.get("GCP_PROJECT", "omega-sorter-467514-q6")
+            geocoded_count = 0
+            failed_count = 0
+            
+            update_query = text("UPDATE listings SET latitude = :lat, longitude = :lng WHERE id = :listing_id")
+            
+            for listing in listings:
+                listing_id, street, ward, district = listing
+                
+                # Construct full address
+                address_parts = [part for part in [street, ward, district] if part and part.strip()]
+                if not address_parts:
+                    logger.info(f"Skipping listing {listing_id}: no address data")
+                    continue
+                
+                full_address = ", ".join(address_parts) + ", Hà Nội, Vietnam"
+                logger.info(f"Geocoding listing {listing_id}: {full_address}")
+                
+                coords = geocode_address(GCP_PROJECT, full_address)
+                if coords:
+                    lat, lng = coords
+                    conn.execute(update_query, {"lat": lat, "lng": lng, "listing_id": listing_id})
+                    geocoded_count += 1
+                    logger.info(f"Successfully geocoded listing {listing_id} to ({lat}, {lng})")
+                else:
+                    failed_count += 1
+                    logger.info(f"Failed to geocode listing {listing_id}: {full_address}")
+            
+            # Commit all updates
+            conn.commit()
+            
+        return https_fn.Response(
+            json.dumps({
+                "message": "Geocoding complete",
+                "processed": len(listings),
+                "geocoded": geocoded_count,
+                "failed": failed_count
+            }),
+            status=200,
+            headers={"Content-Type": "application/json"}
+        )
+
+    except Exception as e:
+        logger.error(f"Error in geocode_existing_listings: {e}")
+        import traceback
+        logger.error(f"Full traceback: {traceback.format_exc()}")
+        return https_fn.Response(f"Internal server error: {str(e)}", status=500)
+
+
+@https_fn.on_request(
+    cors=CORS_CONFIG
+)
+def test_geocoding(req: https_fn.Request) -> https_fn.Response:
+    """
+    Test endpoint to verify geocoding is working with a sample address.
+    POST request with JSON body: {"address": "123 Some Street, Ward, District"}
+    """
+    if req.method != "POST":
+        return https_fn.Response(f"Method {req.method} not allowed.", status=405)
+
+    try:
+        payload = req.get_json()
+        if not payload or "address" not in payload:
+            return https_fn.Response("Missing 'address' field in JSON body.", status=400)
+
+        address = payload["address"]
+        logger.info(f"Testing geocoding for address: {address}")
+        
+        # Get GCP project for secret access
+        GCP_PROJECT = os.environ.get("GCP_PROJECT", "omega-sorter-467514-q6")
+        coords = geocode_address(GCP_PROJECT, address)
+        
+        if coords:
+            lat, lng = coords
+            result = {
+                "success": True,
+                "address": address,
+                "coordinates": {"latitude": lat, "longitude": lng}
+            }
+            logger.info(f"Geocoding successful: {address} -> ({lat}, {lng})")
+        else:
+            result = {
+                "success": False,
+                "address": address,
+                "error": "Geocoding failed"
+            }
+            logger.info(f"Geocoding failed for: {address}")
+        
+        return https_fn.Response(
+            json.dumps(result),
+            status=200,
+            headers={"Content-Type": "application/json"}
+        )
+
+    except Exception as e:
+        logger.error(f"Error in test_geocoding: {e}")
         return https_fn.Response(f"Internal server error: {str(e)}", status=500)
 
 

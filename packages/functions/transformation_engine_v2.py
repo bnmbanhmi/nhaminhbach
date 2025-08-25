@@ -73,13 +73,17 @@ def get_available_attributes(engine=None) -> Dict[str, Dict[str, Any]]:
             ).fetchall()
             
             for row in result:
-                attribute_map[row.slug] = {
-                    "id": row.id,
-                    "type": row.type,
-                    "name": row.name,
-                    "slug": row.slug,
-                    "possible_values": row.possible_values
-                }
+                # Ensure all required fields are not None
+                if row.slug and row.type and row.name:
+                    attribute_map[row.slug] = {
+                        "id": row.id,
+                        "type": row.type,
+                        "name": row.name,
+                        "slug": row.slug,
+                        "possible_values": row.possible_values if row.possible_values else []
+                    }
+                else:
+                    logger.warning(f"Skipping attribute with missing fields: id={row.id}, slug={row.slug}, type={row.type}")
                 
     except Exception as e:
         logger.error(f"Failed to fetch attributes from database: {e}")
@@ -298,16 +302,36 @@ def clean_extracted_data(listing_data: Dict[str, Any]) -> Dict[str, Any]:
             price = int("".join(numbers))
         else:
             price = 1000000  # Default 1M VND
+    elif price is None:
+        price = 1000000  # Default 1M VND
     
-    if price < 500000:
-        price = price * 1000 if price > 0 else 1000000  # Convert to VND if needed
-    
-    cleaned["price_monthly_vnd"] = min(price, 50000000)  # Cap at 50M VND
+    # Ensure price is a valid number
+    try:
+        price = int(price) if price is not None else 1000000
+        if price < 500000:
+            price = price * 1000 if price > 0 else 1000000  # Convert to VND if needed
+        cleaned["price_monthly_vnd"] = min(price, 50000000)  # Cap at 50M VND
+    except (ValueError, TypeError):
+        logger.warning(f"Invalid price value: {price}, setting to default")
+        cleaned["price_monthly_vnd"] = 1000000
     
     # Ensure area is reasonable
     area = cleaned.get("area_m2")
-    if area and area > 200:
-        cleaned["area_m2"] = None  # Invalid area
+    if area is not None:
+        # Handle case where area might be a list or other non-numeric type
+        if isinstance(area, (list, tuple)) and area:
+            # Take first element if it's a list
+            area = area[0] if area else None
+        
+        try:
+            area_float = float(area) if area is not None else None
+            if area_float and area_float > 200:
+                cleaned["area_m2"] = None  # Invalid area
+            else:
+                cleaned["area_m2"] = area_float
+        except (ValueError, TypeError):
+            logger.warning(f"Invalid area value: {area}, setting to None")
+            cleaned["area_m2"] = None
     
     # Clean phone number
     phone = cleaned.get("contact_phone")
@@ -320,6 +344,22 @@ def clean_extracted_data(listing_data: Dict[str, Any]) -> Dict[str, Any]:
         else:
             cleaned["contact_phone"] = None
     
+    # Ensure image_urls is a list
+    image_urls = cleaned.get("image_urls", [])
+    if not isinstance(image_urls, list):
+        if isinstance(image_urls, str):
+            # Single URL as string
+            cleaned["image_urls"] = [image_urls] if image_urls.strip() else []
+        else:
+            cleaned["image_urls"] = []
+    else:
+        # Filter out invalid URLs
+        valid_urls = []
+        for url in image_urls:
+            if isinstance(url, str) and url.strip():
+                valid_urls.append(url.strip())
+        cleaned["image_urls"] = valid_urls
+
     # Set default status
     cleaned["status"] = "pending_review"
     
