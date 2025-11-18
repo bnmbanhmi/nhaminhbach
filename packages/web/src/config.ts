@@ -7,9 +7,7 @@
  * Learn more: https://vitejs.dev/guide/env-and-mode.html
  */
 
-// Production Cloud Functions base URL (asia-southeast1)
-const PROD_API_BASE_URL = 'https://asia-southeast1-omega-sorter-467514-q6.cloudfunctions.net';
-
-// The base URL for the API. It uses the VITE_API_BASE_URL from the .env file if it exists,
-// otherwise it falls back to the production Cloud Functions URL.
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || PROD_API_BASE_URL;
+// The base URL for the API. In production, this will be a relative path
+// so that requests are proxied to the Vercel serverless functions.
+// In development, this can be overridden by a .env file.
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';

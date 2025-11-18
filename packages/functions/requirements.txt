@@ -1,6 +1,5 @@
 # Core function framework
 functions-framework>=3.0.0
-firebase-functions
 
 # Database and Google Cloud
 google-cloud-secret-manager
