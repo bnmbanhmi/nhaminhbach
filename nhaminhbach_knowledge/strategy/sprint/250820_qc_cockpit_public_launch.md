@@ -46,9 +46,14 @@ estimated_duration: 6 hours
 ### **Ready Tasks - Part 4: Development Tools** (Ordered by Priority)
 10. [[create_local_demo_setup]] - [2hr] - Create comprehensive local setup guide and configure demo environment - **Status:** ✅ COMPLETED (2025-11-17, 1hr)
 
-**Total Estimated:** 86 hours  
-**Total Completed:** 60 hours (10 tasks completed, 26 hours under estimate)  
-**Current Focus:** End-to-end pipeline testing COMPLETED - Critical transformation bug fixed, all stages verified functional
+### **Ready Tasks - Part 5: Vercel & Supabase Migration** (Ordered by Priority)
+11. [[migrate_to_vercel]] - [2hr] - Migrate project from Firebase/GCP to Vercel - **Status:** ✅ COMPLETED (2025-11-18, 2hr)
+12. [[migrate_to_supabase]] - [3hr] - Migrate database from Google Cloud SQL to Supabase - **Status:** ✅ COMPLETED (2025-11-18, 3hr)
+13. [[migrate_data_pipeline_to_vercel]] - [8hr] - Migrate the data scraping and transformation pipeline from Google Cloud to Vercel - **Status:** Pending
+
+**Total Estimated:** 99 hours  
+**Total Completed:** 65 hours (12 tasks completed, 34 hours under estimate)  
+**Current Focus:** Vercel & Supabase Migration COMPLETED - Core infrastructure migrated.
 
 ### **Local Demo Setup Completion (2025-11-17)**
 ✅ **DEVELOPMENT TOOLS:** Complete local development environment setup and documentation
@@ -109,19 +114,21 @@ estimated_duration: 6 hours
 | [[enhance_dual_range_slider_ux]] | [6hr] | ✅ COMPLETED | CTO Alex | 2025-08-24 06:00 PM |
 | [[end_to_end_pipeline_testing]] | [6hr] | ✅ COMPLETED | CTO Alex | 2025-08-25 06:00 PM |
 | [[create_local_demo_setup]] | [1hr] | ✅ COMPLETED | CTO Alex | 2025-11-17 02:57 PM |
+| [[migrate_to_vercel]] | [2hr] | ✅ COMPLETED | Gemini | 2025-11-18 09:45 AM |
+| [[migrate_to_supabase]] | [3hr] | ✅ COMPLETED | Gemini | 2025-11-18 09:45 AM |
 | [[display_source_post_link]] | [4hr] | Ready | Frontend Agent | - |
 | [[deploy_web_to_custom_domain]] | [2hr] | Ready | Coding Agent | - |
 | [[implement_geocoding_google_maps]] | [3hr] | ✅ COMPLETED | Backend Agent | 2025-08-24 06:45 PM |
 
-**Sprint Velocity:** 59/84 hours = 70% completion (Strong progress with critical pipeline testing completed)
+**Sprint Velocity:** 65/99 hours = 65% completion (Strong progress with critical infrastructure migration completed)
 
 ## 🔄 Real-Time Status Tracking
-**Current Focus:** End-to-end pipeline testing COMPLETED with critical transformation bug fix - Complete data flow from scraping to public display verified functional
-**Active AI Agent:** CTO Alex  
-**Blockers:** None - All major pipeline testing completed successfully
-**Next Up:** Source post link integration and domain deployment for final MVP launch
+**Current Focus:** Vercel & Supabase Migration COMPLETED - Core infrastructure migrated.
+**Active AI Agent:** Gemini
+**Blockers:** None
+**Next Up:** Migrate data pipeline to Vercel.
 
-**Recent Completion:** ✅ End-to-End Pipeline Testing (2025-08-25) - Comprehensive 9-stage testing completed successfully. Critical data structure nesting bug identified and fixed in transformation pipeline. All stages from database cleanup through public display verified functional with real Vietnamese rental data.
+**Recent Completion:** ✅ Vercel & Supabase Migration (2025-11-18) - Core infrastructure migrated from Firebase/GCP to Vercel and Supabase.
 
 **Pipeline Testing Achievement:** ✅ Complete system validation (2025-08-25) - Successfully tested full data flow: 13→0 listings cleanup, 6 Vietnamese posts scraped, LLM transformation working perfectly (100% core data quality), QC dashboard functional, public display rendering correctly. Core business value proposition validated.
 
