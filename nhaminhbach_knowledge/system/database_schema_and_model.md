@@ -30,4 +30,4 @@
 - `value_integer` (INTEGER)
 - `value_boolean` (BOOLEAN)
 
-**Key Principle:** All interactions with these tables from the backend (Python Cloud Functions) MUST use **SQLAlchemy Core** and be wrapped in **database transactions** to ensure data integrity.
+**Key Principle:** All interactions with these tables from the backend (Python Vercel Serverless Functions) MUST use the **`supabase-py`** client and be wrapped in appropriate error handling to ensure data integrity.

@@ -1,6 +1,8 @@
 # Data Pipeline Architecture
 #system
 
+**NOTE: The data pipeline described in this document is currently on hold. The project has been migrated to Vercel and Supabase, and this pipeline will be redesigned to work with the new architecture.**
+
 ## Overview
 The data pipeline transforms raw Vietnamese rental property posts into clean, structured data ready for public consumption. This end-to-end flow is the core of our competitive advantage.
 
@@ -37,22 +39,22 @@ The data pipeline transforms raw Vietnamese rental property posts into clean, st
 
 ### Data Flow
 ```
-Raw Scraping → Cloud Function Ingestion → PostgreSQL (raw)
+Raw Scraping → Vercel Serverless Function Ingestion → Supabase (raw)
      ↓
-LLM Transformation → Pydantic Validation → PostgreSQL (pending_review)
+(On Hold) LLM Transformation → Pydantic Validation → Supabase (pending_review)
      ↓
-Human QC Review → Approval/Edit/Reject → PostgreSQL (available/rejected)
+(On Hold) Human QC Review → Approval/Edit/Reject → Supabase (available/rejected)
      ↓
 Public API → React Frontend → User Search & Discovery
 ```
 
 ### Infrastructure Components
-- **Database:** PostgreSQL on Google Cloud SQL
-- **Processing:** Google Cloud Functions (Python 3.13+)
+- **Database:** Supabase (PostgreSQL)
+- **Processing:** Vercel Serverless Functions (Python 3.11+)
 - **LLM Service:** Google Vertex AI with Gemini 2.5 Flash Lite model
-- **Frontend:** React/Vite hosted on Firebase Hosting
-- **Security:** Google Secret Manager for all credentials
-- **Monitoring:** Cloud Functions logging and error tracking
+- **Frontend:** React/Vite hosted on Vercel
+- **Security:** Vercel Environment Variables
+- **Monitoring:** Vercel Logging
 
 ## Quality Assurance
 

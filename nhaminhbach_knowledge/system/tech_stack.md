@@ -7,12 +7,12 @@
   - **Framework:** React (using Vite) with TypeScript.
   - **Styling:** Tailwind CSS. Prioritize utility-first classes.
   - **State Management:** For simple cases, use React's built-in hooks (`useState`, `useContext`). For complex global state, use Zustand.
-  - **Deployment:** Firebase Hosting.
+  - **Deployment:** Vercel.
 
 - **Backend:**
-  - **Platform:** Cloud Functions for Firebase.
-  - **Language:** Python 3.13+.
-  - **Architecture:** Serverless, stateless functions. Each function is a single, focused microservice.
+  - **Platform:** Vercel Serverless Functions.
+  - **Language:** Python 3.11+.
+  - **Architecture:** Serverless, stateless functions. Each function is a single, focused microservice in the `packages/api` directory.
 
 - **LLM & AI Processing:**
   ### AI & Machine Learning Stack
@@ -22,18 +22,16 @@
 - **Authentication:** Service Account via Google Secret Manager
   - **Structured Output:** Instructor library for LLM-to-Pydantic model validation
   - **Data Contracts:** Pydantic v2 models mirroring database schema
-  - **Transformation Pipeline:** Cloud Functions with event-driven processing
-  - **Secret Management:** Google Secret Manager for API keys and credentials
+  - **Transformation Pipeline:** (On Hold - To be redesigned for Vercel)
+  - **Secret Management:** Vercel Environment Variables (for Supabase keys) and Google Secret Manager (for GCP services).
 
 - **Database:**
-  - **Provider:** Google Cloud SQL for **PostgreSQL**.
-  - **ORM/Connector:** Use **SQLAlchemy Core** for all database interactions. This is non-negotiable.
+  - **Provider:** Supabase (PostgreSQL).
+  - **Connector:** Use `supabase-py` for all database interactions.
   - **Schema:** The database schema is pre-defined and must be respected. The core tables are `listings`, `attributes`, and `listing_attributes`.
-  - **Data Flow:** Raw scraped data → LLM transformation → Structured data → Database storage
 
 - **Infrastructure:**
-  - **Primary Cloud:** Google Cloud Platform (GCP).
-  - **Secret Management:** Google Secret Manager (mandatory for all secrets, API keys, credentials).
-  - **Environment Variables:** Only for non-secret configuration (project IDs, regions, etc.).
-  - **CI/CD:** Manual deployment via Firebase CLI and gcloud CLI.
-  - **Monitoring:** Google Cloud Functions logging and monitoring.
+  - **Primary Platform:** Vercel.
+  - **Secret Management:** Vercel Environment Variables.
+  - **CI/CD:** Vercel's automatic deployments from Git.
+  - **Monitoring:** Vercel's built-in logging and monitoring.
