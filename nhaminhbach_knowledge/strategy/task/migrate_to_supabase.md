@@ -13,11 +13,11 @@ owner: Minh
 Following the migration to Vercel and FastAPI, the next step in our infrastructure pivot is to replace Google Cloud SQL with Supabase. This will simplify our database management, provide a better developer experience, and align with our new Vercel-based stack.
 
 ## 2. Scope of Work
-- [ ] **Database Provisioning:** Create a new Supabase project.
-- [ ] **Schema Migration:** Export the current PostgreSQL schema from Cloud SQL and import it into Supabase.
+- [x] **Database Provisioning:** Create a new Supabase project.
+- [x] **Schema Migration:** Export the current PostgreSQL schema from Cloud SQL and import it into Supabase.
 - [ ] **Data Migration:** Migrate existing data (listings, attributes, etc.) to Supabase.
-- [ ] **Backend Configuration:** Update the FastAPI backend to connect to the Supabase PostgreSQL instance.
-- [ ] **Environment Variables:** Update Vercel environment variables with Supabase credentials.
+- [x] **Backend Configuration:** Update the FastAPI backend to connect to the Supabase PostgreSQL instance.
+- [x] **Environment Variables:** Update Vercel environment variables with Supabase credentials.
 - [ ] **Verification:** Test all API endpoints to ensure data integrity and connectivity.
 
 ## 3. Technical Details
