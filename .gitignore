@@ -94,3 +94,4 @@ venv.bak/
 
 # Node modules (in case you add Node.js components)
 node_modules/
+.vercel

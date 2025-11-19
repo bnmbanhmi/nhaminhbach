@@ -1,6 +1,6 @@
 # Core function framework
-functions-framework>=3.0.0
-firebase-functions
+# functions-framework>=3.0.0  <-- Removed for Vercel migration
+# firebase-functions          <-- Removed for Vercel migration
 
 # Database and Google Cloud
 google-cloud-secret-manager
@@ -14,8 +14,9 @@ pydantic>=2.0.0
 instructor>=1.0.0
 google-cloud-aiplatform>=1.60.0
 
-# Web framework (Flask - consistent with existing architecture)
-Flask>=3.0.0
+# Web framework
+fastapi>=0.100.0
+uvicorn>=0.20.0
 
 # HTTP client for transformation triggers
 requests>=2.28.0
