@@ -4,7 +4,8 @@
 
 # Database and Google Cloud
 google-cloud-secret-manager
-cloud-sql-python-connector[pg8000]
+# cloud-sql-python-connector[pg8000]  <-- Removed for Supabase
+psycopg2-binary>=2.9.0
 SQLAlchemy>=2.0.0
 
 # Data validation

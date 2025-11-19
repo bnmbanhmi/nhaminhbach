@@ -16,7 +16,7 @@ from datetime import datetime
 from decimal import Decimal
 import sqlalchemy
 from sqlalchemy import text
-from google.cloud.sql.connector import Connector, IPTypes
+# from google.cloud.sql.connector import Connector, IPTypes  <-- Removed for Supabase
 from utils import get_secret, geocode_address
 import logging
 
@@ -54,29 +54,37 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
     if db_engine is not None:
         return db_engine
 
-    # Environment variables
+    # 1. Check for Supabase/Standard PostgreSQL Connection String (Preferred)
+    DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
+    
+    if DATABASE_URL:
+        # Handle "postgres://" vs "postgresql://" for SQLAlchemy
+        if DATABASE_URL.startswith("postgres://"):
+            DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+            
+        # Use standard SQLAlchemy engine creation
+        # pool_pre_ping=True helps with connection drops in serverless environments
+        db_engine = sqlalchemy.create_engine(DATABASE_URL, pool_pre_ping=True)
+        logger.info("Database engine initialized using DATABASE_URL (Supabase).")
+        return db_engine
+
+    # 2. Fallback to Google Cloud SQL (Legacy) - Only if DATABASE_URL is missing
+    logger.warning("DATABASE_URL not found. Falling back to Google Cloud SQL Connector.")
+    
+    try:
+        from google.cloud.sql.connector import Connector, IPTypes
+    except ImportError:
+        raise RuntimeError("DATABASE_URL not set and google-cloud-sql-connector not installed.")
+
     INSTANCE_CONNECTION_NAME = os.environ.get("INSTANCE_CONNECTION_NAME", "omega-sorter-467514-q6:asia-southeast1:nhaminhbach-db-prod")
     DB_USER = os.environ.get("DB_USER", "postgres")
     DB_NAME = os.environ.get("DB_NAME", "postgres")
-    IS_EMULATOR = os.environ.get("FUNCTIONS_EMULATOR") == "true"
     
-    # Get database password from Secret Manager
-    GCP_PROJECT = os.environ.get("GCP_PROJECT")
-    if not GCP_PROJECT:
-        # Set the project ID for Cloud Functions environment
-        os.environ["GCP_PROJECT"] = "omega-sorter-467514-q6"
-        GCP_PROJECT = "omega-sorter-467514-q6"
-    
-    # Try to get password from env var first (Vercel way), then Secret Manager
+    # Get database password
+    GCP_PROJECT = os.environ.get("GCP_PROJECT") or "omega-sorter-467514-q6"
     DB_PASS = os.environ.get("DB_PASS")
     if not DB_PASS:
-        try:
-            DB_PASS = get_secret(GCP_PROJECT, "db-password")
-        except Exception as e:
-            logger.error(f"Failed to get secret: {e}")
-            # Fallback or re-raise depending on strictness. 
-            # For now, we assume if env var is missing, we MUST get it from Secret Manager or fail.
-            raise
+        DB_PASS = get_secret(GCP_PROJECT, "db-password")
 
     def getconn() -> Any:
         conn = Connector().connect(
@@ -87,7 +95,7 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
         return conn
 
     db_engine = sqlalchemy.create_engine("postgresql+pg8000://", creator=getconn)
-    logger.info("Database engine initialized.")
+    logger.info("Database engine initialized (Cloud SQL).")
     return db_engine
 
 # =================================================================================
