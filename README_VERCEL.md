@@ -5,7 +5,7 @@ This project has been migrated to use Vercel for both Frontend and Backend (Serv
 ## 1. Project Structure
 
 - **Frontend**: `packages/web` (Vite + React)
-- **Backend**: `packages/functions/api/index.py` (FastAPI)
+- **Backend**: `api/index.py` (FastAPI entry point, imports from `packages/functions`)
 - **Configuration**: `vercel.json` (Root)
 
 ## 2. Deployment Instructions
