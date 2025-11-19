@@ -46,8 +46,12 @@ estimated_duration: 6 hours
 ### **Ready Tasks - Part 4: Development Tools** (Ordered by Priority)
 10. [[create_local_demo_setup]] - [2hr] - Create comprehensive local setup guide and configure demo environment - **Status:** ✅ COMPLETED (2025-11-17, 1hr)
 
-**Total Estimated:** 86 hours  
-**Total Completed:** 60 hours (10 tasks completed, 26 hours under estimate)  
+### **Ready Tasks - Part 5: Strategic Pivot (Vercel Migration)**
+11. [[migrate_to_vercel_fastapi]] - [4hr] - Migrate backend to FastAPI and deploy full stack to Vercel - **Status:** ✅ COMPLETED (2025-11-19, 2hr)
+12. [[migrate_to_supabase]] - [TBD] - Migrate database to Supabase and re-initialize - **Status:** 📅 PLANNED
+
+**Total Estimated:** 90 hours  
+**Total Completed:** 62 hours (11 tasks completed)  
 **Current Focus:** End-to-end pipeline testing COMPLETED - Critical transformation bug fixed, all stages verified functional
 
 ### **Local Demo Setup Completion (2025-11-17)**

@@ -7,12 +7,13 @@
   - **Framework:** React (using Vite) with TypeScript.
   - **Styling:** Tailwind CSS. Prioritize utility-first classes.
   - **State Management:** For simple cases, use React's built-in hooks (`useState`, `useContext`). For complex global state, use Zustand.
-  - **Deployment:** Firebase Hosting.
+  - **Deployment:** Vercel.
 
 - **Backend:**
-  - **Platform:** Cloud Functions for Firebase.
+  - **Platform:** Vercel Serverless Functions.
+  - **Framework:** FastAPI.
   - **Language:** Python 3.13+.
-  - **Architecture:** Serverless, stateless functions. Each function is a single, focused microservice.
+  - **Architecture:** Serverless, stateless functions.
 
 - **LLM & AI Processing:**
   ### AI & Machine Learning Stack
