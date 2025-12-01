@@ -10,5 +10,4 @@ __pycache__
 .git
 .gitignore
 .vscode
-packages/web
 packages/scraper

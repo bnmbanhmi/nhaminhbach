@@ -62,6 +62,14 @@ def get_db_engine() -> sqlalchemy.engine.Engine:
         if DATABASE_URL.startswith("postgres://"):
             DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
             
+        # Log masked URL for debugging
+        try:
+            from sqlalchemy.engine.url import make_url
+            u = make_url(DATABASE_URL)
+            logger.info(f"Connecting to DB: Host={u.host}, Port={u.port}, User={u.username}, DB={u.database}")
+        except Exception as e:
+            logger.error(f"Failed to parse DATABASE_URL for logging: {e}")
+
         # Use standard SQLAlchemy engine creation
         # pool_pre_ping=True helps with connection drops in serverless environments
         db_engine = sqlalchemy.create_engine(DATABASE_URL, pool_pre_ping=True)
@@ -152,7 +160,9 @@ def get_listings():
 
     except Exception as e:
         logger.error(f"Error in get_listings: {e}")
-        raise HTTPException(status_code=500, detail="An internal server error occurred.")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"An internal server error occurred: {str(e)}")
 
 @app.get("/api/get_admin_listings")
 def get_admin_listings(
@@ -228,7 +238,9 @@ def get_admin_listings(
 
     except Exception as e:
         logger.error(f"Error in get_admin_listings: {e}")
-        raise HTTPException(status_code=500, detail="An internal server error occurred.")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"An internal server error occurred: {str(e)}")
 
 @app.get("/api/get_listing_by_id")
 def get_listing_by_id(id: str):
@@ -266,7 +278,9 @@ def get_listing_by_id(id: str):
         raise
     except Exception as e:
         logger.error(f"Error fetching listing ID {listing_id}: {e}")
-        raise HTTPException(status_code=500, detail="An internal server error occurred.")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"An internal server error occurred: {str(e)}")
 
 @app.get("/api/get_all_attributes")
 def get_all_attributes():
@@ -283,7 +297,9 @@ def get_all_attributes():
 
     except Exception as e:
         logger.error(f"Error in get_all_attributes: {e}")
-        raise HTTPException(status_code=500, detail="An internal server error occurred.")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"An internal server error occurred: {str(e)}")
 
 @app.post("/api/create_listing")
 def create_listing(payload: ListingCreate):

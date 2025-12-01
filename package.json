@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "build": "cd packages/web && npm install && npm run build && rm -rf ../../public && mkdir -p ../../public && cp -r dist/* ../../public"
+  },
   "dependencies": {
     "react-router-dom": "^7.7.1"
   },
