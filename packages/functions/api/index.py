@@ -134,28 +134,49 @@ class ListingDataUpdate(BaseModel):
 @app.get("/api/get_listings")
 def get_listings():
     """API Endpoint to get all 'available' listings."""
+    # Query the v2 GeoID schema: use room_history (current versions) joined to rooms and houses
     sql_query = sqlalchemy.text("""
-        SELECT l.*, (
-            SELECT json_agg(json_build_object(
-                'name', a.name,
-                'slug', a.slug,
-                'value', COALESCE(la.value_boolean::text, la.value_integer::text, la.value_string)
-            ))
-            FROM listing_attributes la JOIN attributes a ON la.attribute_id = a.id
-            WHERE la.listing_id = l.id
-        ) as attributes
-        FROM listings l WHERE l.status = 'available'
+        SELECT
+            rh.id::text AS id,
+            rh.status,
+            rh.source_url,
+            rh.title,
+            rh.description,
+            rh.price_monthly_vnd,
+            rh.area_m2,
+            h.address_street,
+            h.address_ward,
+            h.address_district,
+            h.latitude,
+            h.longitude,
+            rh.contact_phone,
+            rh.image_urls,
+            rh.created_at,
+            (
+                SELECT json_agg(json_build_object(
+                    'name', a.name,
+                    'slug', a.slug,
+                    'value', COALESCE(
+                        NULLIF((rh.attributes ->> a.slug), '')::boolean::text,
+                        NULLIF((rh.attributes ->> a.slug), '')::integer::text,
+                        rh.attributes ->> a.slug
+                    )
+                ))
+                FROM jsonb_each_text(rh.attributes) kv(key, value)
+                JOIN attributes a ON a.slug = kv.key
+            ) as attributes
+        FROM room_history rh
+        JOIN rooms r ON rh.room_id = r.id
+        JOIN houses h ON r.house_id = h.id
+        WHERE rh.is_current = TRUE AND rh.status = 'available'
     """)
 
     try:
         engine = get_db_engine()
         with engine.connect() as conn:
             result = conn.execute(sql_query).fetchall()
-        
+
         listings_data = [dict(row._mapping) for row in result]
-        # Use JSONResponse with custom encoder handling if needed, but FastAPI handles basic types.
-        # For Decimal/UUID/Datetime, we might need to convert them first or use a custom encoder.
-        # Let's convert them manually to be safe as per original code.
         return json.loads(json.dumps(listings_data, default=default_json_serializer))
 
     except Exception as e:
@@ -173,33 +194,55 @@ def get_admin_listings(
 ):
     """API Endpoint for admin dashboard to get listings with filtering by status."""
     
-    # Build dynamic WHERE conditions
+    # Build dynamic WHERE conditions against room_history/houses
     where_conditions = []
     params = {}
 
     if status:
-        where_conditions.append("l.status = :status")
+        where_conditions.append("rh.status = :status")
         params["status"] = status
-    
+
     if district:
-        where_conditions.append("l.address_district ILIKE :district")
+        where_conditions.append("h.address_district ILIKE :district")
         params["district"] = f"%{district}%"
 
     where_clause = " AND ".join(where_conditions) if where_conditions else "1=1"
 
     sql_query = sqlalchemy.text(f"""
-        SELECT l.*, (
-            SELECT json_agg(json_build_object(
-                'name', a.name,
-                'slug', a.slug,
-                'value', COALESCE(la.value_boolean::text, la.value_integer::text, la.value_string)
-            ))
-            FROM listing_attributes la JOIN attributes a ON la.attribute_id = a.id
-            WHERE la.listing_id = l.id
-        ) as attributes
-        FROM listings l 
-        WHERE {where_clause}
-        ORDER BY l.created_at DESC
+        SELECT
+            rh.id::text AS id,
+            rh.status,
+            rh.source_url,
+            rh.title,
+            rh.description,
+            rh.price_monthly_vnd,
+            rh.area_m2,
+            h.address_street,
+            h.address_ward,
+            h.address_district,
+            h.latitude,
+            h.longitude,
+            rh.contact_phone,
+            rh.image_urls,
+            rh.created_at,
+            (
+                SELECT json_agg(json_build_object(
+                    'name', a.name,
+                    'slug', a.slug,
+                    'value', COALESCE(
+                        NULLIF((rh.attributes ->> a.slug), '')::boolean::text,
+                        NULLIF((rh.attributes ->> a.slug), '')::integer::text,
+                        rh.attributes ->> a.slug
+                    )
+                ))
+                FROM jsonb_each_text(rh.attributes) kv(key, value)
+                JOIN attributes a ON a.slug = kv.key
+            ) as attributes
+        FROM room_history rh
+        JOIN rooms r ON rh.room_id = r.id
+        JOIN houses h ON r.house_id = h.id
+        WHERE rh.is_current = TRUE AND {where_clause}
+        ORDER BY rh.created_at DESC
         LIMIT :limit OFFSET :offset
     """)
 
@@ -210,19 +253,21 @@ def get_admin_listings(
         engine = get_db_engine()
         with engine.connect() as conn:
             result = conn.execute(sql_query, params).fetchall()
-        
+
         listings_data = [dict(row._mapping) for row in result]
-        
+
         # Also get total count for pagination
         count_query = sqlalchemy.text(f"""
             SELECT COUNT(*) as total
-            FROM listings l 
-            WHERE {where_clause}
+            FROM room_history rh
+            JOIN rooms r ON rh.room_id = r.id
+            JOIN houses h ON r.house_id = h.id
+            WHERE rh.is_current = TRUE AND {where_clause}
         """)
-        
+
         with engine.connect() as conn:
             count_result = conn.execute(count_query, {k: v for k, v in params.items() if k not in ['limit', 'offset']}).fetchone()
-            total_count = count_result.total
+            total_count = int(count_result.total)
 
         response_data = {
             "listings": listings_data,
@@ -245,39 +290,82 @@ def get_admin_listings(
 @app.get("/api/get_listing_by_id")
 def get_listing_by_id(id: str):
     """Get a specific listing by ID (UUID)."""
+    # Accept either numeric room_history.id or legacy UUID mapped in uuid_to_geoid_mapping
+    engine = get_db_engine()
     try:
-        listing_id = uuid.UUID(id)
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid 'id' format. Must be a valid UUID.")
-
-    sql_query = sqlalchemy.text("""
-        SELECT l.*, (
-            SELECT json_agg(json_build_object(
-                'name', a.name,
-                'slug', a.slug,
-                'value', COALESCE(la.value_boolean::text, la.value_integer::text, la.value_string)
-            ))
-            FROM listing_attributes la JOIN attributes a ON la.attribute_id = a.id
-            WHERE la.listing_id = l.id
-        ) as attributes
-        FROM listings l WHERE l.id = :listing_id
-    """)
-
-    try:
-        engine = get_db_engine()
         with engine.connect() as conn:
-            result = conn.execute(sql_query, {"listing_id": listing_id}).fetchone()
+            rh_id = None
 
-        if not result:
-            raise HTTPException(status_code=404, detail=f"Listing with ID {listing_id} not found.")
+            # First, is it an integer id (room_history.id)
+            if id.isdigit():
+                rh_id = int(id)
+            else:
+                # Try to parse as UUID and lookup mapping
+                try:
+                    old_uuid = uuid.UUID(id)
+                    mapping_q = text("SELECT new_room_id FROM uuid_to_geoid_mapping WHERE old_uuid = :old_uuid LIMIT 1")
+                    mapping = conn.execute(mapping_q, {"old_uuid": str(old_uuid)}).fetchone()
+                    if mapping and mapping.new_room_id:
+                        # Find current room_history for that room
+                        rh_q = text("SELECT id FROM room_history WHERE room_id = :room_id AND is_current = TRUE LIMIT 1")
+                        rh_row = conn.execute(rh_q, {"room_id": mapping.new_room_id}).fetchone()
+                        if rh_row:
+                            rh_id = int(rh_row.id)
+                except ValueError:
+                    pass
 
-        listing_data = dict(result._mapping)
-        return json.loads(json.dumps(listing_data, default=default_json_serializer))
+            if rh_id is None:
+                raise HTTPException(status_code=400, detail="Invalid 'id' format or mapping not found.")
+
+            sql_query = text("""
+                SELECT
+                    rh.id::text AS id,
+                    rh.status,
+                    rh.source_url,
+                    rh.title,
+                    rh.description,
+                    rh.price_monthly_vnd,
+                    rh.area_m2,
+                    h.address_street,
+                    h.address_ward,
+                    h.address_district,
+                    h.latitude,
+                    h.longitude,
+                    rh.contact_phone,
+                    rh.image_urls,
+                    rh.created_at,
+                    rh.attributes,
+                    (
+                        SELECT json_agg(json_build_object(
+                            'name', a.name,
+                            'slug', a.slug,
+                            'value', COALESCE(
+                                NULLIF((rh.attributes ->> a.slug), '')::boolean::text,
+                                NULLIF((rh.attributes ->> a.slug), '')::integer::text,
+                                rh.attributes ->> a.slug
+                            )
+                        ))
+                        FROM jsonb_each_text(rh.attributes) kv(key, value)
+                        JOIN attributes a ON a.slug = kv.key
+                    ) as attributes_list
+                FROM room_history rh
+                JOIN rooms r ON rh.room_id = r.id
+                JOIN houses h ON r.house_id = h.id
+                WHERE rh.id = :rh_id AND rh.is_current = TRUE
+            """)
+
+            result = conn.execute(sql_query, {"rh_id": rh_id}).fetchone()
+
+            if not result:
+                raise HTTPException(status_code=404, detail=f"Listing with ID {id} not found.")
+
+            listing_data = dict(result._mapping)
+            return json.loads(json.dumps(listing_data, default=default_json_serializer))
 
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error fetching listing ID {listing_id}: {e}")
+        logger.error(f"Error fetching listing ID {id}: {e}")
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An internal server error occurred: {str(e)}")
@@ -285,13 +373,13 @@ def get_listing_by_id(id: str):
 @app.get("/api/get_all_attributes")
 def get_all_attributes():
     """API Endpoint to get all possible attributes for a listing."""
-    sql_query = sqlalchemy.text("SELECT * FROM attributes ORDER BY type, id;")
+    sql_query = sqlalchemy.text("SELECT id, type, name, slug, possible_values FROM attributes ORDER BY type, id;")
 
     try:
         engine = get_db_engine()
         with engine.connect() as conn:
             result = conn.execute(sql_query).fetchall()
-        
+
         attributes_data = [dict(row._mapping) for row in result]
         return json.loads(json.dumps(attributes_data, default=default_json_serializer))
 
@@ -309,69 +397,81 @@ def create_listing(payload: ListingCreate):
 
     try:
         engine = get_db_engine()
-        new_listing_id = None
+        new_rh_id = None
+
+        # Build attributes JSONB from provided attributes list (mapping attribute_id -> slug)
+        with engine.connect() as conn:
+            # Fetch attribute id -> slug map
+            attr_map = {row.id: row.slug for row in conn.execute(text("SELECT id, slug FROM attributes")).fetchall()}
+
+        attributes_json = {}
+        if attributes_data:
+            for attr in attributes_data:
+                slug = attr_map.get(attr.attribute_id)
+                if slug:
+                    attributes_json[slug] = attr.value
 
         with engine.connect() as conn:
             with conn.begin() as tx:
                 try:
-                    # 1. Insert into 'listings'
-                    insert_listing_stmt = sqlalchemy.text("""
-                        INSERT INTO listings (title, description, price_monthly_vnd, area_m2, address_ward, address_district, source_url)
-                        VALUES (:title, :description, :price, :area, :ward, :district, :source)
+                    # 1. Create a house (minimal required fields). Generate geo_id using md5(random()) to avoid collisions.
+                    create_house = text("""
+                        INSERT INTO houses (city_code, ward_code, geo_id, address_street, address_ward, address_district, latitude, longitude, created_at, updated_at)
+                        VALUES (:city_code, :ward_code, :geo_id, :street, :ward, :district, :latitude, :longitude, NOW(), NOW())
                         RETURNING id
                     """)
-                    result = conn.execute(
-                        insert_listing_stmt,
-                        {
-                            "title": listing_data.get("title"),
-                            "description": listing_data.get("description"),
-                            "price": int(listing_data.get("price_monthly_vnd", 0)),
-                            "area": float(listing_data.get("area_m2", 0)),
-                            "ward": listing_data.get("address_ward"),
-                            "district": listing_data.get("address_district"),
-                            "source": f"qc-form-{uuid.uuid4()}"
-                        }
-                    )
-                    new_listing_id = result.scalar_one()
 
-                    # 2. Insert into 'listing_attributes'
-                    if attributes_data:
-                        attrs_to_insert = []
-                        for attr in attributes_data:
-                            row = {
-                                "listing_id": new_listing_id,
-                                "attribute_id": attr.attribute_id,
-                                "value_boolean": None,
-                                "value_integer": None,
-                                "value_string": None,
-                            }
-                            
-                            value = attr.value
-                            
-                            if isinstance(value, bool):
-                                row["value_boolean"] = value
-                            elif isinstance(value, int):
-                                row["value_integer"] = value
-                            else:
-                                row["value_string"] = str(value)
-                            
-                            attrs_to_insert.append(row)
-                        
-                        if attrs_to_insert:
-                            insert_attrs_stmt = sqlalchemy.text("""
-                                INSERT INTO listing_attributes (listing_id, attribute_id, value_boolean, value_integer, value_string)
-                                VALUES (:listing_id, :attribute_id, :value_boolean, :value_integer, :value_string)
-                            """)
-                            conn.execute(insert_attrs_stmt, attrs_to_insert)
-                    
+                    gen_geo = str(uuid.uuid4()).replace('-', '')[:5]
+                    house_res = conn.execute(create_house, {
+                        "city_code": "29",
+                        "ward_code": listing_data.get("address_ward") or "00",
+                        "geo_id": gen_geo,
+                        "street": listing_data.get("address_street"),
+                        "ward": listing_data.get("address_ward"),
+                        "district": listing_data.get("address_district"),
+                        "latitude": listing_data.get("latitude"),
+                        "longitude": listing_data.get("longitude")
+                    })
+                    house_id = house_res.scalar_one()
+
+                    # 2. Create a room (room_id '00' by default)
+                    create_room = text("""
+                        INSERT INTO rooms (house_id, room_id, created_at, updated_at)
+                        VALUES (:house_id, :room_id, NOW(), NOW())
+                        RETURNING id
+                    """)
+                    room_res = conn.execute(create_room, {"house_id": house_id, "room_id": "00"})
+                    room_id = room_res.scalar_one()
+
+                    # 3. Insert into room_history as the current version
+                    insert_rh = text("""
+                        INSERT INTO room_history (room_id, title, description, price_monthly_vnd, area_m2, contact_phone, image_urls, source_url, attributes, status, valid_from, is_current, created_at)
+                        VALUES (:room_id, :title, :description, :price, :area, :contact_phone, :image_urls, :source_url, :attributes::jsonb, :status, NOW(), TRUE, NOW())
+                        RETURNING id
+                    """)
+
+                    rh_res = conn.execute(insert_rh, {
+                        "room_id": room_id,
+                        "title": listing_data.get("title"),
+                        "description": listing_data.get("description"),
+                        "price": int(listing_data.get("price_monthly_vnd", 0)),
+                        "area": float(listing_data.get("area_m2", 0)),
+                        "contact_phone": listing_data.get("contact_phone"),
+                        "image_urls": listing_data.get("image_urls"),
+                        "source_url": f"qc-form-{uuid.uuid4()}",
+                        "attributes": json.dumps(attributes_json),
+                        "status": "pending_review"
+                    })
+
+                    new_rh_id = rh_res.scalar_one()
                     tx.commit()
                 except Exception as e:
-                    logger.error(f"Transaction failed, rolling back. Error: {e}")
+                    logger.error(f"Transaction failed creating v2 listing: {e}")
                     tx.rollback()
                     raise
 
         return JSONResponse(
-            content=json.loads(json.dumps({"message": "Listing created successfully", "id": new_listing_id}, default=default_json_serializer)),
+            content=json.loads(json.dumps({"message": "Listing created successfully", "id": str(new_rh_id)}, default=default_json_serializer)),
             status_code=201
         )
 
@@ -391,18 +491,51 @@ def update_listing_status(payload: ListingStatusUpdate):
     try:
         engine = get_db_engine()
         with engine.connect() as conn:
-            check_query = text("SELECT status FROM listings WHERE id = :listing_id")
-            result = conn.execute(check_query, {"listing_id": listing_id}).fetchone()
-            
-            if not result:
-                raise HTTPException(status_code=404, detail="Listing not found.")
-            
-            if result[0] != "pending_review":
-                raise HTTPException(status_code=400, detail=f"Listing is not in pending_review status (current: {result[0]}).")
+            # Determine room_history id from provided listing_id (accept numeric rh.id or legacy UUID mapping)
+            rh_id = None
+            if listing_id.isdigit():
+                rh_id = int(listing_id)
+            else:
+                try:
+                    old_uuid = uuid.UUID(listing_id)
+                    mapping = conn.execute(text("SELECT new_room_id FROM uuid_to_geoid_mapping WHERE old_uuid = :old_uuid LIMIT 1"), {"old_uuid": str(old_uuid)}).fetchone()
+                    if mapping and mapping.new_room_id:
+                        rh_row = conn.execute(text("SELECT id FROM room_history WHERE room_id = :room_id AND is_current = TRUE LIMIT 1"), {"room_id": mapping.new_room_id}).fetchone()
+                        if rh_row:
+                            rh_id = int(rh_row.id)
+                except ValueError:
+                    pass
 
-            update_query = text("UPDATE listings SET status = :status WHERE id = :listing_id")
-            conn.execute(update_query, {"status": new_status, "listing_id": listing_id})
-            conn.commit()
+            if rh_id is None:
+                raise HTTPException(status_code=404, detail="Listing not found or invalid id.")
+
+            # Fetch current room_history row
+            current = conn.execute(text("SELECT * FROM room_history WHERE id = :rh_id AND is_current = TRUE"), {"rh_id": rh_id}).fetchone()
+            if not current:
+                raise HTTPException(status_code=404, detail="Listing not found or not current.")
+
+            if current.status != 'pending_review':
+                raise HTTPException(status_code=400, detail=f"Listing is not in pending_review status (current: {current.status}).")
+
+            # Insert a new room_history row copying existing fields but with updated status (triggers will close previous)
+            insert_q = text("""
+                INSERT INTO room_history (room_id, title, description, price_monthly_vnd, area_m2, contact_phone, image_urls, source_url, attributes, status, valid_from, is_current, created_at)
+                VALUES (:room_id, :title, :description, :price, :area, :contact_phone, :image_urls, :source_url, :attributes, :status, NOW(), TRUE, NOW())
+                RETURNING id
+            """)
+
+            new_rh = conn.execute(insert_q, {
+                "room_id": current.room_id,
+                "title": current.title,
+                "description": current.description,
+                "price": current.price_monthly_vnd,
+                "area": current.area_m2,
+                "contact_phone": current.contact_phone,
+                "image_urls": current.image_urls,
+                "source_url": current.source_url,
+                "attributes": json.dumps(current.attributes) if current.attributes is not None else '{}',
+                "status": new_status
+            }).scalar_one()
 
         return {"message": f"Listing status updated to {new_status}", "listing_id": listing_id}
 
@@ -421,63 +554,82 @@ def update_listing_data(payload: ListingDataUpdate):
     try:
         engine = get_db_engine()
         with engine.connect() as conn:
-            check_query = text("SELECT status FROM listings WHERE id = :listing_id")
-            result = conn.execute(check_query, {"listing_id": listing_id}).fetchone()
-            
-            if not result:
-                raise HTTPException(status_code=404, detail="Listing not found.")
-            
-            if result[0] != "pending_review":
-                raise HTTPException(status_code=400, detail=f"Listing is not in pending_review status (current: {result[0]}).")
-
-            update_fields = []
-            update_params = {"listing_id": listing_id}
-            
-            allowed_fields = ["title", "description", "price_monthly_vnd", "area_m2", 
-                            "address_street", "address_ward", "address_district", "contact_phone"]
-            
-            for field in allowed_fields:
-                if field in listing_data and listing_data[field] is not None:
-                    update_fields.append(f"{field} = :{field}")
-                    update_params[field] = listing_data[field]
-            
-            # Geocoding logic
-            address_fields = ["address_street", "address_ward", "address_district"]
-            if any(field in listing_data for field in address_fields):
-                current_query = text("SELECT address_street, address_ward, address_district FROM listings WHERE id = :listing_id")
-                current_result = conn.execute(current_query, {"listing_id": listing_id}).fetchone()
-                
-                if current_result:
-                    street = listing_data.get("address_street") or current_result[0] or ""
-                    ward = listing_data.get("address_ward") or current_result[1] or ""
-                    district = listing_data.get("address_district") or current_result[2] or ""
-                    
-                    address_parts = [part for part in [street, ward, district] if part and part.strip()]
-                    if address_parts:
-                        full_address = ", ".join(address_parts) + ", Hà Nội, Vietnam"
-                        
-                        GCP_PROJECT = os.environ.get("GCP_PROJECT", "omega-sorter-467514-q6")
-                        coords = geocode_address(GCP_PROJECT, full_address)
-                        
-                        if coords:
-                            lat, lng = coords
-                            update_fields.extend(["latitude = :latitude", "longitude = :longitude"])
-                            update_params.update({"latitude": lat, "longitude": lng})
-            
-            if update_fields:
-                update_fields.append("status = :status")
-                update_params["status"] = "available"
-                
-                update_query = text(f"""
-                    UPDATE listings SET {', '.join(update_fields)}
-                    WHERE id = :listing_id
-                """)
-                conn.execute(update_query, update_params)
-                conn.commit()
+            # Resolve rh_id similar to update_listing_status
+            rh_id = None
+            if listing_id.isdigit():
+                rh_id = int(listing_id)
             else:
-                status_query = text("UPDATE listings SET status = 'available' WHERE id = :listing_id")
-                conn.execute(status_query, {"listing_id": listing_id})
-                conn.commit()
+                try:
+                    old_uuid = uuid.UUID(listing_id)
+                    mapping = conn.execute(text("SELECT new_room_id FROM uuid_to_geoid_mapping WHERE old_uuid = :old_uuid LIMIT 1"), {"old_uuid": str(old_uuid)}).fetchone()
+                    if mapping and mapping.new_room_id:
+                        rh_row = conn.execute(text("SELECT id FROM room_history WHERE room_id = :room_id AND is_current = TRUE LIMIT 1"), {"room_id": mapping.new_room_id}).fetchone()
+                        if rh_row:
+                            rh_id = int(rh_row.id)
+                except ValueError:
+                    pass
+
+            if rh_id is None:
+                raise HTTPException(status_code=404, detail="Listing not found or invalid id.")
+
+            # Fetch current
+            current = conn.execute(text("SELECT * FROM room_history WHERE id = :rh_id AND is_current = TRUE"), {"rh_id": rh_id}).fetchone()
+            if not current:
+                raise HTTPException(status_code=404, detail="Listing not found or not current.")
+
+            # Build new values
+            new_title = listing_data.get("title", current.title)
+            new_description = listing_data.get("description", current.description)
+            new_price = int(listing_data.get("price_monthly_vnd", current.price_monthly_vnd or 0))
+            new_area = float(listing_data.get("area_m2", current.area_m2 or 0))
+            new_contact = listing_data.get("contact_phone", current.contact_phone)
+
+            # Merge attributes if provided
+            existing_attrs = current.attributes or {}
+            new_attrs = existing_attrs.copy()
+            if payload.attributes:
+                # attributes is expected to be list of AttributeValue-like dicts
+                # fetch attribute id -> slug map
+                attr_map = {row.id: row.slug for row in conn.execute(text("SELECT id, slug FROM attributes")).fetchall()}
+                for a in payload.attributes:
+                    slug = attr_map.get(a.get('attribute_id') if isinstance(a, dict) else getattr(a, 'attribute_id', None))
+                    val = a.get('value') if isinstance(a, dict) else getattr(a, 'value', None)
+                    if slug:
+                        new_attrs[slug] = val
+
+            # If address changed, update houses table
+            address_changed = any(field in listing_data for field in ["address_street", "address_ward", "address_district"])
+            if address_changed:
+                # get room -> house
+                room_row = conn.execute(text("SELECT room_id FROM room_history WHERE id = :rh_id"), {"rh_id": rh_id}).fetchone()
+                room_row_id = room_row.room_id
+                house_row = conn.execute(text("SELECT house_id FROM rooms WHERE id = :room_row_id"), {"room_row_id": room_row_id}).fetchone()
+                if house_row:
+                    update_house = text("""
+                        UPDATE houses SET address_street = COALESCE(:street, address_street), address_ward = COALESCE(:ward, address_ward), address_district = COALESCE(:district, address_district), updated_at = NOW()
+                        WHERE id = :house_id
+                    """)
+                    conn.execute(update_house, {"street": listing_data.get("address_street"), "ward": listing_data.get("address_ward"), "district": listing_data.get("address_district"), "house_id": house_row.house_id})
+
+            # Insert a new room_history record with updated values and mark available
+            insert_q = text("""
+                INSERT INTO room_history (room_id, title, description, price_monthly_vnd, area_m2, contact_phone, image_urls, source_url, attributes, status, valid_from, is_current, created_at)
+                VALUES (:room_id, :title, :description, :price, :area, :contact_phone, :image_urls, :source_url, :attributes::jsonb, :status, NOW(), TRUE, NOW())
+                RETURNING id
+            """)
+
+            new_rh = conn.execute(insert_q, {
+                "room_id": current.room_id,
+                "title": new_title,
+                "description": new_description,
+                "price": new_price,
+                "area": new_area,
+                "contact_phone": new_contact,
+                "image_urls": listing_data.get("image_urls") or current.image_urls,
+                "source_url": current.source_url,
+                "attributes": json.dumps(new_attrs),
+                "status": "available"
+            }).scalar_one()
 
         return {"message": "Listing updated and approved successfully", "listing_id": listing_id}
 
