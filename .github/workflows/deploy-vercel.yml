@@ -1,13 +1,12 @@
-name: CI/CD — Tests + Manual Deploy to Vercel
+name: CI — Run tests on PRs and pushes
 
 on:
+  pull_request:
   push:
-    branches: [ main ]
-  workflow_dispatch: {}
 
 jobs:
   test:
-    name: Run Tests
+    name: Run Backend & Frontend Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -42,70 +41,9 @@ jobs:
           cd packages/web
           npm ci
 
-      - name: Run frontend tests
+      - name: Run frontend tests (non-blocking)
         run: |
           cd packages/web
           npm test --silent || true
-
-  check:
-    name: Check for Vercel-related changes
-    runs-on: ubuntu-latest
-    outputs:
-      should_deploy: ${{ steps.determine.outputs.should_deploy }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Determine changed files
-        id: determine
-        run: |
-          echo "Checking changed files between ${{ github.event.before }} and ${{ github.sha }}"
-          if [ "${{ github.event_name }}" = "push" ]; then
-            git fetch --no-tags --prune origin ${{ github.ref }} || true
-            CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} || true)
-          else
-            CHANGED=$(git diff --name-only HEAD~1 HEAD || true)
-          fi
-          echo "Changed files:\n$CHANGED"
-
-          # Patterns that should trigger a Vercel deploy
-          patterns=("vercel.json" "api/**" "packages/web/**" "packages/functions/**" "packages/api/**" "packages/**/build/**" "Dockerfile" ".vercel/**")
-
-          should=false
-          for p in "${patterns[@]}"; do
-            if echo "$CHANGED" | grep -E "^${p//\*/*}" >/dev/null 2>&1; then
-              should=true
-            fi
-          done
-
-          if [ "$should" = true ]; then
-            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
-            echo "Will deploy: relevant files changed"
-          else
-            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
-            echo "Will NOT deploy: no relevant changes"
-          fi
-
-  deploy:
-    name: Deploy to Vercel (auto/manual)
-    runs-on: ubuntu-latest
-    needs: [test, check]
-    # Run deploy when manually triggered OR when check indicates relevant files changed
-    if: ${{ github.event_name == 'workflow_dispatch' || needs.check.outputs.should_deploy == 'true' }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Deploy to Vercel (manual)
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          # Use npx vercel which respects linked project settings.
-          npx vercel --prod --token "$VERCEL_TOKEN" --confirm
 
 
