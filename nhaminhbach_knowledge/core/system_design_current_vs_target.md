@@ -39,29 +39,32 @@
 ## III. HOW 
 ### 1. Technology 
 
-#### **A. ID Architecture (Geo-Identity System)**
-- ❌ **KHÔNG TỒN TẠI** - Đang dùng UUID ngẫu nhiên
-- ❌ Không có **Canonical URL Structure** `domain/29CG.[ID]`
-- ❌ Không có **5-Char Logic (HHHRR)**
-- ❌ Không có **House ID** gắn với tọa độ
-- ❌ Không có **Room ID** để định danh phòng
-- ❌ Không có **ElasticID** algorithm
-- ❌ Không có **Router & Aliases** cho campaign
-- ❌ Không có **Physical Layer (QR Stickers)**
+#### **A. ID Architecture (Geo-Identity System)** - UPDATED 2025-12-02
+- ✅ **FRONTEND IMPLEMENTED** - Short URL routing working!
+- ✅ Có **URL Routing** `/AB1` → listing (via hash-based temp ID)
+- ✅ Có **Search Bar** với GeoID detection
+- ✅ Có **ElasticID** display (compact format)
+- ✅ Có **Copy ID Button** cho sharing
+- ⚠️ **DB Schema Ready** - `schema_v2_geoid.sql` (pending deploy)
+- ⚠️ **Utilities Ready** - `geoid_utils.py` (pending API integration)
+- ❌ Chưa có **Router & Aliases** cho campaign
+- ❌ Chưa có **Physical Layer (QR Stickers)**
 
-**Hiện tại:**
-- URL: `/listings/{uuid}` (ví dụ: `/listings/123e4567-e89b-12d3-a456-426614174000`)
-- Không có semantic meaning
-- Không có geographical hierarchy
-- Không thể tạo campaign alias
+**Hiện tại (UPDATED 2025-12-02):**
+- ✅ URL: `/AB1` hoặc `/listings/{uuid}` (both work!)
+- ✅ Short URL routing implemented (frontend)
+- ✅ Display ID generated from UUID (temporary bridge)
+- ✅ Central search bar với GeoID detection
+- ✅ Copy ID button trên mỗi card
+- ⚠️ Database chưa migrate - dùng UUID hash as temporary GeoID
+- ❌ Chưa có campaign alias
 
 #### **B. Data Ingestion Strategy**
 - ✅ **Mục tiêu:** Chấp nhận mọi loại dữ liệu rác ✓
-- ❌ **Fingerprinting:** Chưa có hệ thống hash để check trùng
-  - Hiện tại: chỉ dựa vào `source_url` UNIQUE constraint
-  - Thiếu: `Hash(City + Ward + Street + House_Number)`
-  - Thiếu: `Hash(Phone_Number + Street_Name)`
-- ⚠️ **Auto-ID Generation Flow:** Không có (do chưa có ID system)
+- ✅ **Fingerprinting:** Đã implement trong geoid_utils.py (chờ deploy)
+  - ✅ `Hash(City + Ward + Street + House_Number)`
+  - ✅ `Hash(Phone_Number + Street_Name)`
+- ⚠️ **Auto-ID Generation Flow:** Implemented, pending DB migration
 - ❌ **Accuracy Level Flag:** Chưa có
   - Thiếu: Level 1 (Verified) vs Level 2 (Fuzzy)
   - Thiếu: Logic hiển thị Pin map vs Circle map
@@ -120,10 +123,11 @@
 **Login:**
 - ✅ Chỉ admin - QC Dashboard cần access
 
-**Instant Gratification:**
-- ❌ Chưa có - Không có hệ thống mã ngắn để gõ
+**Instant Gratification:** (UPDATED 2025-12-02) ✅
+- ✅ CÓ! Gõ mã ngắn (VD: AB1) → thấy ngay phòng
+- ✅ Search bar central với hint "Nhập mã phòng..."
+- ✅ Short URL routing: `/AB1` → listing detail
 - ❌ Thiếu nút liên hệ Zalo trực tiếp
-- ⚠️ Có thông tin đầy đủ nhưng chưa optimize cho "gõ mã → thấy ngay"
 
 **Mobile-First, Native App:**
 - ✅ Mobile-first responsive design
@@ -137,26 +141,26 @@
 - ⚠️ **No Pagination:** Chưa - đang dùng limit/offset
 - ✅ **Card listing dọc:** Có
 - ⚠️ **Ảnh to, tràn viền:** Có ảnh to nhưng không tràn viền
-- ⚠️ **3 thông tin quan trọng:** Có giá, địa chỉ, nhưng không có ID (vì chưa có ID system)
+- ✅ **3 thông tin quan trọng:** Có giá, địa chỉ, VÀ ID! (UPDATED 2025-12-02)
 
 **Speed is King:**
 - ⚠️ Chưa dùng WebP nén
 - ❌ Chưa có Skeleton Loading
 
-**Search Bar:**
-- ❌ Không có search bar chính giữa như Google
-- ❌ Không có placeholder thông minh
-- ❌ Không có auto-suggest
-- ❌ Không có ID search
+**Search Bar:** (UPDATED 2025-12-02)
+- ✅ Có search bar chính giữa như Google
+- ✅ Có placeholder thông minh ("Nhập mã phòng VD: AB1...")
+- ✅ GeoID detection khi nhập
+- ⚠️ Chưa có auto-suggest (future)
 
 **Hiện tại:**
-- Có FilterBar với district, price, amenities
-- Không có text search
-- Không có ID-based navigation
+- ✅ Central SearchBar component với GeoID routing
+- ✅ FilterBar với district, price, amenities
+- ✅ ID-based navigation working!
 
 **Psychology Tricks:**
 - ❌ Chưa có Dark Mode toggle
-- ❌ Chưa có nút copy ID (vì chưa có ID system)
+- ✅ Có nút copy ID trên mỗi card và detail page! (UPDATED 2025-12-02)
 - ❌ Chưa có micro-copy đời thường ("Góc nhìn thật", "Chủ nhà review", "Điểm trừ")
 
 **Style:**

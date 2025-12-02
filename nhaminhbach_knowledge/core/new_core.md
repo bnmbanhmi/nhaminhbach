@@ -1,0 +1,197 @@
+## I. WHY
+### 1. Market Failure
+- **The Global Model (Airbnb):** 
+	- Quá cứng nhắc, thiếu tính "địa phương"
+	- Rào cản thanh toán.
+- **The Legacy Model (Batdongsan, Chotot):**
+    - Legacy Stack
+    - Mô hình kinh doanh: dựa vào môi giới và quảng cáo đẩy tin
+- **The "Chaos" Model (Facebook Groups):**
+    - Ưu điểm: Traffic lớn, data fresh
+    - Nhược điểm: Unstructured, Spam, Trust Gap.
+- **The "Lemon Market" Problem**
+### 2. Cultural Insight
+- Informal Economy
+- **Behavior:** 
+	- Thích chat/mặc cả (Zalo-first)
+	- Tin vào truyền miệng (Social Proof)
+- **Need:** 
+	- Frictionless Search
+### 3. The Innovator's Dilemma
+- Đối thủ lớn không thể chuyển sang mô hình minh bạch vì sẽ giết chết đội ngũ môi giới và quảng cáo
+## II. WHAT 
+### 1. Core Definition
+- **Layer:** filter layer leveraging social network
+- **Infrastructure:** digital identity
+- **Goal**: lùa càng nhiều cá vào ao càng tốt
+### 2. Brand Identity
+- **Name:** Nhaminhbach
+- **Keyword:** Thô (Raw), Thật (Real), Dân dã (Hyper-local)
+- **Visual:** Giao diện tối giản dễ dùng, không quảng cáo
+- "Google của nhà trọ", "Grab của nhà trọ"
+## III. HOW 
+### 1. Technology 
+- ID Architecture (Geo-Identity System)
+	- Mục tiêu: Định danh duy nhất, ngắn gọn, phân cấp, bất biến theo thời gian.
+	- **Canonical URL Structure:** `domain/29CG.[ID]`
+	    - `29`: City Code (Hà Nội).
+	    - `CG`: District Code (Cầu Giấy) - *Lưu ý: Dùng cấp Quận, bỏ cấp Phường để rộng đường dư địa.*
+	    - `[ID]`: **5 Characters Base36** (HHHRR).
+	- **The 5-Char Logic (HHHRR) + ElasticID:** ví dụ CGAB1 = 29CG0AB01
+	    - `HHH` (3 chars): **House ID** (Định danh Tòa nhà/Mảnh đất).
+	        - Gắn chặt với Tọa độ (Lat/Long), lưu lịch sử đất
+	        - ban đầu chưa có nhiều nhà -> dùng hệ 0HH, hiển thị với người dùng là HH
+	    - `RR` (2 chars): **Room ID** (Định danh Unit/Phòng).
+	        - `00`: Mã đại diện/chưa rõ phòng
+	        - `01-ZZ`: Mã cụ thể.
+	        - những nhà không có nhiều phòng -> padding thành 0R, hiển thị với người dùng là R
+		- Thuật toán sinh mã ưu tiên tránh trùng lặp toàn thành phố trước (cố gắng làm ID 3, rồi 4, rồi 5 ký tự là duy nhất trước, full hết 5 ký tự mới tính đến trùng cho từng vùng)
+	- **Router & Aliases (Smart Filters):**
+	    - **System ID (Physical):** `29CG.W8K01` -> Trỏ thẳng về 1 phòng.
+	    - **Campaign Alias (Logical):** `nhaminhbach.com/svbk` -> Redirect 301 hoặc Render View bộ lọc: *Radius 2km from BK + Price < 4m*.
+		    - bắt đầu bằng tập trung vào các chiến dịch cho các đại học lớn
+	- Physical Layer (QR Stickers)
+		- Online to Offline
+- Data Ingestion Strategy 
+	- Mục tiêu: Chấp nhận mọi loại dữ liệu rác, tự động quy hoạch vào ID chuẩn.
+	- **Fingerprinting:**
+	    - Trước khi tạo ID, hệ thống tạo mã hash để check trùng:
+	    - *Priority 1:* `Hash(City + Ward + Street + House_Number)` (Nếu có địa chỉ).
+	    - *Priority 2:* `Hash(Phone_Number + Street_Name)` (Nếu ẩn địa chỉ).
+	- **Auto-ID Generation Flow:**
+	    - `IF` Fingerprint chưa tồn tại -> Tạo mới House ID (`HHH`).
+	    - `IF` Tin không có số phòng -> Gán Room ID mặc định (`00`).
+	    - `IF` Tin có số phòng (P301) -> Gán Room ID tương ứng (map `301` sang code `RR`).
+	- **Accuracy Level Flag:**
+	    - Level 1 (Verified): Có tọa độ chính xác, địa chỉ full. -> *Hiển thị Pin map.*
+	    - Level 2 (Fuzzy): Chỉ có tên phố + SĐT. -> *Hiển thị Circle map (Vùng ngẫu nhiên).*
+- Storage Strategy (The "Time Machine")
+	- Mục tiêu: Lưu trữ lịch sử giá và thay đổi của tài sản (Data-driven).
+	- **Static Layer (Bất biến):**
+	    - Table `Houses`: ID (`HHH`), Geo-location (Lat/Long), Original Address.
+	- **Dynamic Layer (SCD Type 2 - Slowly Changing Dimension):**
+	    - Table `Room_History`:
+	        - `room_id`: (FK to House)
+	        - `price`: Giá tiền
+	        - `attributes`: JSON (Nội thất, tình trạng)
+	        - `valid_from`: Timestamp
+	        - `valid_to`: Timestamp (NULL = Hiện tại)
+	    - *Lợi ích:* Vẽ được biểu đồ biến động giá cho user xem.
+	- Logging
+		- Lưu lịch sử trạng thái phòng
+- AI & Search Enrichment
+	- **Vectorization:**
+	    - Input: natural language description
+	    - Process: periodically creat [[Vector Embeddings]] định kỳ.
+	    - Output: [[Semantic Search]] 
+- **Web design**
+	- Role models: [[Google]], [[Facebook]] (early days), [[Airbnb]], [[RenCity]]
+	- No-login: như [[Google]], có thể dùng cookie để lưu tương tác
+	- Login: ban đầu chỉ admin quản lý
+	- **Instant Gratificitation**: vào web gõ mã -> thấy full thông tin và nút liên hệ Zalo -> yêu thích (như Facebook ngày đầu)
+	- **Mobile-First, Native App**
+	- **The Thumb Zone**
+		- Navbar ở đáy
+		- Sticky CTA/Chat Zalo ở góc dưới
+	- **Feed Experience**
+		- No Pagination
+		- Card listing thiết kế dọc, ảnh to, tràn viền
+		- Thông tin rõ ràng, trên card chỉ 3 thông tin quan trọng nhất: giá, địa chỉ, ID
+	- **Speed is King**: dùng WebP nén để ảnh load nhanh, dùng Skeleton Loading
+	- **Search Bar**
+		- Đặt chính giữa, to rõ ràng như Google
+		- Placeholder thông minh
+		- Auto-suggest
+		- nhập đúng ID phòng là đến thẳng phòng đó, bỏ qua trang kết quả tìm kiếm
+	- **Psychology tricks**
+		- Để ý Dark Mode
+		- Nút copy ID nhanh -> dễ chia sẻ -> phải to đùng 
+		- Micro-copy đời thường: "Góc nhìn thật", "Chủ nhà review", "Điểm trừ" (kiểu như vlog review) -> giữ chân
+	- **Style:** tối giản, High Contrast (đen, trắng, màu nhận diện)
+	- **Vibe:** thực dụng, như một tờ hóa đơn/bảng thông báo
+- **Interaction Layer (Smart Gating):** _Cơ chế bảo vệ Data & Chống Spam._
+    - **The "Login Wall":** Khách vãng lai thấy thông tin nhưng mờ nút liên hệ. Phải liên hệ, sau này là đăng nhập để xem. -> _Loại bỏ bot cào data._
+    - **Rate Limiting (Quota):** Mỗi User chỉ được xem SĐT của 3-5 chủ nhà/ngày. -> _Giết chết môi giới/sale muốn lấy data số lượng lớn._
+    - **Zalo Deep Link (Thay vì SĐT trần):** Nút liên hệ không hiện số `09xxxx`, mà mở thẳng App Zalo vào khung chat với chủ nhà (hoặc OA trung gian). -> _Frictionless cho user thật, nhưng khó copy-paste cho user ảo._
+    - **Data Obfuscation (AI Rewrite):**
+        - Input: Tin cào từ Facebook (văn phong lộn xộn).
+        - Process: Dùng LLM (Gemini Flash/GPT-4o-mini) viết lại nội dung, giữ nguyên thông số nhưng thay đổi câu từ.
+        - Output: Tin đăng mới trên Nhaminhbach. -> _Chặn đứng việc user copy văn bản search ngược trên Facebook để tìm bài gốc._
+### 2. Growth Strategy 
+- **Short-term: Môi giới**
+    - **Role:** Tech-enabled Super Broker.
+    - **Tactic:** Facebook + Screenshot Hook + ID Search.
+    - **Focus:** Data Acquisition & Cashflow (nuôi sống team).
+	- **Facebook: Platform to find customer**
+		- Chiến lược 1 (khó, [[Founder's Bias]])
+			- Săn: tìm group, tìm post có nhu cầu -> lên web, tìm trong kho có sẵn -> comment kèm nhaminhbach và mã (29CG123)
+			- Khách: thấy ảnh đẹp -> tò mò ID -> vào web tra -> liên hệ trực tiếp -> dẫn đi xem -> lấy tiền
+			- Tại sao khó: 
+				- không ai rảnh thoát Facebook vào browser xem
+				- mỗi thao tác thừa sẽ làm mất 50 - 80% người dùng tiềm năng, thiếu sự [[Frictionless]]
+				- [[Don't Make Me Think]]
+		- Chiến lược 2: Seeding
+			- Post ảnh đẹp -> Cần thì comment -> nhắn tin gửi link -> An toàn, reach cao, đúng đối tượng
+	- **Execution Tactic: "The Wizard of Oz" MVP**
+	    - **Nguyên lý:** Bên ngoài là Công nghệ (Web xịn, ID xịn), Bên trong là "Cơm" (Bạn làm thủ công).
+	    - **Workflow:**
+	        - Khách bấm "Liên hệ" -> Form yêu cầu SĐT -> Bot bắn tin về Admin (Bạn).
+	        - Bạn gọi xác nhận khách thật -> Bạn gửi contact chủ nhà cho khách (hoặc ngược lại).
+	        - _Lý do:_ Kiểm soát chặt chất lượng data ban đầu, hiểu sâu insight (khách hay hỏi gì, chủ nhà hay phàn nàn gì) trước khi automate.
+	- **Threads: Platform to build brand awareness by Affiliate-styled Marketing** 
+	    - **Content Strategy:** Emotional Hooks (Drama/Fear/FOMO) + Storytelling
+	    - **Visuals:** Shocking/funny scenarios
+	    - **Dual Personas:**
+	        - Persona A (Victim): Complaint/Review/Drama seeder.
+	        - Persona B (Solver): Solution provider + ID Drop (29CG...).
+	    - **Navigation:** No-Link Policy -> Search by ID (Avoid Algorithm penalty).
+	    - Multiple backup accounts
+		- **With customer**
+			- Success: Money
+			- Failure: Introduce platform
+			- Goal
+				- khách vãng lai -> user web, thay vì lướt facebook tiếp
+				- get insight (tại sao lại thích, tại sao lại thích, tìm hiểu trên danh nghĩa phục vụ người thuê)
+- **Mid-term: Nền tảng**
+    - **Role:** Market Maker.
+    - **Tactic:** Mở đăng tin + Viral IDs
+    - **Focus:** User Base & Habit Formation (Thói quen dùng ID).
+    - **Khi nào gõ cửa chủ trọ, mở rộng nguồn hàng?**
+	    - Pending Demand -> có nhu cầu, đem nhu cầu quảng cáo với chủ nhà -> thu phí hoa hồng/miễn phí
+	- Facebook & Threads: tung ra Alias ID
+		- đúng nhu cầu: nhatrogiarecaugiay
+		- trend hay: nhanghi69
+		- khuyến khích khách hàng cũ review và lan tỏa
+	- Bắt đầu mô hình cho chủ trọ tạo tài khoản và đăng tin
+	- **Business Model: "Vanity for Equity" (Lấy mỡ nó rán nó)**
+		- **Core Revenue:** Bán **"Portfolio Management"** (Tên miền định danh/Gom nhóm).
+		    - _Ví dụ:_ `nhaminhbach.com/u/co-hien-bach-khoa`.
+		- **Value Prop cho Chủ nhà:** Không bán "Vị trí hiển thị" (Zero-sum), mà bán **"Sự tiện lợi"**.
+		    - Link này là một Landing Page cá nhân hóa: Tự động cập nhật phòng Trống/Hết, tự động có Video (AI generated).
+		    - Chủ nhà dùng link này gửi cho khách trên Zalo thay vì phải trả lời lặp lại 100 lần.
+		- **Cơ chế Robin Hood:** Tiền thu được từ các chủ nhà muốn "Tiện & Oai" sẽ dùng để nuôi đội quân xác thực (Verification Team) -> Duy trì sự minh bạch miễn phí cho sinh viên.
+- **Long-term: Hệ sinh thái**
+    - **Role:** Infrastructure Provider
+    - **Tactic:** Scale sang mảng quản lý phòng trọ và lĩnh vực khác
+    - **Focus:** Lock-in (SaaS) & Monetization
+    - Embedded Finance: ứng vốn tân trang phòng
+### 4. Tactics
+- **Fly Under The Radar**
+    1. **Camouflage**: Student Project/Harmless Tool, hide tech logic (Backend only)
+    2. **Infiltration**: Free Internal Tool for Competitor's Staff -> Save time for brokers -> Create Dependency -> Competitors input data -> Enrich Nhaminhbach Database
+    3. **The Flip**: Reveal Platform Scale -> Convert rival staff to ecosystem users
+- **The "Honeypot" Defense**
+	- Chèn các link ẩn (người thường không thấy) vào code HTML của trang web.
+	- Nếu có IP nào truy cập vào các link này -> Đích thị là Bot/Crawler của đối thủ -> **Ban IP vĩnh viễn tự động.**
+	- _Lý do:_ Bảo vệ nguồn hàng độc quyền mà bạn đã tốn công đi "quét phố" mới có được.
+- Pitching
+	- Traction: hỗn loạn -> trật tự
+		- số liệu: user/day, retention
+		- chiến thuật: hút traffic từ facebook về plaform riêng -> data ownership
+	- Vision: Unicorn potential
+		- dưới dạng Business Model Innovation
+		- Future of Rental Identity: không chỉ là web tìm phòng, mà còn là một nền tảng số: bản sao số -> định danh số -> quản lý số (tư duy platform chứ không phải là cò đất)
+		- mảnh ghép cuối của smart city
+	- Hide
+		- Không nói mấy cái hèn hèn
+		- Nói: tận dụng các lỗ hổng phân phối của Social Media để đạt Customer Acquisition Cost gần như bằng 0

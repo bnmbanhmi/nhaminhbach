@@ -1,14 +1,18 @@
 // src/components/listings/ListingCard.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Listing } from '../../types';
 import { formatPrice } from '../../utils/formatters';
+import { getListingDisplayId } from '../../utils/geoid';
 
 interface ListingCardProps {
   listing: Listing;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
+  const [copied, setCopied] = useState(false);
+  const displayId = getListingDisplayId(listing);
+  
   // Helper function to build a clean address string, ignoring null/empty parts
   const formatAddress = () => {
     return [listing.address_ward, listing.address_district]
@@ -21,12 +25,40 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
     return `Phòng trọ tại ${formatAddress()}`;
   };
 
+  // Copy GeoID to clipboard
+  const handleCopyId = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText(displayId).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
     <Link 
       to={`/listings/${listing.id}`} 
       className="group block w-full bg-surface rounded-card shadow-md overflow-hidden text-text-primary hover:shadow-lg hover:-translate-y-1 transition-transform duration-300 relative no-underline min-h-[340px] sm:min-h-[360px]"
       style={{ touchAction: 'manipulation' }}
     >
+      {/* GeoID Badge - Top Right */}
+      <div className="absolute top-2 right-2 z-10">
+        <button
+          onClick={handleCopyId}
+          className={`
+            px-3 py-1.5 rounded-full font-mono font-bold text-sm
+            backdrop-blur-sm transition-all duration-200
+            ${copied 
+              ? 'bg-green-500 text-white' 
+              : 'bg-black/70 text-white hover:bg-primary'
+            }
+          `}
+          title={copied ? 'Đã copy!' : `Copy mã: ${displayId}`}
+        >
+          {copied ? '✓ Copied!' : `#${displayId}`}
+        </button>
+      </div>
+      
       {/* Image Section */}
       {listing.image_urls && listing.image_urls.length > 0 ? (
         <img 

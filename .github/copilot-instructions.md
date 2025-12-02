@@ -29,6 +29,7 @@ You MUST perform this context scan BEFORE any other action:
 ```
 Priority 0 (CRITICAL): 
 - read_file: /Users/mac/nhaminhbach.com/nhaminhbach/CONTRIBUTING.md (lines 1-50)
+- read_file: /Users/mac/nhaminhbach.com/nhaminhbach/nhaminhbach_knowledge/core/new_core.md (the newest updated core document, most important, the others are legacy files)
 
 Priority 1 (STRATEGIC):
 - read_file: /Users/mac/nhaminhbach.com/nhaminhbach/nhaminhbach_knowledge/core/lean_business_model.md (lines 1-30)

@@ -1,3 +1,20 @@
+-- =========================================================================
+-- NHAMINHBACH LEGACY SCHEMA V1.0 (UUID-based)
+-- =========================================================================
+-- Status: ARCHIVED - Superseded by schema_v2_geoid_eav.sql
+-- Date Created: 2025-08-xx
+-- Date Archived: 2025-12-02
+-- 
+-- This schema used UUID-based listings with a flexible EAV attributes system.
+-- It has been replaced by the GeoID-based architecture (V2.1) which:
+--   - Uses GeoID (29CG.HHHRR) instead of UUID
+--   - Separates houses (physical) from rooms (units)
+--   - Implements SCD Type 2 for price/status history
+--   - Preserves the EAV pattern in room_attributes
+--
+-- For new deployments, use: schema_v2_geoid_eav.sql
+-- =========================================================================
+
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 

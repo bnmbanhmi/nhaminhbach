@@ -8,6 +8,7 @@ import type { FilterState } from '../components/listings/FilterBar';
 import type { Attribute } from '../types';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { useSearchParams } from 'react-router-dom';
+import SearchBar from '../components/ui/SearchBar';
 
 // Sử dụng biến đã import để xây dựng endpoint
 const API_ENDPOINT = `${API_BASE_URL}/get_listings`;
@@ -193,7 +194,25 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Danh sách cho thuê</h1>
+      {/* Hero Section with Central Search Bar */}
+      <div className="text-center py-6 sm:py-10 mb-4 sm:mb-6">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
+          Tìm phòng trọ Hà Nội
+        </h1>
+        <p className="text-gray-600 text-base sm:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto">
+          Nguồn tin đáng tin cậy nhất. Gõ mã phòng để xem ngay.
+        </p>
+        
+        {/* Central Search Bar - Google Style */}
+        <div className="max-w-2xl mx-auto">
+          <SearchBar 
+            placeholder="Nhập mã phòng (VD: AB1) hoặc tìm kiếm..."
+            autoFocus={false}
+          />
+        </div>
+      </div>
+      
+      {/* Filter Section */}
       <div className="mb-4 sm:mb-6">
         <FilterBar value={filters} onChange={handleFilterChange} amenities={attributes} isAmenitiesLoading={isAttributesLoading} />
       </div>

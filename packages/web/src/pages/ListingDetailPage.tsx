@@ -5,12 +5,32 @@ import type { Listing } from '../types';
 import { API_BASE_URL } from '../config';
 import { formatPrice, formatArea } from '../utils/formatters';
 import translateEnumValue from '../utils/translations';
+import { getListingDisplayId } from '../utils/geoid';
 
 const ListingDetailPage: React.FC = () => {
   const { listingId } = useParams<{ listingId: string }>();
   const [listing, setListing] = useState<Listing | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const displayId = listing ? getListingDisplayId(listing) : '';
+
+  const handleCopyId = () => {
+    if (!displayId) return;
+    navigator.clipboard.writeText(displayId).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const handleCopyUrl = () => {
+    const url = `${window.location.origin}/${displayId}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   useEffect(() => {
     if (!listingId) {
@@ -53,6 +73,31 @@ const ListingDetailPage: React.FC = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        {/* GeoID Header Badge */}
+        <div className="bg-gray-900 text-white px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-gray-400 text-sm">Mã phòng:</span>
+            <span className="font-mono font-bold text-2xl text-primary">#{displayId}</span>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleCopyId}
+              className={`
+                px-4 py-2 rounded-full text-sm font-medium transition-all
+                ${copied ? 'bg-green-500 text-white' : 'bg-white/10 hover:bg-white/20 text-white'}
+              `}
+            >
+              {copied ? '✓ Đã copy!' : 'Copy mã'}
+            </button>
+            <button
+              onClick={handleCopyUrl}
+              className="px-4 py-2 rounded-full text-sm font-medium bg-primary hover:bg-primary-dark text-white transition-colors"
+            >
+              Chia sẻ link
+            </button>
+          </div>
+        </div>
+        
         {listing.image_urls && listing.image_urls.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {listing.image_urls.slice(0, 4).map((url, index) => (
