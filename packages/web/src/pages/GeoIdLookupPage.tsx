@@ -40,13 +40,21 @@ const GeoIdLookupPage: React.FC = () => {
       setError(null);
 
       try {
-        // Strategy 1: Try to fetch from API by geo_id (future endpoint)
-        // For now, we'll use a workaround by fetching all listings
-        // and finding the one matching the display ID
-        
+        const normalizedInput = geoId.toUpperCase().trim();
+
+        // 1) Try backend GeoID lookup endpoint
+        const resp = await fetch(`${API_BASE_URL}/get_listing_by_geoid?geoid=${encodeURIComponent(normalizedInput)}`);
+        if (resp.ok) {
+          const listingObj = await resp.json();
+          setListing(listingObj);
+          setIsLoading(false);
+          return;
+        }
+
+        // 2) If backend returned 404 or other problem, fall back to existing client-side method
         // Fetch all public listings
         const response = await fetch(`${API_BASE_URL}/get_listings`);
-        
+
         let listings: Listing[] = [];
         if (response.status === 404) {
           // Fallback to admin endpoint
@@ -64,13 +72,8 @@ const GeoIdLookupPage: React.FC = () => {
         setAllListings(listings);
 
         // Find listing by matching generated display ID
-        const normalizedInput = geoId.toUpperCase().trim();
-        
         const foundListing = listings.find((l: Listing) => {
-          // Generate display ID from UUID
           const displayId = generateDisplayIdFromUuid(l.id);
-          
-          // Match against various formats
           return (
             displayId === normalizedInput ||
             `XX${displayId}` === normalizedInput ||

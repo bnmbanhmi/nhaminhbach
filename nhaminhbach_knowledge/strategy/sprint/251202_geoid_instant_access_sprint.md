@@ -367,3 +367,25 @@ WHERE (attributes->>'air_conditioner')::boolean = true;
 ```
 
 **Next Session:** Deploy to Supabase
+
+### Session 6: 2025-12-02 (GeoID Instant Access — Backend + Frontend Integration)
+**Agent:** CTO Alex + AI Agent
+**Duration:** 1.5 hours
+**Completed:** Implemented server-side GeoID lookup, wired frontend short-route handler, added local mock server and unit tests
+
+**Details:**
+- **Backend:** Added `get_listing_by_geoid` endpoint and `lookup_listing_by_geoid(conn, input_raw)` helper in `packages/functions/main.py`. Endpoint supports queries like `?geoid=AB1`, `?geoid=29CG.AB1`, `?geoid=29CGAB1` and queries `v_current_listings` for exact and loose matches.
+- **Frontend:** Updated `packages/web/src/pages/GeoIdLookupPage.tsx` to call the backend endpoint first and fall back to the existing fetch-all approach when the endpoint returns 404.
+- **Testing:** Added `packages/functions/test_get_listing_by_geoid.py` (mock DB connection) and ran tests locally — all passed.
+- **Local Dev:** Added `packages/functions/mock_server.py` to simulate API endpoints for local frontend dev. Verified `GET /get_listing_by_geoid?geoid=29CG.0AB01` returns sample listing JSON.
+
+**Files Modified / Added:**
+- `packages/functions/main.py` — added endpoint + helper
+- `packages/web/src/pages/GeoIdLookupPage.tsx` — call backend endpoint first
+- `packages/functions/test_get_listing_by_geoid.py` — unit test (mocked)
+- `packages/functions/mock_server.py` — lightweight local API mock for dev
+
+**Impact / Next Steps:**
+- Short URL lookup is now supported server-side; frontend uses it for instant navigation. Switch production routing to this endpoint once Supabase view `v_current_listings` is available in the production DB.
+- Deploy endpoint to serverless environment and update production `API_BASE_URL`/proxy accordingly.
+

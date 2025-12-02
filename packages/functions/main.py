@@ -399,6 +399,87 @@ def get_listing_by_id(req: https_fn.Request) -> https_fn.Response:
 @https_fn.on_request(
     cors=CORS_CONFIG
 )
+def get_listing_by_geoid(req: https_fn.Request) -> https_fn.Response:
+    """
+    Lookup listing by GeoID / display ID.
+
+    Supports queries like:
+      - GET ?geoid=AB1
+      - GET ?geoid=29CG.AB1
+      - GET ?geoid=29CGAB1
+
+    Fallbacks:
+      - Try `v_current_listings.full_geo_id` first
+      - Then try a loose match against full_geo_id with dots removed
+      - If not found, return 404
+    """
+    if req.method != "GET":
+        return https_fn.Response(f"Method {req.method} not allowed.", status=405)
+
+    geoid_param = req.args.get("geoid") or req.args.get("q")
+    if not geoid_param:
+        # Also attempt to parse path (e.g., /AB1) by taking last path segment
+        try:
+            path = req.path or ""
+            geoid_param = path.strip('/').split('/')[-1] if path else None
+        except Exception:
+            geoid_param = None
+
+    if not geoid_param:
+        return https_fn.Response("Missing 'geoid' query parameter.", status=400)
+
+    try:
+        input_raw = str(geoid_param).upper().strip()
+
+        engine = get_db_engine()
+        with engine.connect() as conn:
+            listing = lookup_listing_by_geoid(conn, input_raw)
+
+            if not listing:
+                return https_fn.Response(f"Listing with GeoID {input_raw} not found.", status=404)
+
+            json_resp = json.dumps(listing, default=default_json_serializer)
+            return https_fn.Response(json_resp, status=200, headers={"Content-Type": "application/json"})
+
+    except Exception as e:
+        logger.error(f"Error in get_listing_by_geoid: {e}")
+        return https_fn.Response("An internal server error occurred.", status=500)
+
+
+def lookup_listing_by_geoid(conn, input_raw: str):
+    """Helper to lookup listing by GeoID using a DB connection.
+
+    Returns a dict (listing) or None.
+    """
+    norm = input_raw.replace('.', '')
+
+    # 1) Exact match on full_geo_id (with or without dot)
+    query = text("""
+        SELECT * FROM v_current_listings
+        WHERE UPPER(full_geo_id) = :input_raw
+           OR REPLACE(UPPER(full_geo_id),'.','') = :norm
+        LIMIT 1
+    """)
+    row = conn.execute(query, {"input_raw": input_raw, "norm": norm}).fetchone()
+
+    # 2) Loose contains match if exact failed
+    if not row:
+        loose_q = text("""
+            SELECT * FROM v_current_listings
+            WHERE REPLACE(UPPER(full_geo_id),'.','') LIKE '%' || :norm || '%'
+            LIMIT 1
+        """)
+        row = conn.execute(loose_q, {"norm": norm}).fetchone()
+
+    if not row:
+        return None
+
+    return dict(row._mapping)
+
+
+@https_fn.on_request(
+    cors=CORS_CONFIG
+)
 def get_all_attributes(req: https_fn.Request) -> https_fn.Response:
     """
     API Endpoint to get all possible attributes for a listing.
