@@ -1,0 +1,55 @@
+name: CI/CD — Test & Deploy to Vercel
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install backend dependencies
+        run: |
+          cd packages/functions
+          python3 -m venv .venv
+          . .venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt || true
+
+      - name: Run backend unit tests
+        continue-on-error: false
+        run: |
+          cd packages/functions
+          . .venv/bin/activate
+          python3 -m pytest -q
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install frontend dependencies
+        run: |
+          cd packages/web
+          npm ci
+
+      - name: Run frontend tests
+        continue-on-error: false
+        run: |
+          cd packages/web
+          npm test --silent
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          # Use npx vercel which respects linked project settings.
+          npx vercel --prod --token "$VERCEL_TOKEN" --confirm
