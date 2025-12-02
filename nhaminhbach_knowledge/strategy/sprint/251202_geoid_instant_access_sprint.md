@@ -389,3 +389,24 @@ WHERE (attributes->>'air_conditioner')::boolean = true;
 - Short URL lookup is now supported server-side; frontend uses it for instant navigation. Switch production routing to this endpoint once Supabase view `v_current_listings` is available in the production DB.
 - Deploy endpoint to serverless environment and update production `API_BASE_URL`/proxy accordingly.
 
+### Session 7: 2025-12-02 (CI/CD Decision)
+**Agent:** CTO Alex + AI Agent
+**Duration:** 30 minutes
+**Decision:** Use Vercel Git Integration for automatic deployments; keep GitHub Actions as a tests-only CI.
+
+**Rationale:**
+- Vercel already supports Git integration and will create preview deployments for PRs and production deployments for commits to `main`.
+- Using Vercel's native deploy pipeline avoids duplicate deployments and keeps the process simple and reliable.
+- GitHub Actions will run tests (backend + frontend) on `pull_request` and `push` to provide CI feedback and protect `main` via branch protection rules.
+
+**Actions Taken:**
+- Replaced the previous CI deploy workflow with a `tests-only` workflow at `.github/workflows/deploy-vercel.yml` that runs on PRs and pushes.
+- Removed CI-initiated `npx vercel` deploy step to avoid duplication with Vercel Git integration.
+- Added local mock server + unit tests for GeoID endpoint (dev/test support).
+
+**Follow-up / Recommendations:**
+- Enable GitHub branch protection for `main` and require the `tests-only` workflow to pass before merging.
+- Ensure the Vercel project is linked to this repository in the Vercel dashboard (Git integration enabled).
+- If you want CI to perform deploys instead of Vercel's integration, we can reintroduce a gated `npx vercel` step that uses `VERCEL_TOKEN` (stored as GitHub secret).
+
+
