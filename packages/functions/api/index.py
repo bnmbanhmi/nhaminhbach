@@ -422,9 +422,14 @@ def create_listing(payload: ListingCreate):
                     """)
 
                     gen_geo = str(uuid.uuid4()).replace('-', '')[:5]
+                    
+                    ward_input = listing_data.get("address_ward")
+                    ward_code_resolved = get_ward_code(ward_input) or "00"
+                    logger.info(f"DEBUG: Ward Input='{ward_input}', Resolved Code='{ward_code_resolved}'")
+                    
                     house_res = conn.execute(create_house, {
                         "city_code": "29",
-                        "ward_code": listing_data.get("address_ward") or "00",
+                        "ward_code": ward_code_resolved,
                         "geo_id": gen_geo,
                         "street": listing_data.get("address_street"),
                         "ward": listing_data.get("address_ward"),
