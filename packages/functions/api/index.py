@@ -18,6 +18,7 @@ import sqlalchemy
 from sqlalchemy import text
 # from google.cloud.sql.connector import Connector, IPTypes  <-- Removed for Supabase
 from utils import get_secret, geocode_address
+from geoid_utils import get_ward_code
 import logging
 
 # Configure logging
