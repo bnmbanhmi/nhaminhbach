@@ -24,12 +24,12 @@ workflow_path: "_bmad/bmm/workflows/workflow-status/paths/method-brownfield.yaml
 workflow_status:
   - id: document-project
     phase: "Prerequisite"
-    status: required
+    status: docs/project-overview.md
     agent: analyst
     description: "Comprehensive project documentation"
   - id: prd
     phase: "Planning"
-    status: required
+    status: _bmad-output/planning-artifacts/prd.md
     agent: pm
     description: "PRD focused on new features/changes"
   - id: create-ux-design
