@@ -446,7 +446,7 @@ def create_listing(payload: ListingCreate):
                     # 3. Insert into room_history as the current version
                     insert_rh = text("""
                         INSERT INTO room_history (room_id, title, description, price_monthly_vnd, area_m2, contact_phone, image_urls, source_url, attributes, status, valid_from, is_current, created_at)
-                        VALUES (:room_id, :title, :description, :price, :area, :contact_phone, :image_urls, :source_url, :attributes::jsonb, :status, NOW(), TRUE, NOW())
+                        VALUES (:room_id, :title, :description, :price, :area, :contact_phone, :image_urls, :source_url, CAST(:attributes AS jsonb), :status, NOW(), TRUE, NOW())
                         RETURNING id
                     """)
 
@@ -614,7 +614,7 @@ def update_listing_data(payload: ListingDataUpdate):
             # Insert a new room_history record with updated values and mark available
             insert_q = text("""
                 INSERT INTO room_history (room_id, title, description, price_monthly_vnd, area_m2, contact_phone, image_urls, source_url, attributes, status, valid_from, is_current, created_at)
-                VALUES (:room_id, :title, :description, :price, :area, :contact_phone, :image_urls, :source_url, :attributes::jsonb, :status, NOW(), TRUE, NOW())
+                VALUES (:room_id, :title, :description, :price, :area, :contact_phone, :image_urls, :source_url, CAST(:attributes AS jsonb), :status, NOW(), TRUE, NOW())
                 RETURNING id
             """)
 
