@@ -1,6 +1,7 @@
 import React from 'react';
 import { useListingForm } from '../../hooks/useListingForm';
 import type { Attribute } from '../../types';
+import { WARD_LIST } from '../../constants/wardData';
 
 /**
  * ListingForm Component - A comprehensive form for creating new rental listings.
@@ -156,11 +157,22 @@ const ListingForm: React.FC = () => {
           <div>
             <label htmlFor="address_ward" className="block text-sm font-medium text-gray-700 mb-2">Ward (Phường/Xã)</label>
             <input
-              type="text" id="address_ward" name="address_ward" value={formData.address_ward}
-              onChange={handleStaticFieldChange} required
+              type="text"
+              id="address_ward"
+              name="address_ward"
+              value={formData.address_ward}
+              onChange={handleStaticFieldChange}
+              required
+              list="ward-list"
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g., Dịch Vọng Hậu"
+              placeholder="Type to search (e.g., Dịch Vọng)"
+              autoComplete="off"
             />
+            <datalist id="ward-list">
+              {WARD_LIST.map((ward) => (
+                <option key={ward} value={ward} />
+              ))}
+            </datalist>
           </div>
           <div>
             <label htmlFor="address_district" className="block text-sm font-medium text-gray-700 mb-2">District (Quận/Huyện)</label>
@@ -200,11 +212,10 @@ const ListingForm: React.FC = () => {
         <button
           type="submit"
           disabled={isSubmitting || isAttributesLoading}
-          className={`w-full py-3 px-4 rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors ${
-            isSubmitting || isAttributesLoading
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
-          }`}
+          className={`w-full py-3 px-4 rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors ${isSubmitting || isAttributesLoading
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
         >
           {isSubmitting ? 'Submitting...' : (isAttributesLoading ? 'Loading Form...' : 'Create Listing')}
         </button>
