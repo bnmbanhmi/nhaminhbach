@@ -34,7 +34,7 @@ workflow_status:
     description: "PRD focused on new features/changes"
   - id: create-ux-design
     phase: "Planning"
-    status: conditional
+    status: _bmad-output/planning-artifacts/ux-design-specification.md
     agent: ux-designer
     description: "UX Design"
   - id: create-architecture
