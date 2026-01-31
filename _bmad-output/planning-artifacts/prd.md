@@ -266,6 +266,7 @@ NhaMinhBach is a high-performance Single Page Application (SPA) backed by a hybr
 - `GET /api/v1/listings`: Filterable feed with support for GeoID metadata.
 - `POST /api/v1/ingest`: Secured endpoint for the GCP Refinery to deliver "Clean Oil."
 - `PATCH /api/v1/qc/verify/{id}`: Minh’s one-click approval endpoint in the Cockpit.
+- `POST /api/v1/listings/manual`: Endpoint for admin manual creation of listings.
 - `GET /api/v1/houses/{id}/history`: Powers the "Time Machine" price chart.
 
 ## Project Scoping & Phased Development
