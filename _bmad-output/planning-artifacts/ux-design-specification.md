@@ -255,8 +255,8 @@ graph TD
     H --> D
 ```
 
-### Journey 3: The "Verifier" (Admin QC)
-**Goal:** The admin rapidly validates incoming scraped data against the source truth.
+### Journey 3: The "Verifier" (Admin QC) & Manual Entry
+**Goal:** The admin rapidly validates incoming scraped data or manually inputs new listings using the unified interface.
 
 ```mermaid
 graph LR

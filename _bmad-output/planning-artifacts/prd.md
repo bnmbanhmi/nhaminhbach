@@ -345,6 +345,7 @@ NhaMinhBach is a high-performance Single Page Application (SPA) backed by a hybr
 - **FR21:** Admins can approve or reject pending listings with a single action.
 - **FR22:** Admins can view fingerprint collision alerts for properties that have appeared historically.
 - **FR23:** Admins can manage the "Available/Rented" status of any room in the system.
+- **FR27:** Admins can manually input new listings (individually or in bulk) via the admin interface, reusing the manual edit components.
 
 ### Security & Integrity
 - **FR24:** The System can identify and auto-ban non-human scraping agents via invisible "Honeypot" links.
