@@ -181,6 +181,8 @@ lastStep: 11
 - **Guided UI Tokens:** Interactive chips in the search bar to help users build searches visually.
 - **Smart Gating:** Login walls for contact info and rate-limiting protection.
 - **Owner Claiming:** Workflow for landlords to verify their own GeoID portfolios.
+- **Vanity Aliases & Portfolio Sharing (Phase 2):** Support for root-level custom URLs and landlord portfolio views (FR10).
+- **Bulk Listing Ingestion (Phase 2):** Admin capability to upload listings in bulk (FR27).
 
 ### Vision (Future)
 

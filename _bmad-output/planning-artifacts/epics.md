@@ -150,7 +150,6 @@ So that I have a solid foundation for implementing features.
 **Given** a Supabase project
 **When** I apply the initial Alembic migrations
 **Then** the houses and rooms tables are created with support for JSONB attributes
-**And** the schema supports SCD Type 2 history (tracking changes via valid_from/valid_to)
 
 ### Story 1.2: Admin Manual Listing Creation
 
@@ -161,7 +160,7 @@ So that I can start building the platform's data without automation.
 **Acceptance Criteria:**
 
 **Given** I am logged into the Admin interface
-**When** I enter a property address and details (Price, Ward, District, Specs) and submit
+**When** I enter a property address, coordinates (Lat/Lng), and details (Price, Ward, District, Specs) and submit
 **Then** the system checks for address fingerprint collisions
 **And** generates a unique hierarchical GeoID (e.g., 29CG.W8K01)
 **And** creates a new House and Room record in the database

@@ -352,6 +352,15 @@ We will utilize **Headless UI** (React) wrapped in **Tailwind CSS** to provide t
 *   **Chip-Based Input:** Instead of traditional form fields, users construct queries using "Smart Chips" (e.g., `[< 3m]` `[Cau Giay]`).
 *   **Progressive Disclosure:** Advanced filters (e.g., "Has AC") are hidden behind a "More" chip or bottom sheet, keeping the initial interface clean.
 
+### Map View Interaction (FR5)
+*   **Visual Style:** A custom-styled map (using Mapbox or Google Maps) that adheres to the **"Future Warmth"** palette (softened colors, reduced visual clutter).
+*   **Pin Design:** Custom Coral (#F06D65) markers. When clicked, pins transform into a larger "Active" state.
+*   **Interaction:**
+    *   **Single Tap:** Opens a "Mini-Listing Card" as a bottom sheet (30% height), allowing the user to scan key details without leaving the map.
+    *   **Double Tap / Click Preview:** Navigates to the full Listing Detail Page.
+    *   **Clustering:** Pins cluster when zoomed out to maintain scannability. Clusters show the count of properties and use a softer Coral gradient.
+*   **Navigation:** A floating "List View" button allows for instant switching back to the discovery grid.
+
 ## Responsive Design & Accessibility
 
 ### Responsive Strategy
